@@ -1,0 +1,69 @@
+apply plugin: 'maven'
+
+def getRepositoryUsername() {
+    return hasProperty('NEXUS_USERNAME') ? NEXUS_USERNAME : ""
+}
+
+def getRepositoryPassword() {
+    return hasProperty('NEXUS_PASSWORD') ? NEXUS_PASSWORD : ""
+}
+
+def getRepositoryUrl() {
+    return !VERSION.toUpperCase().contains("SNAPSHOT") ? RELEASE_REPOSITORY_URL : SNAPSHOT_REPOSITORY_URL
+}
+
+// 配置上传指令
+uploadArchives {
+    configuration = configurations.archives
+    repositories {
+        mavenDeployer {
+            repository(url: getRepositoryUrl()) {
+                authentication(userName: NEXUS_USERNAME, password: NEXUS_PASSWORD)
+            }
+            pom.project {
+                version VERSION
+                artifactId ARTIFACT_ID
+                groupId GROUP_ID
+                packaging TYPE
+                description DESCRIPTION
+                name ARTIFACT_ID
+
+                developers {
+                    developer {
+                        id 'futianyi'
+                        name 'Fu Tianyi'
+                        email 'fu_tianyi@leapmotor.com'
+                    }
+                }
+            }
+        }
+    }
+}
+tasks.withType(GroovyCompile) {
+    groovyOptions.encoding = "MacRoman"
+}
+tasks.withType(JavaCompile) {
+    options.encoding = "UTF-8"
+}
+task sourcesJar(type: Jar) {
+    from android.sourceSets.main.java.srcDirs
+    getArchiveClassifier().set('sources')
+}
+task javadoc(type: Javadoc) {
+    source = android.sourceSets.main.java.srcDirs
+    classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+}
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    from javadoc.destinationDir
+    getArchiveClassifier().set('javadoc')
+}
+artifacts {
+    archives sourcesJar
+    archives javadocJar
+}
+
+task findConventions {
+    doLast {
+        println project.getConvention()
+    }
+}

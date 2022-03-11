@@ -1,0 +1,89 @@
+ext {
+    android = [
+            applicationId     : "com.leapmotor.utils",
+            minSdkVersion     : 25,
+            targetSdkVersion  : 28,
+            compileSdkVersion : 28,
+            buildToolsVersion : "28.0.3",
+            versionCode       : 101,
+            versionName       : "1.0.1",
+
+            roomVersion       : "2.2.6",
+            workVersion       : "2.7.1",
+            retrofitSdkVersion: "2.7.2",
+            autodisposeVersion: "1.4.0",
+            smartRefreshLayout: "2.0.3",
+            skinSupport       : "4.0.5",
+            skinSupportSS     : "4.0.5-SNAPSHOT",
+    ]
+
+    dependencies = [
+            //test
+            junit                             : "junit:junit:4.13",
+            runner                            : "androidx.test.ext:junit:1.1.2",
+            espresso_core                     : "androidx.test.espresso:espresso-core:3.2.0",
+            espresso_contrib                  : "androidx.test.espresso:espresso-contrib:3.3.0",
+            espresso_intents                  : "androidx.test.espresso:espresso-intents:3.4.0",
+            androidJUnitRunner                : "androidx.test.runner.AndroidJUnitRunner",
+
+            media                             : "androidx.media:media:1.2.0",
+            design                            : "com.google.android.material:material:1.2.1",
+            multidex                          : "androidx.multidex:multidex:2.0.0",
+            supportv4                         : "androidx.legacy:legacy-support-v4:1.1.0",
+            supportv7                         : "androidx.appcompat:appcompat:1.1.0",
+            annotations                       : "androidx.annotation:annotation:1.1.0",
+            recyclerviewv7                    : "androidx.recyclerview:recyclerview:1.1.0",
+            constraintlayout                  : "androidx.constraintlayout:constraintlayout:1.1.3",
+            //rxjava
+            rxjava2                           : "io.reactivex.rxjava2:rxjava:2.2.18",
+            rxandroid2                        : "io.reactivex.rxjava2:rxandroid:2.1.1",
+            rxrelay2                          : "com.jakewharton.rxrelay2:rxrelay:2.1.1",
+            autodispose                       : "com.uber.autodispose:autodispose:${android["autodisposeVersion"]}",
+            autodispose_android_archcomponents: "com.uber.autodispose:autodispose-android-archcomponents:${android["autodisposeVersion"]}",
+            //retrofit
+            retrofit2                         : "com.squareup.retrofit2:retrofit:${android["retrofitSdkVersion"]}",
+            retrofit2_converter_gson          : "com.squareup.retrofit2:converter-gson:${android["retrofitSdkVersion"]}",
+            retrofit2_adapter_rxjava2         : "com.squareup.retrofit2:adapter-rxjava2:${android["retrofitSdkVersion"]}",
+            //jetpack
+            room                              : "androidx.room:room-runtime:${android["roomVersion"]}",
+            room_rxjava2                      : "androidx.room:room-rxjava2:${android["roomVersion"]}",
+            room_compiler                     : "androidx.room:room-compiler:${android["roomVersion"]}",
+            work                              : "androidx.work:work-runtime:${android["workVersion"]}",
+            lifecycle_extensions              : "androidx.lifecycle:lifecycle-extensions:2.1.0",
+            //image
+            glide                             : "com.github.bumptech.glide:glide:4.11.0",
+            glide_compiler                    : "com.github.bumptech.glide:compiler:4.11.0",
+            glide_transformations             : "jp.wasabeef:glide-transformations:4.3.0",
+            //widget
+            swiperefreshlayout                : "androidx.swiperefreshlayout:swiperefreshlayout:1.1.0",
+            smartrefreshlayout                : "com.scwang.smart:refresh-layout-kernel:${android["smartRefreshLayout"]}",
+            smartrefreshheader_classics       : "com.scwang.smart:refresh-header-classics:${android["smartRefreshLayout"]}",
+            skin                              : "skin.support:skin-support:${android["skinSupportSS"]}",
+            skin_appcompat                    : "skin.support:skin-support-appcompat:${android["skinSupportSS"]}",
+            skin_design                       : "skin.support:skin-support-design:${android["skinSupport"]}",
+            banner                            : "com.youth.banner:banner:2.1.0",
+            pickerView                        : "com.contrarywind:Android-PickerView:4.1.9",
+            circleimageview                   : "de.hdodenhof:circleimageview:3.1.0",
+            //google
+            gson                              : "com.google.code.gson:gson:2.8.5",
+            zxing                             : "com.google.zxing:core:3.4.1",
+            flexbox                           : "com.google.android:flexbox:2.0.1",
+            //arouter
+            arouter_api                       : "com.alibaba:arouter-api:1.5.1",
+            arouter_compiler                  : "com.alibaba:arouter-compiler:1.5.1",
+            //utils
+            mmkv                              : "com.tencent:mmkv-static:1.2.9",
+            utilcodex                         : "com.blankj:utilcodex:1.30.6",
+            butterknife                       : "com.jakewharton:butterknife:10.2.3",
+            butterknife_compiler              : "com.jakewharton:butterknife-compiler:10.2.3",
+            //okhttp
+            persistent_cookiejar              : "com.github.franmontiel:PersistentCookieJar:v1.0.1",
+            //adapter
+            baseRecyclerViewAdapterHelper     : "com.github.CymChad:BaseRecyclerViewAdapterHelper:3.0.6",
+
+            //Leapmotor
+            lp_okgo                           : "com.leapmotor:okgo:1.0.9-SNAPSHOT",
+            lp_utils                          : "com.leapmotor.utils:toast:1.0.0-SNAPSHOT",
+    ]
+}
+
