@@ -26,11 +26,11 @@ public class SecoundActivity extends AppCompatActivity implements View.OnClickLi
     public void onClick(View v) {
         int id = v.getId();
         if (id == R.id.tvToastMain) {
-            ToastUtils.show(null, Display.DEFAULT_DISPLAY, "hello!", 40, false, false);
+            ToastUtils.show(null, Display.DEFAULT_DISPLAY, "hello!", ToastUtils.TXT_MAX_WIDTH, false, false);
         } else if (id == R.id.tvToastVice) {
-            ToastUtils.show(null, 1, "hello!", 40, false, false);
+            ToastUtils.show(null, 1, "hello!", ToastUtils.TXT_MAX_WIDTH, false, false);
         } else if (id == R.id.tvToastDynamic) {
-            ToastUtils.show(this, Display.INVALID_DISPLAY, "hello!", 40, false, false);
+            ToastUtils.show(this, Display.INVALID_DISPLAY, "hello!", ToastUtils.TXT_MAX_WIDTH, false, false);
         } else if (id == R.id.tvBack) {
             finish();
         }

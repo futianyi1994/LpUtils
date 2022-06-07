@@ -4,6 +4,7 @@ import android.app.Application;
 import android.content.Context;
 import android.graphics.PixelFormat;
 import android.os.Build;
+import android.text.TextPaint;
 import android.util.Log;
 import android.view.Display;
 import android.view.Gravity;
@@ -11,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import androidx.annotation.ColorRes;
@@ -40,11 +42,12 @@ import java.util.stream.Collectors;
  * @description :
  */
 public class ToastUtils {
-    public static final int MAXEMS = 30;
+    public static final int TXT_MAX_WIDTH = 800;
+    public static final int TXT_BG_SHADOW_PADING = 40;
+    public static final int TXT_PADING_START = 80, TXT_PADING_TOP = 80, TXT_PADING_END = 80, TXT_PADING_BOTTOM = 80;
     public static final int LENGTH_SHORT = 2000;
     public static final int LENGTH_LONG = 3500;
     private static final String TAG = "ToastUtils";
-
     private static final Map<Integer, WindowManager> WINDOW_MANAGER_MAP = new HashMap<>();
     private static final Map<Integer, View> VIEW_MANAGER_MAP = new HashMap<>();
     private static final Map<Integer, ThreadUtils.Task<Integer>> TASK_MAP = new HashMap<>();
@@ -55,7 +58,7 @@ public class ToastUtils {
      * @param msg The text.
      */
     public static void showShort(CharSequence msg) {
-        show(null, Display.DEFAULT_DISPLAY, msg, MAXEMS, false, false);
+        show(null, Display.DEFAULT_DISPLAY, msg, TXT_MAX_WIDTH, false, false);
     }
 
     /**
@@ -66,7 +69,7 @@ public class ToastUtils {
      * @param yOffset Y offset.
      */
     public static void showShort(CharSequence msg, @DrawableRes int bgResid, @ColorRes int textColor, int yOffset) {
-        show(null, Display.DEFAULT_DISPLAY, msg, MAXEMS, false, bgResid, textColor, yOffset, false);
+        show(null, Display.DEFAULT_DISPLAY, msg, TXT_MAX_WIDTH, false, bgResid, textColor, yOffset, false);
     }
 
     /**
@@ -75,7 +78,7 @@ public class ToastUtils {
      * @param msg The text.
      */
     public static void showLong(CharSequence msg) {
-        show(null, Display.DEFAULT_DISPLAY, msg, MAXEMS, true, false);
+        show(null, Display.DEFAULT_DISPLAY, msg, TXT_MAX_WIDTH, true, false);
     }
 
     /**
@@ -86,7 +89,7 @@ public class ToastUtils {
      * @param yOffset Y offset.
      */
     public static void showLong(CharSequence msg, @DrawableRes int bgResid, @ColorRes int textColor, int yOffset) {
-        show(null, Display.DEFAULT_DISPLAY, msg, MAXEMS, true, bgResid, textColor, yOffset, false);
+        show(null, Display.DEFAULT_DISPLAY, msg, TXT_MAX_WIDTH, true, bgResid, textColor, yOffset, false);
     }
 
     /**
@@ -96,7 +99,7 @@ public class ToastUtils {
      * @param msg     The text.
      */
     public static void showShort(@NonNull Context context, CharSequence msg) {
-        show(context, Display.INVALID_DISPLAY, msg, MAXEMS, false, false);
+        show(context, Display.INVALID_DISPLAY, msg, TXT_MAX_WIDTH, false, false);
     }
 
     /**
@@ -108,7 +111,7 @@ public class ToastUtils {
      * @param yOffset Y offset.
      */
     public static void showShort(@NonNull Context context, CharSequence msg, @DrawableRes int bgResid, @ColorRes int textColor, int yOffset) {
-        show(context, Display.INVALID_DISPLAY, msg, MAXEMS, false, bgResid, textColor, yOffset, false);
+        show(context, Display.INVALID_DISPLAY, msg, TXT_MAX_WIDTH, false, bgResid, textColor, yOffset, false);
     }
 
     /**
@@ -118,7 +121,7 @@ public class ToastUtils {
      * @param msg     The text.
      */
     public static void showLong(@NonNull Context context, CharSequence msg) {
-        show(context, Display.INVALID_DISPLAY, msg, MAXEMS, true, false);
+        show(context, Display.INVALID_DISPLAY, msg, TXT_MAX_WIDTH, true, false);
     }
 
     /**
@@ -130,7 +133,7 @@ public class ToastUtils {
      * @param yOffset Y offset.
      */
     public static void showLong(@NonNull Context context, CharSequence msg, @DrawableRes int bgResid, @ColorRes int textColor, int yOffset) {
-        show(context, Display.INVALID_DISPLAY, msg, MAXEMS, true, bgResid, textColor, yOffset, false);
+        show(context, Display.INVALID_DISPLAY, msg, TXT_MAX_WIDTH, true, bgResid, textColor, yOffset, false);
     }
 
     /**
@@ -139,12 +142,12 @@ public class ToastUtils {
      * @param context   The context.
      * @param displayId The displayId.
      * @param msg       The text.
-     * @param maxEms    The text maxEms.
+     * @param maxWidth  The text maxWidth.
      * @param isLong    True is show the toast for a long period of time, false otherwise.
      * @param isRecycle True is recycle view,task,and window, false otherwise.
      */
-    public static void show(@Nullable Context context, int displayId, CharSequence msg, int maxEms, boolean isLong, boolean isRecycle) {
-        show(context, displayId, msg, maxEms, isLong, getBgResourceIdByTheme(), getToastTextColor(), -C11Util.Y_TOP_OFFSET / 2, isRecycle);
+    public static void show(@Nullable Context context, int displayId, CharSequence msg, int maxWidth, boolean isLong, boolean isRecycle) {
+        show(context, displayId, msg, maxWidth, isLong, getBgResourceIdByTheme(), getToastTextColor(), -C11Util.Y_TOP_OFFSET / 2, isRecycle);
     }
 
     /**
@@ -153,14 +156,14 @@ public class ToastUtils {
      * @param context      The context.
      * @param displayId    The displayId.
      * @param msg          The text.
-     * @param maxEms       The text maxEms.
+     * @param maxWidth     The text maxWidth.
      * @param isLong       True is show the toast for a long period of time, false otherwise.
      * @param bgResid      Background resource id.
      * @param textColorRes The text color resource.
      * @param yOffset      Y offset.
      * @param isRecycle    True is recycle view,task,and window, false otherwise.
      */
-    public static void show(@Nullable Context context, int displayId, CharSequence msg, int maxEms, boolean isLong, @DrawableRes int bgResid, @ColorRes int textColorRes, int yOffset, boolean isRecycle) {
+    public static void show(@Nullable Context context, int displayId, CharSequence msg, int maxWidth, boolean isLong, @DrawableRes int bgResid, @ColorRes int textColorRes, int yOffset, boolean isRecycle) {
         Application app = LpUtils.getApp();
         int currentDisplayId = Display.INVALID_DISPLAY;
         WindowManager wm;
@@ -196,21 +199,28 @@ public class ToastUtils {
         View customToastView = VIEW_MANAGER_MAP.computeIfAbsent(currentDisplayId, k -> getView(app, R.layout.layout_custom_toast));
         customToastView.setVisibility(View.VISIBLE);
         TextView tvMsg = FindViewUtlis.findViewById(customToastView, R.id.tvMsg);
+        float msgWidth = 0;
         if (tvMsg != null) {
             tvMsg.setText(msg);
-            tvMsg.setMaxEms(maxEms);
+            tvMsg.setMaxWidth(maxWidth);
             tvMsg.setTextColor(ContextCompat.getColor(app, textColorRes));
             tvMsg.setBackgroundResource(bgResid);
+            tvMsg.setPadding(TXT_PADING_START, TXT_PADING_TOP, TXT_PADING_END, TXT_PADING_BOTTOM);
+            FrameLayout.LayoutParams tvLayoutParams = (FrameLayout.LayoutParams) tvMsg.getLayoutParams();
+            tvLayoutParams.setMargins(0, 0, 0, 0);
+            TextPaint textPaint = tvMsg.getPaint();
+            msgWidth = textPaint.measureText(msg.toString());
         }
         WindowManager.LayoutParams layoutParams = new WindowManager.LayoutParams();
         if (windowManager.getDefaultDisplay().getDisplayId() == Display.DEFAULT_DISPLAY) {
-            layoutParams.gravity = Gravity.TOP | Gravity.CENTER;
+            layoutParams.gravity = Gravity.TOP;
             layoutParams.x = C11Util.X_OFFSET / 2;
             layoutParams.y = Math.max(C11Util.Y_TOP_OFFSET + yOffset, 0);
         } else {
             layoutParams.gravity = Gravity.CENTER;
         }
-        layoutParams.width = ViewGroup.LayoutParams.WRAP_CONTENT;
+        int contentWidth = (int) (msgWidth + TXT_PADING_START + TXT_PADING_END + TXT_BG_SHADOW_PADING * 2);
+        layoutParams.width = Math.min(contentWidth, TXT_MAX_WIDTH);
         layoutParams.height = ViewGroup.LayoutParams.WRAP_CONTENT;
         layoutParams.type = Build.VERSION.SDK_INT > Build.VERSION_CODES.O ? WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY : WindowManager.LayoutParams.TYPE_PHONE;
         layoutParams.flags = WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
