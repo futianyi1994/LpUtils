@@ -4,11 +4,9 @@ import android.app.Application;
 import android.content.Context;
 import android.graphics.PixelFormat;
 import android.os.Build;
-import android.text.TextPaint;
 import android.util.Log;
 import android.view.Display;
 import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -17,7 +15,6 @@ import android.widget.TextView;
 
 import androidx.annotation.ColorRes;
 import androidx.annotation.DrawableRes;
-import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
@@ -53,87 +50,61 @@ public class ToastUtils {
     private static final Map<Integer, ThreadUtils.Task<Integer>> TASK_MAP = new HashMap<>();
 
     /**
-     * Show the toast for a short period of time.
+     * Show the toast for a short period of time on default display.
      *
      * @param msg The text.
      */
     public static void showShort(CharSequence msg) {
-        show(null, Display.DEFAULT_DISPLAY, msg, TXT_MAX_WIDTH, false, false);
+        show(null, Display.DEFAULT_DISPLAY, msg, false);
     }
 
     /**
-     * Show the toast for a short period of time.
-     *
-     * @param msg     The text.
-     * @param bgResid Background resource id.
-     * @param yOffset Y offset.
-     */
-    public static void showShort(CharSequence msg, @DrawableRes int bgResid, @ColorRes int textColor, int yOffset) {
-        show(null, Display.DEFAULT_DISPLAY, msg, TXT_MAX_WIDTH, false, bgResid, textColor, yOffset, false);
-    }
-
-    /**
-     * Show the toast for a long period of time.
+     * Show the toast for a long period of time on default display.
      *
      * @param msg The text.
      */
     public static void showLong(CharSequence msg) {
-        show(null, Display.DEFAULT_DISPLAY, msg, TXT_MAX_WIDTH, true, false);
+        show(null, Display.DEFAULT_DISPLAY, msg, true);
     }
 
     /**
-     * Show the toast for a long period of time.
-     *
-     * @param msg     The text.
-     * @param bgResid Background resource id.
-     * @param yOffset Y offset.
-     */
-    public static void showLong(CharSequence msg, @DrawableRes int bgResid, @ColorRes int textColor, int yOffset) {
-        show(null, Display.DEFAULT_DISPLAY, msg, TXT_MAX_WIDTH, true, bgResid, textColor, yOffset, false);
-    }
-
-    /**
-     * Show the toast for a short period of time.
+     * Show the toast for a short period of time according to the context.
      *
      * @param context The content.
      * @param msg     The text.
      */
     public static void showShort(@NonNull Context context, CharSequence msg) {
-        show(context, Display.INVALID_DISPLAY, msg, TXT_MAX_WIDTH, false, false);
+        show(context, Display.INVALID_DISPLAY, msg, false);
     }
 
     /**
-     * Show the toast for a short period of time.
-     *
-     * @param context The content.
-     * @param msg     The text.
-     * @param bgResid Background resource id.
-     * @param yOffset Y offset.
-     */
-    public static void showShort(@NonNull Context context, CharSequence msg, @DrawableRes int bgResid, @ColorRes int textColor, int yOffset) {
-        show(context, Display.INVALID_DISPLAY, msg, TXT_MAX_WIDTH, false, bgResid, textColor, yOffset, false);
-    }
-
-    /**
-     * Show the toast for a long period of time.
+     * Show the toast for a long period of time according to the context.
      *
      * @param context The content.
      * @param msg     The text.
      */
     public static void showLong(@NonNull Context context, CharSequence msg) {
-        show(context, Display.INVALID_DISPLAY, msg, TXT_MAX_WIDTH, true, false);
+        show(context, Display.INVALID_DISPLAY, msg, true);
     }
 
     /**
-     * Show the toast for a long period of time.
+     * Show the toast for a short period of time according to the display.
      *
-     * @param context The content.
-     * @param msg     The text.
-     * @param bgResid Background resource id.
-     * @param yOffset Y offset.
+     * @param displayId The displayId.
+     * @param msg       The text.
      */
-    public static void showLong(@NonNull Context context, CharSequence msg, @DrawableRes int bgResid, @ColorRes int textColor, int yOffset) {
-        show(context, Display.INVALID_DISPLAY, msg, TXT_MAX_WIDTH, true, bgResid, textColor, yOffset, false);
+    public static void showShort(int displayId, CharSequence msg) {
+        show(null, displayId, msg, TXT_MAX_WIDTH, false, getBgResourceIdByTheme(), getToastTextColor(), -C11Util.Y_TOP_OFFSET / 2, false);
+    }
+
+    /**
+     * Show the toast for a long period of time according to the display.
+     *
+     * @param displayId The displayId.
+     * @param msg       The text.
+     */
+    public static void showLong(int displayId, CharSequence msg) {
+        show(null, displayId, msg, TXT_MAX_WIDTH, true, getBgResourceIdByTheme(), getToastTextColor(), -C11Util.Y_TOP_OFFSET / 2, false);
     }
 
     /**
@@ -142,12 +113,10 @@ public class ToastUtils {
      * @param context   The context.
      * @param displayId The displayId.
      * @param msg       The text.
-     * @param maxWidth  The text maxWidth.
      * @param isLong    True is show the toast for a long period of time, false otherwise.
-     * @param isRecycle True is recycle view,task,and window, false otherwise.
      */
-    public static void show(@Nullable Context context, int displayId, CharSequence msg, int maxWidth, boolean isLong, boolean isRecycle) {
-        show(context, displayId, msg, maxWidth, isLong, getBgResourceIdByTheme(), getToastTextColor(), -C11Util.Y_TOP_OFFSET / 2, isRecycle);
+    private static void show(@Nullable Context context, int displayId, CharSequence msg, boolean isLong) {
+        show(context, displayId, msg, TXT_MAX_WIDTH, isLong, getBgResourceIdByTheme(), getToastTextColor(), -C11Util.Y_TOP_OFFSET / 2, false);
     }
 
     /**
@@ -196,7 +165,7 @@ public class ToastUtils {
             isAddView.set(false);
             return wm;
         });
-        View customToastView = VIEW_MANAGER_MAP.computeIfAbsent(currentDisplayId, k -> getView(app, R.layout.layout_custom_toast));
+        View customToastView = VIEW_MANAGER_MAP.computeIfAbsent(currentDisplayId, k -> ViewUtils.layoutId2View(app, R.layout.layout_custom_toast));
         customToastView.setVisibility(View.VISIBLE);
         TextView tvMsg = FindViewUtlis.findViewById(customToastView, R.id.tvMsg);
         float msgWidth = 0;
@@ -208,8 +177,7 @@ public class ToastUtils {
             tvMsg.setPadding(TXT_PADING_START, TXT_PADING_TOP, TXT_PADING_END, TXT_PADING_BOTTOM);
             FrameLayout.LayoutParams tvLayoutParams = (FrameLayout.LayoutParams) tvMsg.getLayoutParams();
             tvLayoutParams.setMargins(0, 0, 0, 0);
-            TextPaint textPaint = tvMsg.getPaint();
-            msgWidth = textPaint.measureText(msg.toString());
+            msgWidth = tvMsg.getPaint().measureText(msg.toString());
         }
         WindowManager.LayoutParams layoutParams = new WindowManager.LayoutParams();
         if (windowManager.getDefaultDisplay().getDisplayId() == Display.DEFAULT_DISPLAY) {
@@ -280,11 +248,6 @@ public class ToastUtils {
         if (windowManager != null && customToastView != null) {
             customToastView.setVisibility(View.GONE);
         }
-    }
-
-    private static View getView(Context context, @LayoutRes final int layoutId) {
-        LayoutInflater inflate = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        return inflate.inflate(layoutId, null);
     }
 
     @DrawableRes

@@ -20,8 +20,6 @@ public class FindViewUtlis {
     }
 
     /**
-     *
-     *
      * @param object
      * @param id
      * @param <V>
@@ -29,13 +27,13 @@ public class FindViewUtlis {
      */
     public static <V extends View> V findViewById(Object object, int id) {
         if (object instanceof View) {
-            return (V) ((View) object).findViewById(id);
+            return ((View) object).findViewById(id);
         } else if (object instanceof Activity) {
-            return (V) ((Activity) object).findViewById(id);
+            return ((Activity) object).findViewById(id);
         } else if (object instanceof Window) {
-            return (V) ((Window) object).findViewById(id);
+            return ((Window) object).findViewById(id);
         } else if (object instanceof Fragment) {
-            return (V) ((Fragment) object).getView().findViewById(id);
+            return ((Fragment) object).getView().findViewById(id);
         }
         return null;
     }

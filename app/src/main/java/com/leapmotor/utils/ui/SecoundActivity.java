@@ -6,6 +6,7 @@ import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.leapmotor.lputils.utils.DialogUtils;
 import com.leapmotor.lputils.utils.FindViewUtlis;
 import com.leapmotor.lputils.utils.ToastUtils;
 import com.leapmotor.utils.R;
@@ -19,6 +20,7 @@ public class SecoundActivity extends AppCompatActivity implements View.OnClickLi
         FindViewUtlis.findViewById(this, R.id.tvToastMain).setOnClickListener(this);
         FindViewUtlis.findViewById(this, R.id.tvToastVice).setOnClickListener(this);
         FindViewUtlis.findViewById(this, R.id.tvToastDynamic).setOnClickListener(this);
+        FindViewUtlis.findViewById(this, R.id.tvDialog).setOnClickListener(this);
         FindViewUtlis.findViewById(this, R.id.tvBack).setOnClickListener(this);
     }
 
@@ -26,11 +28,13 @@ public class SecoundActivity extends AppCompatActivity implements View.OnClickLi
     public void onClick(View v) {
         int id = v.getId();
         if (id == R.id.tvToastMain) {
-            ToastUtils.show(null, Display.DEFAULT_DISPLAY, "hello!", ToastUtils.TXT_MAX_WIDTH, false, false);
+            ToastUtils.showShort(Display.DEFAULT_DISPLAY, "hello!");
         } else if (id == R.id.tvToastVice) {
-            ToastUtils.show(null, 1, "hello!", ToastUtils.TXT_MAX_WIDTH, false, false);
+            ToastUtils.showShort(1, "hello!");
         } else if (id == R.id.tvToastDynamic) {
-            ToastUtils.show(this, Display.INVALID_DISPLAY, "hello!", ToastUtils.TXT_MAX_WIDTH, false, false);
+            ToastUtils.showShort(this, "hello!");
+        } else if (id == R.id.tvDialog) {
+            DialogUtils.show(this, "TitleTitleTitleTitleTitleTitleTitleTitleTitleTitleTitleTitleTitleTitleTitleTitleTitleTitleTitleTitleTitleTitleTitleTitleTitleTitleTitleTitleTitleTitleTitleTitleTitleTitleTitleTitle", "确定", "取消");
         } else if (id == R.id.tvBack) {
             finish();
         }

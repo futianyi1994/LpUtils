@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center">
+
+    <LinearLayout
+        android:id="@+id/llRoot"
+        android:layout_width="@dimen/x_720"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:orientation="vertical"
+        tools:background="@mipmap/bg_toast_night">
+
+        <TextView
+            android:id="@+id/tvHeadTitle"
+            style="@style/main_text"
+            android:layout_width="match_parent"
+            android:paddingStart="@dimen/x_40"
+            android:paddingTop="@dimen/y_40"
+            android:paddingEnd="@dimen/x_40"
+            android:textSize="@dimen/size_L"
+            android:visibility="visible"
+            tools:text="headTitle" />
+
+        <TextView
+            android:id="@+id/tvTitle"
+            style="@style/main_text"
+            android:layout_width="match_parent"
+            android:padding="@dimen/x_40"
+            android:textSize="@dimen/size_L"
+            tools:text="title" />
+
+        <View
+            android:id="@+id/vLine"
+            style="@style/line_h" />
+
+        <LinearLayout
+            android:id="@+id/llConfirm"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/y_87">
+
+            <TextView
+                android:id="@+id/tvLeft"
+                style="@style/main_text"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:textSize="@dimen/size_L"
+                android:visibility="visible"
+                tools:text="left" />
+
+            <TextView
+                android:id="@+id/tvRight"
+                style="@style/main_text"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:textSize="@dimen/size_L"
+                android:visibility="visible"
+                tools:text="end" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+</FrameLayout>

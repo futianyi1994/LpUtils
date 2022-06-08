@@ -7,7 +7,6 @@ buildscript {
         maven { url 'http://10.1.12.10:8081/repository/android_aliyun/' }
         maven { url 'http://10.1.12.10:8081/repository/android_jpack/' }
         maven { url 'http://10.1.12.10:8081/repository/android_jcenter/' }
-        maven { url 'http://10.1.12.10:8081/repository/android_maven2/' }
         maven { url 'http://10.1.12.10:8081/repository/snapshot/' }
     }
     dependencies {
@@ -24,7 +23,6 @@ allprojects {
         maven { url 'http://10.1.12.10:8081/repository/android_aliyun/' }
         maven { url 'http://10.1.12.10:8081/repository/android_jpack/' }
         maven { url 'http://10.1.12.10:8081/repository/android_jcenter/' }
-        maven { url 'http://10.1.12.10:8081/repository/android_maven2/' }
         maven { url 'http://10.1.12.10:8081/repository/snapshot/' }
     }
 }
