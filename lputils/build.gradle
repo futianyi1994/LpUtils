@@ -25,7 +25,8 @@ android {
 }
 
 dependencies {
-    compileOnly rootProject.ext.dependencies["supportv7"]
+    api rootProject.ext.dependencies["supportv4"]
+    api rootProject.ext.dependencies["supportv7"]
 }
 
 tasks.withType(Javadoc) {

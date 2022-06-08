@@ -65,26 +65,34 @@
     <!--界面底色-->
     <color name="bg_hmi">#FF000000</color>
     <!--模块背景-->
-    <color name="bg_module">#FF26272A</color>
+    <color name="bg_module">#FF1E1F24</color>
+    <!--卡片颜色-->
+    <color name="bg_card">#802F323B</color>
     <!--弹窗背景-->
-    <color name="bg_popup">#FF424347</color>
+    <color name="bg_popup">#FF232529</color>
     <!--toast背景-->
-    <color name="bg_toast">#FF68707C</color>
-    <!--阴影颜色-->
+    <color name="bg_toast">#E633373D</color>
+    <!--弹窗阴影-->
     <color name="shadow_popup">#66000000</color>
     <!--背景+文字按钮-->
     <!--常规按钮背景-->
-    <color name="btn_bg_normal">#FF424347</color>
+    <color name="btn_bg_normal">#FF2F3238</color>
     <!--常规按钮背景按下-->
-    <color name="btn_bg_normal_pre">#99424347</color>
+    <color name="btn_bg_normal_pre">#992F3238</color>
     <!--常规按钮背景禁用-->
-    <color name="btn_bg_normal_dis">#33424347</color>
+    <color name="btn_bg_normal_dis">#332F3238</color>
+    <!--切换按钮背景-->
+    <color name="btn_toggle_bg">#CC000000</color>
+    <!--切换按钮背景按下-->
+    <color name="btn_toggle_bg_pre">#7A000000</color>
+    <!--切换按钮背景禁用-->
+    <color name="btn_toggle_bg_dis">#29000000</color>
     <!--弹窗按钮背景-->
-    <color name="btn_bg_popup">#FF5E5F62</color>
+    <color name="btn_bg_popup">#FF2F3238</color>
     <!--弹窗按钮背景按下-->
-    <color name="btn_bg_popup_pre">#995E5F62</color>
+    <color name="btn_bg_popup_pre">#992F3238</color>
     <!--弹窗按钮背景禁用-->
-    <color name="btn_bg_popup_dis">#335E5F62</color>
+    <color name="btn_bg_popup_dis">#332F3238</color>
     <!--常规/弹窗按钮文字-->
     <color name="btn_text_normal">#FFFFFFFF</color>
     <!--常规/弹窗按钮文字按下-->
@@ -92,32 +100,44 @@
     <!--常规/弹窗按钮文字禁用-->
     <color name="btn_text_normal_dis">#33FFFFFF</color>
     <!--高亮按钮背景-->
-    <color name="btn_bg_highlight">#FF5486FF</color>
+    <color name="btn_bg_highlight">#FF2F3238</color>
     <!--高亮按钮背景按下-->
-    <color name="btn_bg_highlight_pre">#995486FF</color>
+    <color name="btn_bg_highlight_pre">#992F3238</color>
     <!--高亮按钮背景禁用-->
-    <color name="btn_bg_highlight_dis">#335486FF</color>
+    <color name="btn_bg_highlight_dis">#332F3238</color>
     <!--高亮按钮文字-->
-    <color name="btn_text_highlight">#FFFFFFFF</color>
+    <color name="btn_text_highlight">#FF00CF67</color>
     <!--高亮按钮文字按下-->
-    <color name="btn_text_highlight_pre">#99FFFFFF</color>
+    <color name="btn_text_highlight_pre">#9900CF67</color>
     <!--高亮按钮文字禁用-->
-    <color name="btn_text_highlight_dis">#33FFFFFF</color>
+    <color name="btn_text_highlight_dis">#3300CF67</color>
+    <!--超亮按钮背景-->
+    <color name="btn_bg_highlight_1">#FF00CF67</color>
+    <!--超亮按钮背景按下-->
+    <color name="btn_bg_highlight_1_pre">#9900CF67</color>
+    <!--超亮按钮背景禁用-->
+    <color name="btn_bg_highlight_1_dis">#3300CF67</color>
+    <!--超亮按钮文字-->
+    <color name="btn_text_highlight_1">#FFFFFFFF</color>
+    <!--超亮按钮文字按下-->
+    <color name="btn_text_highlight_1_pre">#99FFFFFF</color>
+    <!--超亮按钮文字禁用-->
+    <color name="btn_text_highlight_1_dis">#33FFFFFF</color>
     <!--文字按钮-->
     <!--标签文字按钮-->
-    <color name="btn_text_tab">#CCFFFFFF</color>
+    <color name="btn_text_tab">#FFFFFFFF</color>
     <!--标签文字按钮按下-->
-    <color name="btn_text_tab_pre">#66FFFFFF</color>
+    <color name="btn_text_tab_pre">#99FFFFFF</color>
     <!--标签文字按钮禁用-->
     <color name="btn_text_tab_dis">#33FFFFFF</color>
     <!--高亮文字按钮-->
-    <color name="btn_text_tab_highlight">#FF589BFF</color>
+    <color name="btn_text_tab_highlight">#FF00CF67</color>
     <!--高亮文字按钮按下-->
-    <color name="btn_text_tab_highlight_pre">#99589BFF</color>
+    <color name="btn_text_tab_highlight_pre">#9900CF67</color>
     <!--高亮文字按钮禁用-->
-    <color name="btn_text_tab_highlight_dis">#33589BFF</color>
+    <color name="btn_text_tab_highlight_dis">#3300CF67</color>
     <!--警示文字按钮-->
-    <color name="btn_text_caution">#FFF2602F</color>
+    <color name="btn_text_caution">#FFEA4E3D</color>
     <!--警示文字按钮按下-->
     <color name="btn_text_caution_pre">#99F2602F</color>
     <!--警示文字按钮禁用-->
@@ -140,75 +160,95 @@
     <!--==================================================白天==================================================-->
     <!--背景-->
     <!--界面底色-->
-    <color name="bg_hmi_light">#FFDADDE2</color>
+    <color name="bg_hmi_light">#FFE7EAEE</color>
     <!--模块背景-->
-    <color name="bg_module_light">#FFE7EAEE</color>
+    <color name="bg_module_light">#FFEEF1F5</color>
+    <!--卡片颜色-->
+    <color name="bg_card_light">#CCFFFFFF</color>
     <!--弹窗背景-->
-    <color name="bg_popup_light">#FFFAFAFB</color>
+    <color name="bg_popup_light">#FFF2F3F5</color>
     <!--toast背景-->
-    <color name="bg_toast_light">#FFFAFAFB</color>
-    <!--阴影颜色-->
-    <color name="shadow_popup_light">#332D3D4D</color>
+    <color name="bg_toast_light">#E6FAFAFB</color>
+    <!--弹窗阴影-->
+    <color name="shadow_popup_light">#33333333</color>
     <!--背景+文字按钮-->
     <!--常规按钮背景-->
-    <color name="btn_bg_normal_light">#FFFAFAFB</color>
+    <color name="btn_bg_normal_light">#FFFFFFFF</color>
     <!--常规按钮背景按下-->
-    <color name="btn_bg_normal_pre_light">#99FAFAFB</color>
+    <color name="btn_bg_normal_pre_light">#99FFFFFF</color>
     <!--常规按钮背景禁用-->
-    <color name="btn_bg_normal_dis_light">#33FAFAFB</color>
+    <color name="btn_bg_normal_dis_light">#33FFFFFF</color>
+    <!--切换按钮背景-->
+    <color name="btn_toggle_bg_light">#CCDFE4F0</color>
+    <!--切换按钮背景按下-->
+    <color name="btn_toggle_bg_pre_light">#7ADFE4F0</color>
+    <!--切换按钮背景禁用-->
+    <color name="btn_toggle_bg_dis_light">#29DFE4F0</color>
     <!--弹窗按钮背景-->
-    <color name="btn_bg_popup_light">#FFE7EAEE</color>
+    <color name="btn_bg_popup_light">#FFFFFFFF</color>
     <!--弹窗按钮背景按下-->
-    <color name="btn_bg_popup_pre_light">#99E7EAEE</color>
+    <color name="btn_bg_popup_pre_light">#99FFFFFF</color>
     <!--弹窗按钮背景禁用-->
-    <color name="btn_bg_popup_dis_light">#33E7EAEE</color>
+    <color name="btn_bg_popup_dis_light">#33FFFFFF</color>
     <!--常规/弹窗按钮文字-->
-    <color name="btn_text_normal_light">#FF2D3D4D</color>
+    <color name="btn_text_normal_light">#FF333333</color>
     <!--常规/弹窗按钮文字按下-->
-    <color name="btn_text_normal_pre_light">#992D3D4D</color>
+    <color name="btn_text_normal_pre_light">#99333333</color>
     <!--常规/弹窗按钮文字禁用-->
-    <color name="btn_text_normal_dis_light">#332D3D4D</color>
+    <color name="btn_text_normal_dis_light">#33333333</color>
     <!--高亮按钮背景-->
-    <color name="btn_bg_highlight_light">#FF5486FF</color>
+    <color name="btn_bg_highlight_light">#FFFFFFFF</color>
     <!--高亮按钮背景按下-->
-    <color name="btn_bg_highlight_pre_light">#995486FF</color>
+    <color name="btn_bg_highlight_pre_light">#99FFFFFF</color>
     <!--高亮按钮背景禁用-->
-    <color name="btn_bg_highlight_dis_light">#335486FF</color>
+    <color name="btn_bg_highlight_dis_light">#33FFFFFF</color>
     <!--高亮按钮文字-->
-    <color name="btn_text_highlight_light">#FFFFFFFF</color>
+    <color name="btn_text_highlight_light">#FF00CF67</color>
     <!--高亮按钮文字按下-->
-    <color name="btn_text_highlight_pre_light">#99FFFFFF</color>
+    <color name="btn_text_highlight_pre_light">#9900CF67</color>
     <!--高亮按钮文字禁用-->
-    <color name="btn_text_highlight_dis_light">#33FFFFFF</color>
+    <color name="btn_text_highlight_dis_light">#3300CF67</color>
+    <!--超亮按钮背景-->
+    <color name="btn_bg_highlight_1_light">#FF00CF67</color>
+    <!--超亮按钮背景按下-->
+    <color name="btn_bg_highlight_1_pre_light">#9900CF67</color>
+    <!--超亮按钮背景禁用-->
+    <color name="btn_bg_highlight_1_dis_light">#3300CF67</color>
+    <!--超亮按钮文字-->
+    <color name="btn_text_highlight_1_light">#FFFFFFFF</color>
+    <!--超亮按钮文字按下-->
+    <color name="btn_text_highlight_1_pre_light">#99FFFFFF</color>
+    <!--超亮按钮文字禁用-->
+    <color name="btn_text_highlight_1_dis_light">#33FFFFFF</color>
     <!--文字按钮-->
     <!--标签文字按钮-->
-    <color name="btn_text_tab_light">#CC2D3D4D</color>
+    <color name="btn_text_tab_light">#FF333333</color>
     <!--标签文字按钮按下-->
-    <color name="btn_text_tab_pre_light">#662D3D4D</color>
+    <color name="btn_text_tab_pre_light">#99333333</color>
     <!--标签文字按钮禁用-->
-    <color name="btn_text_tab_dis_light">#332D3D4D</color>
+    <color name="btn_text_tab_dis_light">#33333333</color>
     <!--高亮文字按钮-->
-    <color name="btn_text_tab_highlight_light">#FF589BFF</color>
+    <color name="btn_text_tab_highlight_light">#FF00CF67</color>
     <!--高亮文字按钮按下-->
-    <color name="btn_text_tab_highlight_pre_light">#99589BFF</color>
+    <color name="btn_text_tab_highlight_pre_light">#9900CF67</color>
     <!--高亮文字按钮禁用-->
-    <color name="btn_text_tab_highlight_dis_light">#33589BFF</color>
+    <color name="btn_text_tab_highlight_dis_light">#3300CF67</color>
     <!--警示文字按钮-->
-    <color name="btn_text_caution_light">#FFF2602F</color>
+    <color name="btn_text_caution_light">#FFEA4E3D</color>
     <!--警示文字按钮按下-->
     <color name="btn_text_caution_pre_light">#99F2602F</color>
     <!--警示文字按钮禁用-->
     <color name="btn_text_caution_dis_light">#33F2602F</color>
     <!--文案-->
     <!--主要文字颜色-->
-    <color name="text_primary_light">#FF2D3D4D</color>
+    <color name="text_primary_light">#FF333333</color>
     <!--次要文字颜色-->
-    <color name="text_secondary_light">#992D3D4D</color>
+    <color name="text_secondary_light">#99333333</color>
     <!--图片上文字-->
     <color name="text_pic_light">#FFFFFFFF</color>
     <!--其他-->
     <!--线-->
-    <color name="line_light">#332D3D4D</color>、
+    <color name="line_light">#33333333</color>
     <!--弹窗遮罩-->
     <color name="mask_popup_light">#99DADDE2</color>
     <!--图片遮罩-->

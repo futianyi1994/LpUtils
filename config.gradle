@@ -27,9 +27,9 @@ ext {
             androidJUnitRunner                : "androidx.test.runner.AndroidJUnitRunner",
 
             media                             : "androidx.media:media:1.2.0",
-            design                            : "com.google.android.material:material:1.2.1",
+            design                            : "com.google.android.material:material:1.4.0",
             multidex                          : "androidx.multidex:multidex:2.0.0",
-            supportv4                         : "androidx.legacy:legacy-support-v4:1.1.0",
+            supportv4                         : "androidx.legacy:legacy-support-v4:1.0.0",
             supportv7                         : "androidx.appcompat:appcompat:1.1.0",
             annotations                       : "androidx.annotation:annotation:1.1.0",
             recyclerviewv7                    : "androidx.recyclerview:recyclerview:1.1.0",
@@ -82,8 +82,8 @@ ext {
             baseRecyclerViewAdapterHelper     : "com.github.CymChad:BaseRecyclerViewAdapterHelper:3.0.6",
 
             //Leapmotor
-            lp_okgo                           : "com.leapmotor:okgo:1.0.9-SNAPSHOT",
-            lp_utils                          : "com.leapmotor.utils:toast:1.0.0-SNAPSHOT",
+            lp_okgo                           : "com.leapmotor:okgo:1.0.14-SNAPSHOT",
+            lp_utils                          : "com.leapmotor.utils:toast:1.0.1-SNAPSHOT",
     ]
 }
 

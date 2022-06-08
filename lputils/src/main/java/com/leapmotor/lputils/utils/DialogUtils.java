@@ -20,7 +20,6 @@ import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 
 import com.leapmotor.lputils.R;
-import com.leapmotor.lputils.annotation.ScreenModeType;
 
 import java.util.HashMap;
 import java.util.List;
@@ -113,7 +112,7 @@ public class DialogUtils {
      * @param rightTitle The right title text.
      */
     private static void show(@Nullable Context context, int displayId, CharSequence title, @Nullable CharSequence leftTitle, @Nullable CharSequence rightTitle) {
-        show(context, displayId, null, title, leftTitle, rightTitle, getBgResourceIdByTheme(), getDialogTextColor(), false);
+        show(context, displayId, null, title, leftTitle, rightTitle, ColorUtils.getBgToastOrDialog(), ColorUtils.getTextPrimaryColor(), false);
     }
 
     /**
@@ -153,7 +152,7 @@ public class DialogUtils {
      * @param rightTitle The right title text.
      */
     private static void show(@Nullable Context context, int displayId, @Nullable CharSequence headTitle, CharSequence title, @Nullable CharSequence leftTitle, @Nullable CharSequence rightTitle) {
-        show(context, displayId, headTitle, title, leftTitle, rightTitle, getBgResourceIdByTheme(), getDialogTextColor(), false);
+        show(context, displayId, headTitle, title, leftTitle, rightTitle, ColorUtils.getBgToastOrDialog(), ColorUtils.getTextPrimaryColor(), false);
     }
 
     /**
@@ -192,9 +191,9 @@ public class DialogUtils {
             }
         }
         if (isRecycle) {
-            removeDialogLayout(currentDisplayId);
+            removeLayout(currentDisplayId);
         } else {
-            hideDialogLayout(currentDisplayId);
+            hideLayout(currentDisplayId);
         }
 
         if (TASK_MAP.get(currentDisplayId) != null) {
@@ -215,9 +214,9 @@ public class DialogUtils {
             @Override
             public void onSuccess(Integer displayId) {
                 if (isRecycle) {
-                    removeDialogLayout(displayId);
+                    removeLayout(displayId);
                 } else {
-                    hideDialogLayout(displayId);
+                    hideLayout(displayId);
                     WINDOW_MANAGER_MAP.remove(displayId);
                     VIEW_MANAGER_MAP.remove(displayId);
                     TASK_MAP.remove(displayId);
@@ -263,7 +262,7 @@ public class DialogUtils {
             tvLeft.setText(leftTitle);
             tvRight.setText(rightTitle);
             tvHeadTitle.setTextColor(ContextCompat.getColor(app, textColorRes));
-            tvLeft.setTextColor(ContextCompat.getColor(app, textColorRes));
+            tvLeft.setTextColor(ContextCompat.getColor(app, ColorUtils.getBtnTextHighlightColor()));
             tvRight.setTextColor(ContextCompat.getColor(app, textColorRes));
             tvHeadTitle.setVisibility(headTitle == null ? View.GONE : View.VISIBLE);
             tvLeft.setVisibility(leftTitle == null ? View.GONE : View.VISIBLE);
@@ -302,7 +301,12 @@ public class DialogUtils {
         }
     }
 
-    public static void removeDialogLayout(int displayId) {
+    /**
+     * Remove the dialog layout according to the display.
+     *
+     * @param displayId The displayId.
+     */
+    public static void removeLayout(int displayId) {
         WindowManager windowManager = WINDOW_MANAGER_MAP.get(displayId);
         View customDialogView = VIEW_MANAGER_MAP.get(displayId);
         if (windowManager != null && customDialogView != null) {
@@ -312,7 +316,12 @@ public class DialogUtils {
         VIEW_MANAGER_MAP.remove(displayId);
     }
 
-    public static void hideDialogLayout(int displayId) {
+    /**
+     * Hide the dialog layout according to the display.
+     *
+     * @param displayId The displayId.
+     */
+    public static void hideLayout(int displayId) {
         WindowManager windowManager = WINDOW_MANAGER_MAP.get(displayId);
         View customDialogView = VIEW_MANAGER_MAP.get(displayId);
         if (windowManager != null && customDialogView != null) {
@@ -320,28 +329,28 @@ public class DialogUtils {
         }
     }
 
-    @DrawableRes
-    private static int getBgResourceIdByTheme() {
-        switch (SettingsUtils.screenMode()) {
-            case ScreenModeType.NIGHT:
-                return R.mipmap.bg_toast_night;
-            case ScreenModeType.DAY:
-                return R.mipmap.bg_toast_light;
-            default:
-                return R.mipmap.bg_toast_night;
-        }
-    }
-
-    @ColorRes
-    private static int getDialogTextColor() {
-        switch (SettingsUtils.screenMode()) {
-            case ScreenModeType.NIGHT:
-                return R.color.text_primary;
-            case ScreenModeType.DAY:
-                return R.color.text_primary_light;
-            default:
-                return R.color.text_primary;
-        }
+    /**
+     * Refresh the dialog layout theme.
+     */
+    public static void refresh() {
+        VIEW_MANAGER_MAP.forEach((integer, view) -> {
+            LinearLayout llRoot = FindViewUtlis.findViewById(view, R.id.llRoot);
+            TextView tvHeadTitle = FindViewUtlis.findViewById(view, R.id.tvHeadTitle);
+            TextView tvTitle = FindViewUtlis.findViewById(view, R.id.tvTitle);
+            TextView tvLeft = FindViewUtlis.findViewById(view, R.id.tvLeft);
+            TextView tvRight = FindViewUtlis.findViewById(view, R.id.tvRight);
+            if (llRoot != null && tvTitle != null && tvHeadTitle != null && tvLeft != null && tvRight != null) {
+                int textPrimaryColor = ContextCompat.getColor(LpUtils.getApp(), ColorUtils.getTextPrimaryColor());
+                int textLeftColor = ContextCompat.getColor(LpUtils.getApp(), ColorUtils.getBtnTextHighlightColor());
+                llRoot.setBackgroundResource(ColorUtils.getBgToastOrDialog());
+                llRoot.setPadding(0, 0, 0, 0);
+                tvHeadTitle.setTextColor(textPrimaryColor);
+                tvTitle.setTextColor(textPrimaryColor);
+                tvLeft.setTextColor(textLeftColor);
+                tvRight.setTextColor(textPrimaryColor);
+            }
+        });
+        Log.i(TAG, "refresh dialog theme success !");
     }
 
     /**

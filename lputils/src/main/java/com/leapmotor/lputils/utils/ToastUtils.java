@@ -20,7 +20,6 @@ import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 
 import com.leapmotor.lputils.R;
-import com.leapmotor.lputils.annotation.ScreenModeType;
 
 import java.util.HashMap;
 import java.util.List;
@@ -94,7 +93,7 @@ public class ToastUtils {
      * @param msg       The text.
      */
     public static void showShort(int displayId, CharSequence msg) {
-        show(null, displayId, msg, TXT_MAX_WIDTH, false, getBgResourceIdByTheme(), getToastTextColor(), -C11Util.Y_TOP_OFFSET / 2, false);
+        show(null, displayId, msg, TXT_MAX_WIDTH, false, ColorUtils.getBgToastOrDialog(), ColorUtils.getTextPrimaryColor(), -C11Util.Y_TOP_OFFSET / 2, false);
     }
 
     /**
@@ -104,7 +103,7 @@ public class ToastUtils {
      * @param msg       The text.
      */
     public static void showLong(int displayId, CharSequence msg) {
-        show(null, displayId, msg, TXT_MAX_WIDTH, true, getBgResourceIdByTheme(), getToastTextColor(), -C11Util.Y_TOP_OFFSET / 2, false);
+        show(null, displayId, msg, TXT_MAX_WIDTH, true, ColorUtils.getBgToastOrDialog(), ColorUtils.getTextPrimaryColor(), -C11Util.Y_TOP_OFFSET / 2, false);
     }
 
     /**
@@ -116,7 +115,7 @@ public class ToastUtils {
      * @param isLong    True is show the toast for a long period of time, false otherwise.
      */
     private static void show(@Nullable Context context, int displayId, CharSequence msg, boolean isLong) {
-        show(context, displayId, msg, TXT_MAX_WIDTH, isLong, getBgResourceIdByTheme(), getToastTextColor(), -C11Util.Y_TOP_OFFSET / 2, false);
+        show(context, displayId, msg, TXT_MAX_WIDTH, isLong, ColorUtils.getBgToastOrDialog(), ColorUtils.getTextPrimaryColor(), -C11Util.Y_TOP_OFFSET / 2, false);
     }
 
     /**
@@ -155,9 +154,9 @@ public class ToastUtils {
             }
         }
         if (isRecycle) {
-            removeToastLayout(currentDisplayId);
+            removeLayout(currentDisplayId);
         } else {
-            hideToastLayout(currentDisplayId);
+            hideLayout(currentDisplayId);
         }
 
         AtomicBoolean isAddView = new AtomicBoolean(true);
@@ -218,9 +217,9 @@ public class ToastUtils {
             @Override
             public void onSuccess(Integer displayId) {
                 if (isRecycle) {
-                    removeToastLayout(displayId);
+                    removeLayout(displayId);
                 } else {
-                    hideToastLayout(displayId);
+                    hideLayout(displayId);
                     WINDOW_MANAGER_MAP.remove(displayId);
                     VIEW_MANAGER_MAP.remove(displayId);
                     TASK_MAP.remove(displayId);
@@ -231,7 +230,12 @@ public class ToastUtils {
         ThreadUtils.executeBySingleWithDelay(integerTask, isLong ? LENGTH_LONG : LENGTH_SHORT, TimeUnit.MILLISECONDS);
     }
 
-    public static void removeToastLayout(int displayId) {
+    /**
+     * Remove the toast layout according to the display.
+     *
+     * @param displayId The displayId.
+     */
+    public static void removeLayout(int displayId) {
         WindowManager windowManager = WINDOW_MANAGER_MAP.get(displayId);
         View customToastView = VIEW_MANAGER_MAP.get(displayId);
         if (windowManager != null && customToastView != null) {
@@ -242,7 +246,12 @@ public class ToastUtils {
         TASK_MAP.remove(displayId);
     }
 
-    public static void hideToastLayout(int displayId) {
+    /**
+     * Hide the toast layout according to the display.
+     *
+     * @param displayId The displayId.
+     */
+    public static void hideLayout(int displayId) {
         WindowManager windowManager = WINDOW_MANAGER_MAP.get(displayId);
         View customToastView = VIEW_MANAGER_MAP.get(displayId);
         if (windowManager != null && customToastView != null) {
@@ -250,27 +259,18 @@ public class ToastUtils {
         }
     }
 
-    @DrawableRes
-    private static int getBgResourceIdByTheme() {
-        switch (SettingsUtils.screenMode()) {
-            case ScreenModeType.NIGHT:
-                return R.mipmap.bg_toast_night;
-            case ScreenModeType.DAY:
-                return R.mipmap.bg_toast_light;
-            default:
-                return R.mipmap.bg_toast_night;
-        }
-    }
-
-    @ColorRes
-    private static int getToastTextColor() {
-        switch (SettingsUtils.screenMode()) {
-            case ScreenModeType.NIGHT:
-                return R.color.text_primary;
-            case ScreenModeType.DAY:
-                return R.color.text_primary_light;
-            default:
-                return R.color.text_primary;
-        }
+    /**
+     * Refresh the toast layout theme.
+     */
+    public static void refresh() {
+        VIEW_MANAGER_MAP.forEach((integer, view) -> {
+            TextView tvMsg = FindViewUtlis.findViewById(view, R.id.tvMsg);
+            if (tvMsg != null) {
+                tvMsg.setTextColor(ContextCompat.getColor(LpUtils.getApp(), ColorUtils.getTextPrimaryColor()));
+                tvMsg.setBackgroundResource(ColorUtils.getBgToastOrDialog());
+                tvMsg.setPadding(TXT_PADING_START, TXT_PADING_TOP, TXT_PADING_END, TXT_PADING_BOTTOM);
+            }
+        });
+        Log.i(TAG, "refresh toast theme success !");
     }
 }

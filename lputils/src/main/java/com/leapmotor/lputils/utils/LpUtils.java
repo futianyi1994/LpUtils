@@ -58,4 +58,12 @@ public class LpUtils {
         }
         return sApp;
     }
+
+    /**
+     * Refresh the dialog and toast layout theme.
+     */
+    public static void refreshScreenThemeMode() {
+        DialogUtils.refresh();
+        ToastUtils.refresh();
+    }
 }
