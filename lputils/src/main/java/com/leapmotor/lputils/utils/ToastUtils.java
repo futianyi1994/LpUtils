@@ -4,6 +4,7 @@ import android.app.Application;
 import android.content.Context;
 import android.graphics.PixelFormat;
 import android.os.Build;
+import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.Display;
 import android.view.Gravity;
@@ -38,6 +39,7 @@ import java.util.stream.Collectors;
  * @description :
  */
 public class ToastUtils {
+    public static final int TXT_MAX_LINES = 2;
     public static final int TXT_MAX_WIDTH = 800;
     public static final int TXT_BG_SHADOW_PADING = 40;
     public static final int TXT_PADING_START = 80, TXT_PADING_TOP = 80, TXT_PADING_END = 80, TXT_PADING_BOTTOM = 80;
@@ -171,6 +173,8 @@ public class ToastUtils {
         if (tvMsg != null) {
             tvMsg.setText(msg);
             tvMsg.setMaxWidth(maxWidth);
+            tvMsg.setMaxLines(TXT_MAX_LINES);
+            tvMsg.setMovementMethod(ScrollingMovementMethod.getInstance());
             tvMsg.setTextColor(ContextCompat.getColor(app, textColorRes));
             tvMsg.setBackgroundResource(bgResid);
             tvMsg.setPadding(TXT_PADING_START, TXT_PADING_TOP, TXT_PADING_END, TXT_PADING_BOTTOM);
@@ -191,8 +195,7 @@ public class ToastUtils {
         layoutParams.height = ViewGroup.LayoutParams.WRAP_CONTENT;
         layoutParams.type = Build.VERSION.SDK_INT > Build.VERSION_CODES.O ? WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY : WindowManager.LayoutParams.TYPE_PHONE;
         layoutParams.flags = WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
-                | WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
-                | WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE;
+                | WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
         layoutParams.format = PixelFormat.RGBA_8888;
 
         if (!isAddView.getAndSet(true)) {
