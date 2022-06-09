@@ -45,7 +45,7 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/y_87">
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/tvLeft"
                 style="@style/main_text"
                 android:layout_height="match_parent"
