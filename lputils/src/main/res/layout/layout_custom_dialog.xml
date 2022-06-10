@@ -7,7 +7,7 @@
 
     <LinearLayout
         android:id="@+id/llRoot"
-        android:layout_width="@dimen/x_720"
+        android:layout_width="@dimen/x720"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:gravity="center"
@@ -20,9 +20,9 @@
             android:layout_width="match_parent"
             android:ellipsize="marquee"
             android:marqueeRepeatLimit="marquee_forever"
-            android:paddingStart="@dimen/x_40"
-            android:paddingTop="@dimen/y_40"
-            android:paddingEnd="@dimen/x_40"
+            android:paddingStart="@dimen/x40"
+            android:paddingTop="@dimen/y40"
+            android:paddingEnd="@dimen/x40"
             android:singleLine="true"
             android:textSize="@dimen/size_L"
             android:visibility="visible"
@@ -32,7 +32,7 @@
             android:id="@+id/tvTitle"
             style="@style/main_text"
             android:layout_width="match_parent"
-            android:padding="@dimen/x_40"
+            android:padding="@dimen/x40"
             android:textSize="@dimen/size_L"
             tools:text="title" />
 
@@ -43,7 +43,7 @@
         <LinearLayout
             android:id="@+id/llConfirm"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/y_87">
+            android:layout_height="@dimen/y87">
 
             <com.leapmotor.lputils.view.MTextView
                 android:id="@+id/tvLeft"
