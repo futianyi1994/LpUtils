@@ -18,10 +18,9 @@ import android.widget.TextView;
 import androidx.annotation.ColorRes;
 import androidx.annotation.DrawableRes;
 import androidx.annotation.Nullable;
-import androidx.appcompat.widget.AppCompatTextView;
-import androidx.core.content.ContextCompat;
 
 import com.leapmotor.lputils.R;
+import com.leapmotor.lputils.content.ContextCompat;
 import com.leapmotor.lputils.view.MTextView;
 
 import java.util.HashMap;
@@ -320,7 +319,7 @@ public class DialogUtils {
             LinearLayout llRoot = FindViewUtlis.findViewById(view, R.id.llRoot);
             TextView tvHeadTitle = FindViewUtlis.findViewById(view, R.id.tvHeadTitle);
             TextView tvTitle = FindViewUtlis.findViewById(view, R.id.tvTitle);
-            AppCompatTextView tvLeft = FindViewUtlis.findViewById(view, R.id.tvLeft);
+            MTextView tvLeft = FindViewUtlis.findViewById(view, R.id.tvLeft);
             TextView tvRight = FindViewUtlis.findViewById(view, R.id.tvRight);
             if (llRoot != null && tvTitle != null && tvHeadTitle != null && tvLeft != null && tvRight != null) {
                 int textPrimaryColor = ContextCompat.getColor(LpUtils.getApp(), ColorUtils.getTextPrimaryColor());
