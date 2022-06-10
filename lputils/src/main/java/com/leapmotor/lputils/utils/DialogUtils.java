@@ -21,7 +21,6 @@ import androidx.annotation.Nullable;
 
 import com.leapmotor.lputils.R;
 import com.leapmotor.lputils.content.ContextCompat;
-import com.leapmotor.lputils.view.MTextView;
 
 import java.util.HashMap;
 import java.util.List;
@@ -221,7 +220,7 @@ public class DialogUtils {
         TextView tvHeadTitle = FindViewUtlis.findViewById(customDialogView, R.id.tvHeadTitle);
         TextView tvTitle = FindViewUtlis.findViewById(customDialogView, R.id.tvTitle);
         View vLine = FindViewUtlis.findViewById(customDialogView, R.id.vLine);
-        MTextView tvLeft = FindViewUtlis.findViewById(customDialogView, R.id.tvLeft);
+        TextView tvLeft = FindViewUtlis.findViewById(customDialogView, R.id.tvLeft);
         TextView tvRight = FindViewUtlis.findViewById(customDialogView, R.id.tvRight);
         if (llRoot != null && llConfirm != null && tvTitle != null && tvHeadTitle != null && vLine != null && tvLeft != null && tvRight != null) {
             llRoot.setBackgroundResource(bgResid);
@@ -319,7 +318,7 @@ public class DialogUtils {
             LinearLayout llRoot = FindViewUtlis.findViewById(view, R.id.llRoot);
             TextView tvHeadTitle = FindViewUtlis.findViewById(view, R.id.tvHeadTitle);
             TextView tvTitle = FindViewUtlis.findViewById(view, R.id.tvTitle);
-            MTextView tvLeft = FindViewUtlis.findViewById(view, R.id.tvLeft);
+            TextView tvLeft = FindViewUtlis.findViewById(view, R.id.tvLeft);
             TextView tvRight = FindViewUtlis.findViewById(view, R.id.tvRight);
             if (llRoot != null && tvTitle != null && tvHeadTitle != null && tvLeft != null && tvRight != null) {
                 int textPrimaryColor = ContextCompat.getColor(LpUtils.getApp(), ColorUtils.getTextPrimaryColor());

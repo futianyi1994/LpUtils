@@ -45,7 +45,7 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/y87">
 
-            <com.leapmotor.lputils.view.MTextView
+            <TextView
                 android:id="@+id/tvLeft"
                 style="@style/main_text"
                 android:layout_height="match_parent"
@@ -53,6 +53,7 @@
                 android:ellipsize="marquee"
                 android:marqueeRepeatLimit="marquee_forever"
                 android:singleLine="true"
+                android:textColor="@null"
                 android:textSize="@dimen/size_L"
                 android:visibility="visible"
                 tools:text="left" />
