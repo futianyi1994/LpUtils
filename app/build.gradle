@@ -33,6 +33,7 @@ dependencies {
     androidTestImplementation rootProject.ext.dependencies["espresso_core"]
 
     implementation project(path: ':lputils')
+    implementation rootProject.ext.dependencies["supportv7"]
     //implementation rootProject.ext.dependencies["lp_utils"]
     implementation rootProject.ext.dependencies["utilcodex"]
 }

@@ -18,9 +18,9 @@ import androidx.annotation.ColorRes;
 import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.content.ContextCompat;
 
 import com.leapmotor.lputils.R;
+import com.leapmotor.lputils.content.ContextCompat;
 
 import java.util.HashMap;
 import java.util.List;

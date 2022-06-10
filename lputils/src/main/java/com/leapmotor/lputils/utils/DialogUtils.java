@@ -1,5 +1,6 @@
 package com.leapmotor.lputils.utils;
 
+import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
 import android.graphics.PixelFormat;
@@ -21,6 +22,7 @@ import androidx.appcompat.widget.AppCompatTextView;
 import androidx.core.content.ContextCompat;
 
 import com.leapmotor.lputils.R;
+import com.leapmotor.lputils.view.MTextView;
 
 import java.util.HashMap;
 import java.util.List;
@@ -66,14 +68,14 @@ public class DialogUtils {
     /**
      * Show the dialog according to the context.
      *
-     * @param context         The context.
+     * @param activity        The context.
      * @param title           The title text.
      * @param leftTitle       The left title text.
      * @param rightTitle      The right title text.
      * @param onClickListener The callback that will run.
      */
-    public static void show(@Nullable Context context, CharSequence title, @Nullable CharSequence leftTitle, @Nullable CharSequence rightTitle, @Nullable OnClickListener onClickListener) {
-        show(context, Display.INVALID_DISPLAY, title, leftTitle, rightTitle, onClickListener);
+    public static void show(@Nullable Activity activity, CharSequence title, @Nullable CharSequence leftTitle, @Nullable CharSequence rightTitle, @Nullable OnClickListener onClickListener) {
+        show(activity, Display.INVALID_DISPLAY, title, leftTitle, rightTitle, onClickListener);
     }
 
     /**
@@ -92,29 +94,29 @@ public class DialogUtils {
     /**
      * Show the dialog according to the display or context.
      *
-     * @param context         The context.
+     * @param activity        The context.
      * @param displayId       The displayId.
      * @param title           The title text.
      * @param leftTitle       The left title text.
      * @param rightTitle      The right title text.
      * @param onClickListener The callback that will run.
      */
-    private static void show(@Nullable Context context, int displayId, CharSequence title, @Nullable CharSequence leftTitle, @Nullable CharSequence rightTitle, @Nullable OnClickListener onClickListener) {
-        show(context, displayId, null, title, leftTitle, rightTitle, ColorUtils.getBgToastOrDialog(), ColorUtils.getTextPrimaryColor(), onClickListener);
+    private static void show(@Nullable Activity activity, int displayId, CharSequence title, @Nullable CharSequence leftTitle, @Nullable CharSequence rightTitle, @Nullable OnClickListener onClickListener) {
+        show(activity, displayId, null, title, leftTitle, rightTitle, ColorUtils.getBgToastOrDialog(), ColorUtils.getTextPrimaryColor(), onClickListener);
     }
 
     /**
      * Show the dialog according to the context.
      *
-     * @param context         The context.
+     * @param activity        The context.
      * @param headTitle       The head title text.
      * @param title           The title text.
      * @param leftTitle       The left title text.
      * @param rightTitle      The right title text.
      * @param onClickListener The callback that will run.
      */
-    public static void show(@Nullable Context context, @Nullable CharSequence headTitle, CharSequence title, @Nullable CharSequence leftTitle, @Nullable CharSequence rightTitle, @Nullable OnClickListener onClickListener) {
-        show(context, Display.INVALID_DISPLAY, headTitle, title, leftTitle, rightTitle, onClickListener);
+    public static void show(@Nullable Activity activity, @Nullable CharSequence headTitle, CharSequence title, @Nullable CharSequence leftTitle, @Nullable CharSequence rightTitle, @Nullable OnClickListener onClickListener) {
+        show(activity, Display.INVALID_DISPLAY, headTitle, title, leftTitle, rightTitle, onClickListener);
     }
 
     /**
@@ -134,7 +136,7 @@ public class DialogUtils {
     /**
      * Show the dialog according to the display or context.
      *
-     * @param context         The context.
+     * @param activity        The context.
      * @param displayId       The displayId.
      * @param headTitle       The head title text.
      * @param title           The title text.
@@ -142,14 +144,14 @@ public class DialogUtils {
      * @param rightTitle      The right title text.
      * @param onClickListener The callback that will run.
      */
-    private static void show(@Nullable Context context, int displayId, @Nullable CharSequence headTitle, CharSequence title, @Nullable CharSequence leftTitle, @Nullable CharSequence rightTitle, @Nullable OnClickListener onClickListener) {
-        show(context, displayId, headTitle, title, leftTitle, rightTitle, ColorUtils.getBgToastOrDialog(), ColorUtils.getTextPrimaryColor(), onClickListener);
+    private static void show(@Nullable Activity activity, int displayId, @Nullable CharSequence headTitle, CharSequence title, @Nullable CharSequence leftTitle, @Nullable CharSequence rightTitle, @Nullable OnClickListener onClickListener) {
+        show(activity, displayId, headTitle, title, leftTitle, rightTitle, ColorUtils.getBgToastOrDialog(), ColorUtils.getTextPrimaryColor(), onClickListener);
     }
 
     /**
      * Show the dialog according to the display or context.
      *
-     * @param context         The context.
+     * @param activity        The context.
      * @param displayId       The displayId.
      * @param headTitle       The head title text.
      * @param title           The title text.
@@ -159,7 +161,7 @@ public class DialogUtils {
      * @param textColorRes    The text color resource.
      * @param onClickListener The callback that will run.
      */
-    public static void show(@Nullable Context context, int displayId, @Nullable CharSequence headTitle, CharSequence title, @Nullable CharSequence leftTitle, @Nullable CharSequence rightTitle, @DrawableRes int bgResid, @ColorRes int textColorRes, @Nullable OnClickListener onClickListener) {
+    public static void show(@Nullable Activity activity, int displayId, @Nullable CharSequence headTitle, CharSequence title, @Nullable CharSequence leftTitle, @Nullable CharSequence rightTitle, @DrawableRes int bgResid, @ColorRes int textColorRes, @Nullable OnClickListener onClickListener) {
         Application app = LpUtils.getApp();
         boolean haveWindowToken;
         int currentDisplayId = Display.INVALID_DISPLAY;
@@ -175,9 +177,9 @@ public class DialogUtils {
                 return;
             }
         } else {
-            if (context != null) {
+            if (activity != null) {
                 haveWindowToken = true;
-                wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+                wm = (WindowManager) activity.getSystemService(Context.WINDOW_SERVICE);
                 currentDisplayId = wm.getDefaultDisplay().getDisplayId();
             } else {
                 Log.e(TAG, String.format(Locale.getDefault(), "showOnDisplay error : contexy is null, displayId can't be %d !", Display.INVALID_DISPLAY));
@@ -220,7 +222,7 @@ public class DialogUtils {
         TextView tvHeadTitle = FindViewUtlis.findViewById(customDialogView, R.id.tvHeadTitle);
         TextView tvTitle = FindViewUtlis.findViewById(customDialogView, R.id.tvTitle);
         View vLine = FindViewUtlis.findViewById(customDialogView, R.id.vLine);
-        AppCompatTextView tvLeft = FindViewUtlis.findViewById(customDialogView, R.id.tvLeft);
+        MTextView tvLeft = FindViewUtlis.findViewById(customDialogView, R.id.tvLeft);
         TextView tvRight = FindViewUtlis.findViewById(customDialogView, R.id.tvRight);
         if (llRoot != null && llConfirm != null && tvTitle != null && tvHeadTitle != null && vLine != null && tvLeft != null && tvRight != null) {
             llRoot.setBackgroundResource(bgResid);
