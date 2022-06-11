@@ -318,15 +318,18 @@ public class DialogUtils {
             LinearLayout llRoot = FindViewUtlis.findViewById(view, R.id.llRoot);
             TextView tvHeadTitle = FindViewUtlis.findViewById(view, R.id.tvHeadTitle);
             TextView tvTitle = FindViewUtlis.findViewById(view, R.id.tvTitle);
+            View vLine = FindViewUtlis.findViewById(view, R.id.vLine);
             TextView tvLeft = FindViewUtlis.findViewById(view, R.id.tvLeft);
             TextView tvRight = FindViewUtlis.findViewById(view, R.id.tvRight);
             if (llRoot != null && tvTitle != null && tvHeadTitle != null && tvLeft != null && tvRight != null) {
                 int textPrimaryColor = ContextCompat.getColor(LpUtils.getApp(), ColorUtils.getTextPrimaryColor());
                 int textLeftColor = ContextCompat.getColor(LpUtils.getApp(), ColorUtils.getBtnTextHighlightColor());
+                int lineColor = ContextCompat.getColor(LpUtils.getApp(), ColorUtils.getLineColor());
                 llRoot.setBackgroundResource(ColorUtils.getBgToastOrDialog());
                 llRoot.setPadding(0, 0, 0, 0);
                 tvHeadTitle.setTextColor(textPrimaryColor);
                 tvTitle.setTextColor(textPrimaryColor);
+                vLine.setBackgroundColor(lineColor);
                 tvLeft.setTextColor(textLeftColor);
                 tvRight.setTextColor(textPrimaryColor);
             }
@@ -353,6 +356,8 @@ public class DialogUtils {
          * @param v The view that was clicked.
          * @return True is click dismmss, false otherwise.
          */
-        boolean onRightClick(View v);
+        default boolean onRightClick(View v) {
+            return true;
+        }
     }
 }

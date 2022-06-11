@@ -63,99 +63,99 @@
     <!--==================================================黑夜==================================================-->
     <!--背景-->
     <!--界面底色-->
-    <color name="bg_hmi">#FF000000</color>
+    <color name="bg_hmi_night">#FF000000</color>
     <!--模块背景-->
-    <color name="bg_module">#FF1E1F24</color>
+    <color name="bg_module_night">#FF1E1F24</color>
     <!--卡片颜色-->
-    <color name="bg_card">#802F323B</color>
+    <color name="bg_card_night">#802F323B</color>
     <!--弹窗背景-->
-    <color name="bg_popup">#FF232529</color>
+    <color name="bg_popup_night">#FF232529</color>
     <!--toast背景-->
-    <color name="bg_toast">#E633373D</color>
+    <color name="bg_toast_night">#E633373D</color>
     <!--弹窗阴影-->
-    <color name="shadow_popup">#66000000</color>
+    <color name="shadow_popup_night">#66000000</color>
     <!--背景+文字按钮-->
     <!--常规按钮背景-->
-    <color name="btn_bg_normal">#FF2F3238</color>
+    <color name="btn_bg_normal_night">#FF2F3238</color>
     <!--常规按钮背景按下-->
-    <color name="btn_bg_normal_pre">#992F3238</color>
+    <color name="btn_bg_normal_pre_night">#992F3238</color>
     <!--常规按钮背景禁用-->
-    <color name="btn_bg_normal_dis">#332F3238</color>
+    <color name="btn_bg_normal_dis_night">#332F3238</color>
     <!--切换按钮背景-->
-    <color name="btn_toggle_bg">#CC000000</color>
+    <color name="btn_toggle_bg_night">#CC000000</color>
     <!--切换按钮背景按下-->
-    <color name="btn_toggle_bg_pre">#7A000000</color>
+    <color name="btn_toggle_bg_pre_night">#7A000000</color>
     <!--切换按钮背景禁用-->
-    <color name="btn_toggle_bg_dis">#29000000</color>
+    <color name="btn_toggle_bg_dis_night">#29000000</color>
     <!--弹窗按钮背景-->
-    <color name="btn_bg_popup">#FF2F3238</color>
+    <color name="btn_bg_popup_night">#FF2F3238</color>
     <!--弹窗按钮背景按下-->
-    <color name="btn_bg_popup_pre">#992F3238</color>
+    <color name="btn_bg_popup_pre_night">#992F3238</color>
     <!--弹窗按钮背景禁用-->
-    <color name="btn_bg_popup_dis">#332F3238</color>
+    <color name="btn_bg_popup_dis_night">#332F3238</color>
     <!--常规/弹窗按钮文字-->
-    <color name="btn_text_normal">#FFFFFFFF</color>
+    <color name="btn_text_normal_night">#FFFFFFFF</color>
     <!--常规/弹窗按钮文字按下-->
-    <color name="btn_text_normal_pre">#99FFFFFF</color>
+    <color name="btn_text_normal_pre_night">#99FFFFFF</color>
     <!--常规/弹窗按钮文字禁用-->
-    <color name="btn_text_normal_dis">#33FFFFFF</color>
+    <color name="btn_text_normal_dis_night">#33FFFFFF</color>
     <!--高亮按钮背景-->
-    <color name="btn_bg_highlight">#FF2F3238</color>
+    <color name="btn_bg_highlight_night">#FF2F3238</color>
     <!--高亮按钮背景按下-->
-    <color name="btn_bg_highlight_pre">#992F3238</color>
+    <color name="btn_bg_highlight_pre_night">#992F3238</color>
     <!--高亮按钮背景禁用-->
-    <color name="btn_bg_highlight_dis">#332F3238</color>
+    <color name="btn_bg_highlight_dis_night">#332F3238</color>
     <!--高亮按钮文字-->
-    <color name="btn_text_highlight">#FF00CF67</color>
+    <color name="btn_text_highlight_night">#FF00CF67</color>
     <!--高亮按钮文字按下-->
-    <color name="btn_text_highlight_pre">#9900CF67</color>
+    <color name="btn_text_highlight_pre_night">#9900CF67</color>
     <!--高亮按钮文字禁用-->
-    <color name="btn_text_highlight_dis">#3300CF67</color>
+    <color name="btn_text_highlight_dis_night">#3300CF67</color>
     <!--超亮按钮背景-->
-    <color name="btn_bg_highlight_1">#FF00CF67</color>
+    <color name="btn_bg_highlight_1_night">#FF00CF67</color>
     <!--超亮按钮背景按下-->
-    <color name="btn_bg_highlight_1_pre">#9900CF67</color>
+    <color name="btn_bg_highlight_1_pre_night">#9900CF67</color>
     <!--超亮按钮背景禁用-->
-    <color name="btn_bg_highlight_1_dis">#3300CF67</color>
+    <color name="btn_bg_highlight_1_dis_night">#3300CF67</color>
     <!--超亮按钮文字-->
-    <color name="btn_text_highlight_1">#FFFFFFFF</color>
+    <color name="btn_text_highlight_1_night">#FFFFFFFF</color>
     <!--超亮按钮文字按下-->
-    <color name="btn_text_highlight_1_pre">#99FFFFFF</color>
+    <color name="btn_text_highlight_1_pre_night">#99FFFFFF</color>
     <!--超亮按钮文字禁用-->
-    <color name="btn_text_highlight_1_dis">#33FFFFFF</color>
+    <color name="btn_text_highlight_1_dis_night">#33FFFFFF</color>
     <!--文字按钮-->
     <!--标签文字按钮-->
-    <color name="btn_text_tab">#FFFFFFFF</color>
+    <color name="btn_text_tab_night">#FFFFFFFF</color>
     <!--标签文字按钮按下-->
-    <color name="btn_text_tab_pre">#99FFFFFF</color>
+    <color name="btn_text_tab_pre_night">#99FFFFFF</color>
     <!--标签文字按钮禁用-->
-    <color name="btn_text_tab_dis">#33FFFFFF</color>
+    <color name="btn_text_tab_dis_night">#33FFFFFF</color>
     <!--高亮文字按钮-->
-    <color name="btn_text_tab_highlight">#FF00CF67</color>
+    <color name="btn_text_tab_highlight_night">#FF00CF67</color>
     <!--高亮文字按钮按下-->
-    <color name="btn_text_tab_highlight_pre">#9900CF67</color>
+    <color name="btn_text_tab_highlight_pre_night">#9900CF67</color>
     <!--高亮文字按钮禁用-->
-    <color name="btn_text_tab_highlight_dis">#3300CF67</color>
+    <color name="btn_text_tab_highlight_dis_night">#3300CF67</color>
     <!--警示文字按钮-->
-    <color name="btn_text_caution">#FFEA4E3D</color>
+    <color name="btn_text_caution_night">#FFEA4E3D</color>
     <!--警示文字按钮按下-->
-    <color name="btn_text_caution_pre">#99F2602F</color>
+    <color name="btn_text_caution_pre_night">#99F2602F</color>
     <!--警示文字按钮禁用-->
-    <color name="btn_text_caution_dis">#33F2602F</color>
+    <color name="btn_text_caution_dis_night">#33F2602F</color>
     <!--文案-->
     <!--主要文字颜色-->
-    <color name="text_primary">#FFFFFFFF</color>
+    <color name="text_primary_night">#FFFFFFFF</color>
     <!--次要文字颜色-->
-    <color name="text_secondary">#99FFFFFF</color>
+    <color name="text_secondary_night">#99FFFFFF</color>
     <!--图片上文字-->
-    <color name="text_pic">#FFFFFFFF</color>
+    <color name="text_pic_night">#FFFFFFFF</color>
     <!--其他-->
     <!--线-->
-    <color name="line">#33FFFFFF</color>、
+    <color name="line_night">#33FFFFFF</color>、
     <!--弹窗遮罩-->
-    <color name="mask_popup">#99000000</color>
+    <color name="mask_popup_night">#99000000</color>
     <!--图片遮罩-->
-    <color name="mask_pic">#33000000</color>
+    <color name="mask_pic_night">#33000000</color>
 
     <!--==================================================白天==================================================-->
     <!--背景-->

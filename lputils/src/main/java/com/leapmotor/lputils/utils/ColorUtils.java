@@ -31,11 +31,11 @@ class ColorUtils {
     public static int getTextPrimaryColor() {
         switch (SettingsUtils.screenMode()) {
             case ScreenModeType.NIGHT:
-                return R.color.text_primary;
+                return R.color.text_primary_night;
             case ScreenModeType.DAY:
                 return R.color.text_primary_light;
             default:
-                return R.color.text_primary;
+                return R.color.text_primary_night;
         }
     }
 
@@ -43,11 +43,23 @@ class ColorUtils {
     public static int getBtnTextHighlightColor() {
         switch (SettingsUtils.screenMode()) {
             case ScreenModeType.NIGHT:
-                return R.color.btn_text_highlight;
+                return R.color.btn_text_highlight_night;
             case ScreenModeType.DAY:
                 return R.color.btn_text_highlight_light;
             default:
-                return R.color.btn_text_highlight;
+                return R.color.btn_text_highlight_night;
+        }
+    }
+
+    @ColorRes
+    public static int getLineColor() {
+        switch (SettingsUtils.screenMode()) {
+            case ScreenModeType.NIGHT:
+                return R.color.line_night;
+            case ScreenModeType.DAY:
+                return R.color.line_light;
+            default:
+                return R.color.line_night;
         }
     }
 }
