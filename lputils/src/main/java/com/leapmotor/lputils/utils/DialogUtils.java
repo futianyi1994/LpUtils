@@ -100,7 +100,7 @@ public class DialogUtils {
      * @param onClickListener The callback that will run.
      */
     private static void show(@Nullable Activity activity, int displayId, CharSequence title, @Nullable CharSequence leftTitle, @Nullable CharSequence rightTitle, @Nullable OnClickListener onClickListener) {
-        show(activity, displayId, null, title, leftTitle, rightTitle, ColorUtils.getBgToastOrDialog(), ColorUtils.getTextPrimaryColor(), onClickListener);
+        show(activity, displayId, null, title, leftTitle, rightTitle, ColorUtils.getBgToastOrDialog(), ColorUtils.getTextPrimaryColor(), null, onClickListener);
     }
 
     /**
@@ -143,7 +143,26 @@ public class DialogUtils {
      * @param onClickListener The callback that will run.
      */
     private static void show(@Nullable Activity activity, int displayId, @Nullable CharSequence headTitle, CharSequence title, @Nullable CharSequence leftTitle, @Nullable CharSequence rightTitle, @Nullable OnClickListener onClickListener) {
-        show(activity, displayId, headTitle, title, leftTitle, rightTitle, ColorUtils.getBgToastOrDialog(), ColorUtils.getTextPrimaryColor(), onClickListener);
+        show(activity, displayId, headTitle, title, leftTitle, rightTitle, ColorUtils.getBgToastOrDialog(), ColorUtils.getTextPrimaryColor(), null, onClickListener);
+    }
+
+    /**
+     * Show the full screen dialog according to the display.
+     *
+     * @param displayId       The displayId.
+     * @param headTitle       The head title text.
+     * @param title           The title text.
+     * @param leftTitle       The left title text.
+     * @param rightTitle      The right title text.
+     * @param onClickListener The callback that will run.
+     */
+    public static void showFullScreen(int displayId, @Nullable CharSequence headTitle, CharSequence title, @Nullable CharSequence leftTitle, @Nullable CharSequence rightTitle, @Nullable OnClickListener onClickListener) {
+        WindowManager.LayoutParams layoutParams = getDefaultLayoutParams(displayId);
+        layoutParams.x = 0;
+        layoutParams.y = 0;
+        layoutParams.gravity = Gravity.CENTER;
+        layoutParams.type = Build.VERSION.SDK_INT > Build.VERSION_CODES.O ? WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY : WindowManager.LayoutParams.TYPE_PHONE;
+        show(null, displayId, headTitle, title, leftTitle, rightTitle, ColorUtils.getBgToastOrDialog(), ColorUtils.getTextPrimaryColor(), layoutParams, onClickListener);
     }
 
     /**
@@ -159,7 +178,7 @@ public class DialogUtils {
      * @param textColorRes    The text color resource.
      * @param onClickListener The callback that will run.
      */
-    public static void show(@Nullable Activity activity, int displayId, @Nullable CharSequence headTitle, CharSequence title, @Nullable CharSequence leftTitle, @Nullable CharSequence rightTitle, @DrawableRes int bgResid, @ColorRes int textColorRes, @Nullable OnClickListener onClickListener) {
+    public static void show(@Nullable Activity activity, int displayId, @Nullable CharSequence headTitle, CharSequence title, @Nullable CharSequence leftTitle, @Nullable CharSequence rightTitle, @DrawableRes int bgResid, @ColorRes int textColorRes, @Nullable WindowManager.LayoutParams layoutParams, @Nullable OnClickListener onClickListener) {
         Application app = LpUtils.getApp();
         boolean haveWindowToken;
         int currentDisplayId = Display.INVALID_DISPLAY;
@@ -273,20 +292,10 @@ public class DialogUtils {
                 }
             });
         }
-        WindowManager.LayoutParams layoutParams = new WindowManager.LayoutParams();
-        if (windowManager.getDefaultDisplay().getDisplayId() == Display.DEFAULT_DISPLAY) {
-            layoutParams.gravity = Gravity.CENTER;
-            layoutParams.x = C11Util.X_OFFSET / 2;
-            layoutParams.y = (C11Util.Y_TOP_OFFSET - C11Util.Y_BOTTOM_OFFSET) / 2;
-        } else {
-            layoutParams.gravity = Gravity.CENTER;
+        if (layoutParams == null) {
+            layoutParams = getDefaultLayoutParams(currentDisplayId);
+            layoutParams.type = haveWindowToken ? WindowManager.LayoutParams.TYPE_APPLICATION_ATTACHED_DIALOG : Build.VERSION.SDK_INT > Build.VERSION_CODES.O ? WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY : WindowManager.LayoutParams.TYPE_PHONE;
         }
-        layoutParams.width = DIALOG_WIDTH;
-        layoutParams.height = ViewGroup.LayoutParams.WRAP_CONTENT;
-        layoutParams.type = haveWindowToken ? WindowManager.LayoutParams.TYPE_APPLICATION_ATTACHED_DIALOG : Build.VERSION.SDK_INT > Build.VERSION_CODES.O ? WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY : WindowManager.LayoutParams.TYPE_PHONE;
-        layoutParams.flags = WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
-                | WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
-        layoutParams.format = PixelFormat.RGBA_8888;
 
         if (!isAddView.getAndSet(true)) {
             windowManager.addView(customDialogView, layoutParams);
@@ -335,6 +344,71 @@ public class DialogUtils {
             }
         });
         Log.i(TAG, "refresh dialog theme success !");
+    }
+
+    /**
+     * Get defarult windowManager layoutParams.
+     *
+     * @param displayId The displayId.
+     * @return The default windowManager layoutParams.
+     */
+    public static WindowManager.LayoutParams getDefaultLayoutParams(int displayId) {
+        WindowManager.LayoutParams layoutParams = new WindowManager.LayoutParams();
+        if (displayId == Display.DEFAULT_DISPLAY) {
+            layoutParams.gravity = Gravity.CENTER;
+            layoutParams.x = C11Util.X_OFFSET / 2;
+            layoutParams.y = (C11Util.Y_TOP_OFFSET - C11Util.Y_BOTTOM_OFFSET) / 2;
+        } else {
+            layoutParams.gravity = Gravity.CENTER;
+        }
+        layoutParams.width = DIALOG_WIDTH;
+        layoutParams.height = ViewGroup.LayoutParams.WRAP_CONTENT;
+        layoutParams.type = WindowManager.LayoutParams.TYPE_APPLICATION_ATTACHED_DIALOG;
+        layoutParams.flags = WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON | WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
+        layoutParams.format = PixelFormat.RGBA_8888;
+        return layoutParams;
+    }
+
+    /**
+     * Get merged windowManager layoutParams.
+     *
+     * @param displayId    The displayId.
+     * @param layoutParams The source windowManager layoutParams.
+     * @return The merged windowManager layoutParams.
+     */
+    public static WindowManager.LayoutParams mergeLayoutParams(int displayId, WindowManager.LayoutParams layoutParams) {
+        if (displayId == Display.DEFAULT_DISPLAY) {
+            if (layoutParams.gravity == Gravity.NO_GRAVITY) {
+                layoutParams.gravity = Gravity.CENTER;
+            }
+            if (layoutParams.x == 0) {
+                layoutParams.x = C11Util.X_OFFSET / 2;
+            }
+            if (layoutParams.y == 0) {
+                layoutParams.y = (C11Util.Y_TOP_OFFSET - C11Util.Y_BOTTOM_OFFSET) / 2;
+            }
+        } else {
+            if (layoutParams.gravity == Gravity.NO_GRAVITY) {
+                layoutParams.gravity = Gravity.CENTER;
+            }
+        }
+
+        if (layoutParams.width == 0) {
+            layoutParams.width = DIALOG_WIDTH;
+        }
+        if (layoutParams.height == 0) {
+            layoutParams.height = ViewGroup.LayoutParams.WRAP_CONTENT;
+        }
+        if (layoutParams.type == 0) {
+            layoutParams.type = WindowManager.LayoutParams.TYPE_APPLICATION_ATTACHED_DIALOG;
+        }
+        if (layoutParams.flags == 0) {
+            layoutParams.flags = WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON | WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
+        }
+        if (layoutParams.format == 0) {
+            layoutParams.format = PixelFormat.RGBA_8888;
+        }
+        return layoutParams;
     }
 
     /**

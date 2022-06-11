@@ -56,6 +56,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         C11Util.windowFlag(this);
+        FindViewUtlis.findViewById(this, R.id.tvFullDialogMain).setOnClickListener(this);
+        FindViewUtlis.findViewById(this, R.id.tvFullDialogVice).setOnClickListener(this);
         FindViewUtlis.findViewById(this, R.id.tvDialogMain).setOnClickListener(this);
         FindViewUtlis.findViewById(this, R.id.tvDialogByContext).setOnClickListener(this);
         FindViewUtlis.findViewById(this, R.id.tvDialogAppointMain).setOnClickListener(this);
@@ -74,7 +76,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onClick(View v) {
         int id = v.getId();
-        if (id == R.id.tvDialogMain) {
+        if (id == R.id.tvFullDialogMain) {
+            DialogUtils.showFullScreen(0, "吟诗一首", TEST_TITLE, "确定", "取消", this);
+        } else if (id == R.id.tvFullDialogVice) {
+            DialogUtils.showFullScreen(1, "吟诗一首", TEST_TITLE, "确定", "取消", this);
+        } else if (id == R.id.tvDialogMain) {
             DialogUtils.show(TEST_TITLE, "确定", "取消", this);
         } else if (id == R.id.tvDialogByContext) {
             DialogUtils.show(this, TEST_TITLE, "确定", "取消", this);

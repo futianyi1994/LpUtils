@@ -18,6 +18,8 @@ public class SecoundActivity extends AppCompatActivity implements View.OnClickLi
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_secound);
+        FindViewUtlis.findViewById(this, R.id.tvFullDialogMain).setOnClickListener(this);
+        FindViewUtlis.findViewById(this, R.id.tvFullDialogVice).setOnClickListener(this);
         FindViewUtlis.findViewById(this, R.id.tvDialogMain).setOnClickListener(this);
         FindViewUtlis.findViewById(this, R.id.tvDialogByContext).setOnClickListener(this);
         FindViewUtlis.findViewById(this, R.id.tvDialogAppointMain).setOnClickListener(this);
@@ -36,7 +38,11 @@ public class SecoundActivity extends AppCompatActivity implements View.OnClickLi
     @Override
     public void onClick(View v) {
         int id = v.getId();
-        if (id == R.id.tvDialogMain) {
+        if (id == R.id.tvFullDialogMain) {
+            DialogUtils.showFullScreen(0, "HeadTitle", "Title", "确定", "取消", this);
+        } else if (id == R.id.tvFullDialogVice) {
+            DialogUtils.showFullScreen(1, "HeadTitle", "Title", "确定", "取消", this);
+        } else if (id == R.id.tvDialogMain) {
             DialogUtils.show("Title", "确定", "取消", this);
         } else if (id == R.id.tvDialogByContext) {
             DialogUtils.show(this, "Title", "确定", "取消", this);
