@@ -14,7 +14,19 @@ import com.leapmotor.lputils.annotation.ScreenModeType;
  * @email : futianyi1994@126.com
  * @description :
  */
-class ColorUtils {
+public class ThemeUtils {
+    @ColorRes
+    public static int getMaskPopup() {
+        switch (SettingsUtils.screenMode()) {
+            case ScreenModeType.NIGHT:
+                return R.color.mask_popup_night;
+            case ScreenModeType.DAY:
+                return R.color.mask_popup_light;
+            default:
+                return R.color.mask_popup_night;
+        }
+    }
+
     @DrawableRes
     public static int getBgToastOrDialog() {
         switch (SettingsUtils.screenMode()) {

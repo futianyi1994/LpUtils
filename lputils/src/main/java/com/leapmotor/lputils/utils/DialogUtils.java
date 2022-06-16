@@ -17,6 +17,7 @@ import android.widget.TextView;
 
 import androidx.annotation.ColorRes;
 import androidx.annotation.DrawableRes;
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.leapmotor.lputils.R;
@@ -72,7 +73,7 @@ public class DialogUtils {
      * @param rightTitle      The right title text.
      * @param onClickListener The callback that will run.
      */
-    public static void show(@Nullable Activity activity, CharSequence title, @Nullable CharSequence leftTitle, @Nullable CharSequence rightTitle, @Nullable OnClickListener onClickListener) {
+    public static void show(@Nullable Activity activity, @NonNull CharSequence title, @Nullable CharSequence leftTitle, @Nullable CharSequence rightTitle, @Nullable OnClickListener onClickListener) {
         show(activity, Display.INVALID_DISPLAY, title, leftTitle, rightTitle, onClickListener);
     }
 
@@ -99,8 +100,8 @@ public class DialogUtils {
      * @param rightTitle      The right title text.
      * @param onClickListener The callback that will run.
      */
-    private static void show(@Nullable Activity activity, int displayId, CharSequence title, @Nullable CharSequence leftTitle, @Nullable CharSequence rightTitle, @Nullable OnClickListener onClickListener) {
-        show(activity, displayId, null, title, leftTitle, rightTitle, ColorUtils.getBgToastOrDialog(), ColorUtils.getTextPrimaryColor(), null, onClickListener);
+    private static void show(@Nullable Activity activity, int displayId, @NonNull CharSequence title, @Nullable CharSequence leftTitle, @Nullable CharSequence rightTitle, @Nullable OnClickListener onClickListener) {
+        show(activity, displayId, null, title, leftTitle, rightTitle, ThemeUtils.getBgToastOrDialog(), ThemeUtils.getTextPrimaryColor(), null, onClickListener);
     }
 
     /**
@@ -113,7 +114,7 @@ public class DialogUtils {
      * @param rightTitle      The right title text.
      * @param onClickListener The callback that will run.
      */
-    public static void show(@Nullable Activity activity, @Nullable CharSequence headTitle, CharSequence title, @Nullable CharSequence leftTitle, @Nullable CharSequence rightTitle, @Nullable OnClickListener onClickListener) {
+    public static void show(@Nullable Activity activity, @Nullable CharSequence headTitle, @NonNull CharSequence title, @Nullable CharSequence leftTitle, @Nullable CharSequence rightTitle, @Nullable OnClickListener onClickListener) {
         show(activity, Display.INVALID_DISPLAY, headTitle, title, leftTitle, rightTitle, onClickListener);
     }
 
@@ -127,7 +128,7 @@ public class DialogUtils {
      * @param rightTitle      The right title text.
      * @param onClickListener The callback that will run.
      */
-    public static void show(int displayId, @Nullable CharSequence headTitle, CharSequence title, @Nullable CharSequence leftTitle, @Nullable CharSequence rightTitle, @Nullable OnClickListener onClickListener) {
+    public static void show(int displayId, @Nullable CharSequence headTitle, @NonNull CharSequence title, @Nullable CharSequence leftTitle, @Nullable CharSequence rightTitle, @Nullable OnClickListener onClickListener) {
         show(null, displayId, headTitle, title, leftTitle, rightTitle, onClickListener);
     }
 
@@ -142,8 +143,8 @@ public class DialogUtils {
      * @param rightTitle      The right title text.
      * @param onClickListener The callback that will run.
      */
-    private static void show(@Nullable Activity activity, int displayId, @Nullable CharSequence headTitle, CharSequence title, @Nullable CharSequence leftTitle, @Nullable CharSequence rightTitle, @Nullable OnClickListener onClickListener) {
-        show(activity, displayId, headTitle, title, leftTitle, rightTitle, ColorUtils.getBgToastOrDialog(), ColorUtils.getTextPrimaryColor(), null, onClickListener);
+    private static void show(@Nullable Activity activity, int displayId, @Nullable CharSequence headTitle, @NonNull CharSequence title, @Nullable CharSequence leftTitle, @Nullable CharSequence rightTitle, @Nullable OnClickListener onClickListener) {
+        show(activity, displayId, headTitle, title, leftTitle, rightTitle, ThemeUtils.getBgToastOrDialog(), ThemeUtils.getTextPrimaryColor(), null, onClickListener);
     }
 
     /**
@@ -156,13 +157,13 @@ public class DialogUtils {
      * @param rightTitle      The right title text.
      * @param onClickListener The callback that will run.
      */
-    public static void showFullScreen(int displayId, @Nullable CharSequence headTitle, CharSequence title, @Nullable CharSequence leftTitle, @Nullable CharSequence rightTitle, @Nullable OnClickListener onClickListener) {
+    public static void showFullScreen(int displayId, @Nullable CharSequence headTitle, @NonNull CharSequence title, @Nullable CharSequence leftTitle, @Nullable CharSequence rightTitle, @Nullable OnClickListener onClickListener) {
         WindowManager.LayoutParams layoutParams = getDefaultLayoutParams(displayId);
         layoutParams.x = 0;
         layoutParams.y = 0;
         layoutParams.gravity = Gravity.CENTER;
         layoutParams.type = Build.VERSION.SDK_INT > Build.VERSION_CODES.O ? WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY : WindowManager.LayoutParams.TYPE_PHONE;
-        show(null, displayId, headTitle, title, leftTitle, rightTitle, ColorUtils.getBgToastOrDialog(), ColorUtils.getTextPrimaryColor(), layoutParams, onClickListener);
+        show(null, displayId, headTitle, title, leftTitle, rightTitle, ThemeUtils.getBgToastOrDialog(), ThemeUtils.getTextPrimaryColor(), layoutParams, onClickListener);
     }
 
     /**
@@ -178,7 +179,7 @@ public class DialogUtils {
      * @param textColorRes    The text color resource.
      * @param onClickListener The callback that will run.
      */
-    public static void show(@Nullable Activity activity, int displayId, @Nullable CharSequence headTitle, CharSequence title, @Nullable CharSequence leftTitle, @Nullable CharSequence rightTitle, @DrawableRes int bgResid, @ColorRes int textColorRes, @Nullable WindowManager.LayoutParams layoutParams, @Nullable OnClickListener onClickListener) {
+    public static void show(@Nullable Activity activity, int displayId, @Nullable CharSequence headTitle, @NonNull CharSequence title, @Nullable CharSequence leftTitle, @Nullable CharSequence rightTitle, @DrawableRes int bgResid, @ColorRes int textColorRes, @Nullable WindowManager.LayoutParams layoutParams, @Nullable OnClickListener onClickListener) {
         Application app = LpUtils.getApp();
         boolean haveWindowToken;
         int currentDisplayId = Display.INVALID_DISPLAY;
@@ -270,7 +271,8 @@ public class DialogUtils {
             tvLeft.setSelected(true);
             tvRight.setSelected(true);
             tvHeadTitle.setTextColor(ContextCompat.getColor(app, textColorRes));
-            tvLeft.setTextColor(ContextCompat.getColor(app, ColorUtils.getBtnTextHighlightColor()));
+            vLine.setBackgroundResource(ThemeUtils.getLineColor());
+            tvLeft.setTextColor(ContextCompat.getColor(app, ThemeUtils.getBtnTextHighlightColor()));
             tvRight.setTextColor(ContextCompat.getColor(app, textColorRes));
             tvHeadTitle.setVisibility(headTitle == null ? View.GONE : View.VISIBLE);
             tvLeft.setVisibility(leftTitle == null ? View.GONE : View.VISIBLE);
@@ -330,16 +332,14 @@ public class DialogUtils {
             View vLine = FindViewUtlis.findViewById(view, R.id.vLine);
             TextView tvLeft = FindViewUtlis.findViewById(view, R.id.tvLeft);
             TextView tvRight = FindViewUtlis.findViewById(view, R.id.tvRight);
-            if (llRoot != null && tvTitle != null && tvHeadTitle != null && tvLeft != null && tvRight != null) {
-                int textPrimaryColor = ContextCompat.getColor(LpUtils.getApp(), ColorUtils.getTextPrimaryColor());
-                int textLeftColor = ContextCompat.getColor(LpUtils.getApp(), ColorUtils.getBtnTextHighlightColor());
-                int lineColor = ContextCompat.getColor(LpUtils.getApp(), ColorUtils.getLineColor());
-                llRoot.setBackgroundResource(ColorUtils.getBgToastOrDialog());
+            if (llRoot != null && tvHeadTitle != null && tvTitle != null && vLine != null && tvLeft != null && tvRight != null) {
+                int textPrimaryColor = ContextCompat.getColor(LpUtils.getApp(), ThemeUtils.getTextPrimaryColor());
+                llRoot.setBackgroundResource(ThemeUtils.getBgToastOrDialog());
                 llRoot.setPadding(0, 0, 0, 0);
                 tvHeadTitle.setTextColor(textPrimaryColor);
                 tvTitle.setTextColor(textPrimaryColor);
-                vLine.setBackgroundColor(lineColor);
-                tvLeft.setTextColor(textLeftColor);
+                vLine.setBackgroundResource(ThemeUtils.getLineColor());
+                tvLeft.setTextColor(ContextCompat.getColor(LpUtils.getApp(), ThemeUtils.getBtnTextHighlightColor()));
                 tvRight.setTextColor(textPrimaryColor);
             }
         });

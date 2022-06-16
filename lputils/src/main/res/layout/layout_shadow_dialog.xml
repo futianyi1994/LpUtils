@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/flRoot"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_gravity="center"
+    tools:background="@color/mask_popup_night">
+
+    <LinearLayout
+        android:id="@+id/llRoot"
+        android:layout_width="@dimen/x720"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:orientation="vertical"
+        tools:background="@mipmap/bg_toast_night">
+
+        <TextView
+            android:id="@+id/tvTitle"
+            style="@style/main_text"
+            android:layout_width="match_parent"
+            android:ellipsize="marquee"
+            android:marqueeRepeatLimit="marquee_forever"
+            android:paddingStart="@dimen/x40"
+            android:paddingTop="@dimen/y40"
+            android:paddingEnd="@dimen/x40"
+            android:singleLine="true"
+            android:textSize="@dimen/size_L"
+            android:visibility="visible"
+            tools:text="headTitle" />
+
+        <TextView
+            android:id="@+id/tvContent"
+            style="@style/main_text"
+            android:layout_width="match_parent"
+            android:padding="@dimen/x40"
+            android:textSize="@dimen/size_L"
+            tools:text="title" />
+
+        <View
+            android:id="@+id/vLine"
+            style="@style/line_h" />
+
+        <LinearLayout
+            android:id="@+id/llConfirm"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/y87">
+
+            <TextView
+                android:id="@+id/tvConfirm"
+                style="@style/main_text"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:ellipsize="marquee"
+                android:marqueeRepeatLimit="marquee_forever"
+                android:singleLine="true"
+                android:textColor="@null"
+                android:textSize="@dimen/size_L"
+                android:visibility="visible"
+                tools:text="OK" />
+
+            <TextView
+                android:id="@+id/tvCancel"
+                style="@style/main_text"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:ellipsize="marquee"
+                android:marqueeRepeatLimit="marquee_forever"
+                android:singleLine="true"
+                android:textSize="@dimen/size_L"
+                android:visibility="visible"
+                tools:text="Cancel" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+</FrameLayout>

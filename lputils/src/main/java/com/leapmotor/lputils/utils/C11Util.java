@@ -15,10 +15,13 @@ import android.view.WindowManager;
 public class C11Util {
 
     public static final int X_OFFSET = 280;
+    public static final int X_OFFSET_VICE = 160;
     public static final int Y_TOP_OFFSET = 80;
     public static final int Y_BOTTOM_OFFSET = 120;
     public static final int WIDTH = 1640;
+    public static final int WIDTH_VICE = 1920 - X_OFFSET_VICE;
     public static final int HEIGHT = 880;
+    public static final int HEIGHT_VICE = 720;
 
     public static void windowFlag(Activity activity) {
         activity.getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE, WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE);

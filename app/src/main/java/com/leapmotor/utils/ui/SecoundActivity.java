@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.leapmotor.lputils.utils.DialogUtils;
 import com.leapmotor.lputils.utils.FindViewUtlis;
 import com.leapmotor.lputils.utils.ToastUtils;
+import com.leapmotor.lputils.widget.ShadowDialog;
 import com.leapmotor.utils.R;
 import com.leapmotor.utils.utils.CarUtil;
 
@@ -18,6 +19,7 @@ public class SecoundActivity extends AppCompatActivity implements View.OnClickLi
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_secound);
+        FindViewUtlis.findViewById(this, R.id.ShowShadowDialog).setOnClickListener(this);
         FindViewUtlis.findViewById(this, R.id.tvFullDialogMain).setOnClickListener(this);
         FindViewUtlis.findViewById(this, R.id.tvFullDialogVice).setOnClickListener(this);
         FindViewUtlis.findViewById(this, R.id.tvDialogMain).setOnClickListener(this);
@@ -38,10 +40,31 @@ public class SecoundActivity extends AppCompatActivity implements View.OnClickLi
     @Override
     public void onClick(View v) {
         int id = v.getId();
-        if (id == R.id.tvFullDialogMain) {
+        if (id == R.id.ShowShadowDialog) {
+            ShadowDialog shadowDialog = new ShadowDialog(this)
+                    .setTitleText("吟诗一首")
+                    .setContentText("天生我材必有用，千金散尽还复来。")
+                    .setConfirmText("确定")
+                    .setCancelText("取消");
+            shadowDialog.setCanceledOnTouchOutside(false);
+            shadowDialog.show();
+            shadowDialog.setOnClickListener(new DialogUtils.OnClickListener() {
+                @Override
+                public boolean onLeftClick(View v) {
+                    ToastUtils.showShort(SecoundActivity.this, "点击左边按钮");
+                    return false;
+                }
+
+                @Override
+                public boolean onRightClick(View v) {
+                    ToastUtils.showShort(SecoundActivity.this, "点击右边按钮");
+                    return DialogUtils.OnClickListener.super.onRightClick(v);
+                }
+            });
+        } else if (id == R.id.tvFullDialogMain) {
             DialogUtils.showFullScreen(0, "HeadTitle", "Title", "确定", "取消", this);
         } else if (id == R.id.tvFullDialogVice) {
-            DialogUtils.showFullScreen(1, "HeadTitle", "Title", "确定", "取消", this);
+            DialogUtils.showFullScreen(1, "吟诗一首", "天生我材必有用，千金散尽还复来。", "确定", "取消", this);
         } else if (id == R.id.tvDialogMain) {
             DialogUtils.show("Title", "确定", "取消", this);
         } else if (id == R.id.tvDialogByContext) {
