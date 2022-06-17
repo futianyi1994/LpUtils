@@ -23,11 +23,13 @@ import android.widget.TextView;
 
 import androidx.annotation.AnimRes;
 import androidx.annotation.AnimatorRes;
+import androidx.annotation.ColorRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.leapmotor.lputils.R;
 import com.leapmotor.lputils.animation.OptAnimationLoader;
+import com.leapmotor.lputils.annotation.ScreenModeType;
 import com.leapmotor.lputils.content.ContextCompat;
 import com.leapmotor.lputils.utils.C11Util;
 import com.leapmotor.lputils.utils.DialogUtils;
@@ -36,6 +38,64 @@ import com.leapmotor.lputils.utils.ThemeUtils;
 
 
 /**
+ * <p>Example:
+ * <pre><code>
+ *  //参数enableAnimation为是否开启弹出框动画效果（此方法会在设置动画后失效）
+ *  ShadowDialog shadowDialog = new ShadowDialog(this, true)
+ *          //设置标题文字
+ *          .setTitleText("吟诗一首")
+ *          //设置内容文字
+ *          .setContentText("君不见，黄河之水天上来，奔流到海不复回。")
+ *          //设置左边按钮文字
+ *          .setConfirmText("确定")
+ *          //设置右边内容文字
+ *          .setCancelText("取消")
+ *          //设置弹出框弹出时动画
+ *          .setAnimIn(R.anim.modal_in)
+ *          //设置弹出框退出时动画
+ *          .setAnimOut(R.anim.modal_out)
+ *          //设置弹出框弹出和退出时动画
+ *          //.setAnim(R.anim.modal_in,R.anim.modal_out)
+ *          //设置是否启动动画（此方法会在设置动画后失效）
+ *          //.setEnableAnimation(true)
+ *          //设置是否主屏全屏居中显示（设置为true时弹框仅在主屏应用区域内居中显示）
+ *          .setFullScreen(false)
+ *          //统一设置白天黑夜遮罩背景色
+ *          //.setMaskResourceId(R.color.mask_popup_night)
+ *          //单独设置白天和黑夜遮罩背景色
+ *          .setMaskResourceId(R.color.mask_popup_light, R.color.mask_popup_night)
+ *          //设置左边按钮点击事件
+ *          .setConfirmClickListener((dialog, view) -> {
+ *              ToastUtils.showShort(this, "点击确定");
+ *              //返回true时点击后自动消失；返回false时点击后不自动消失
+ *              return false;
+ *          })
+ *          //设置右边按钮点击事件
+ *          .setCancelClickListener((dialog, view) -> {
+ *              ToastUtils.showShort(this, "点击取消");
+ *              //返回true时点击后自动消失；返回false时点击后不自动消失
+ *              return true;
+ *          });
+ *  //设置是否点击弹框遮罩部分可消失
+ *  shadowDialog.setCanceledOnTouchOutside(true);
+ *  shadowDialog.show();
+ *  //设置左边和右边两个按钮的点击事件
+ *  shadowDialog.setOnClickListener(new DialogUtils.OnClickListener() {
+ *      @Override
+ *      public boolean onLeftClick(View v) {
+ *          ToastUtils.showShort(MainActivity.this, "点击左边按钮");
+ *          //返回true时点击后自动消失；返回false时点击后不自动消失
+ *          return false;
+ *      }
+ *      @Override
+ *      public boolean onRightClick(View v) {
+ *          ToastUtils.showShort(MainActivity.this, "点击右边按钮");
+ *          //返回true时点击后自动消失；返回false时点击后不自动消失
+ *          return DialogUtils.OnClickListener.super.onRightClick(v);
+ *      }
+ *  });
+ * </code></pre>
+ * <p>
  * good programmer.
  *
  * @date : 2022/6/11 15:55
@@ -61,13 +121,6 @@ public class ShadowDialog extends Dialog implements View.OnClickListener {
     private View vLine;
     private LinearLayout llConfirm;
     private TextView tvConfirm, tvCancel;
-    private final ContentObserver observer = new ContentObserver(new Handler()) {
-        @Override
-        public void onChange(boolean selfChange, Uri uri) {
-            super.onChange(selfChange, uri);
-            refresh();
-        }
-    };
     private String title;
     private String content;
     private String confirm;
@@ -76,8 +129,17 @@ public class ShadowDialog extends Dialog implements View.OnClickListener {
     private DialogUtils.OnClickListener clickListener;
     private boolean closeFromCancel;
     private boolean isFullScreen = false;
-    private boolean isCanceledOnTouchOutside = false;
+    private boolean isCanceledOnTouchOutside = true;
     private boolean enableAnimation = true;
+    @ColorRes
+    private int maskResourceIdLight, maskResourceIdNight;
+    private final ContentObserver observer = new ContentObserver(new Handler()) {
+        @Override
+        public void onChange(boolean selfChange, Uri uri) {
+            super.onChange(selfChange, uri);
+            refresh();
+        }
+    };
 
     public ShadowDialog(Context context) {
         this(context, true);
@@ -91,7 +153,6 @@ public class ShadowDialog extends Dialog implements View.OnClickListener {
         super(context, R.style.shadow_dialog);
         setCancelable(true);
         setCanceledOnTouchOutside(true);
-        setEnableAnimation(enableAnimation);
         setAnim(animIn, animOut);
     }
 
@@ -112,7 +173,7 @@ public class ShadowDialog extends Dialog implements View.OnClickListener {
         WindowManager windowManager = (WindowManager) getContext().getSystemService(Context.WINDOW_SERVICE);
         int currentDisplayId = windowManager.getDefaultDisplay().getDisplayId();
         boolean isDefaultScreen = currentDisplayId == Display.DEFAULT_DISPLAY;
-        int maskPopup = ThemeUtils.getMaskPopup();
+        int maskPopup = getMaskResourceId();
         Window window = getWindow();
         WindowManager.LayoutParams attributes = window.getAttributes();
         if (isFullScreen) {
@@ -215,9 +276,7 @@ public class ShadowDialog extends Dialog implements View.OnClickListener {
 
     @Override
     public void dismiss() {
-        if (enableAnimation) {
-            dismissWithAnimation(false);
-        }
+        dismissWithAnimation(false);
     }
 
     @Override
@@ -232,7 +291,7 @@ public class ShadowDialog extends Dialog implements View.OnClickListener {
             dismissWithAnimation(false);
         } else if (v.getId() == R.id.tvCancel) {
             if (cancelClickListener != null) {
-                if (cancelClickListener.onClick(ShadowDialog.this)) {
+                if (cancelClickListener.onClick(ShadowDialog.this, v)) {
                     dismissWithAnimation(false);
                 }
             } else {
@@ -246,7 +305,7 @@ public class ShadowDialog extends Dialog implements View.OnClickListener {
             }
         } else if (v.getId() == R.id.tvConfirm) {
             if (confirmClickListener != null) {
-                if (confirmClickListener.onClick(ShadowDialog.this)) {
+                if (confirmClickListener.onClick(ShadowDialog.this, v)) {
                     dismissWithAnimation(false);
                 }
             } else {
@@ -311,17 +370,6 @@ public class ShadowDialog extends Dialog implements View.OnClickListener {
         return this;
     }
 
-
-    public ShadowDialog setFullScreen(boolean isFullScreen) {
-        this.isFullScreen = isFullScreen;
-        return this;
-    }
-
-    public ShadowDialog setEnableAnimation(boolean enableAnimation) {
-        this.enableAnimation = enableAnimation;
-        return this;
-    }
-
     public ShadowDialog setTitleText(@Nullable String text) {
         title = text;
         if (tvTitle != null) {
@@ -343,7 +391,7 @@ public class ShadowDialog extends Dialog implements View.OnClickListener {
         confirm = text;
         if (tvConfirm != null) {
             tvConfirm.setText(confirm);
-            tvConfirm.setVisibility(title == null ? View.GONE : View.VISIBLE);
+            tvConfirm.setVisibility(confirm == null ? View.GONE : View.VISIBLE);
         }
         return this;
     }
@@ -352,9 +400,48 @@ public class ShadowDialog extends Dialog implements View.OnClickListener {
         cancel = text;
         if (tvCancel != null) {
             tvCancel.setText(cancel);
-            tvCancel.setVisibility(title == null ? View.GONE : View.VISIBLE);
+            tvCancel.setVisibility(cancel == null ? View.GONE : View.VISIBLE);
         }
         return this;
+    }
+
+    private int getMaskResourceId() {
+        if (maskResourceIdLight == 0 && maskResourceIdNight == 0) {
+            return ThemeUtils.getMaskPopup();
+        }
+        switch (SettingsUtils.screenMode()) {
+            case ScreenModeType.NIGHT:
+                return maskResourceIdNight;
+            case ScreenModeType.DAY:
+                return maskResourceIdLight;
+            default:
+                return maskResourceIdNight;
+        }
+    }
+
+    public ShadowDialog setMaskResourceId(@ColorRes int maskResourceId) {
+        return setMaskResourceId(maskResourceId, maskResourceId);
+
+    }
+
+    public ShadowDialog setMaskResourceId(@ColorRes int maskResourceIdLight, @ColorRes int maskResourceIdNight) {
+        this.maskResourceIdLight = maskResourceIdLight;
+        this.maskResourceIdNight = maskResourceIdNight;
+        return this;
+    }
+
+    public ShadowDialog setEnableAnimation(boolean enableAnimation) {
+        this.enableAnimation = enableAnimation;
+        return this;
+    }
+
+    public ShadowDialog setFullScreen(boolean isFullScreen) {
+        this.isFullScreen = isFullScreen;
+        return this;
+    }
+
+    public void setOnClickListener(@Nullable DialogUtils.OnClickListener listener) {
+        clickListener = listener;
     }
 
     public ShadowDialog setConfirmClickListener(@Nullable OnClickListener listener) {
@@ -365,10 +452,6 @@ public class ShadowDialog extends Dialog implements View.OnClickListener {
     public ShadowDialog setCancelClickListener(@Nullable OnClickListener listener) {
         cancelClickListener = listener;
         return this;
-    }
-
-    public void setOnClickListener(@Nullable DialogUtils.OnClickListener listener) {
-        clickListener = listener;
     }
 
     private void dismissWithAnimation(boolean fromCancel) {
@@ -392,7 +475,7 @@ public class ShadowDialog extends Dialog implements View.OnClickListener {
     public void refresh() {
         if (isShowing()) {
             int textPrimaryColor = ContextCompat.getColor(getContext(), ThemeUtils.getTextPrimaryColor());
-            flRoot.setBackgroundResource(ThemeUtils.getMaskPopup());
+            flRoot.setBackgroundResource(getMaskResourceId());
             llRoot.setBackgroundResource(ThemeUtils.getBgToastOrDialog());
             llRoot.setPadding(0, 0, 0, 0);
             tvTitle.setTextColor(textPrimaryColor);
@@ -405,6 +488,6 @@ public class ShadowDialog extends Dialog implements View.OnClickListener {
     }
 
     public interface OnClickListener {
-        boolean onClick(ShadowDialog dialog);
+        boolean onClick(ShadowDialog dialog, View view);
     }
 }

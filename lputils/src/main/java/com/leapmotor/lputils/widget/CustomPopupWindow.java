@@ -16,12 +16,6 @@ import androidx.annotation.RequiresApi;
 
 
 /**
- * Good programmer.
- *
- * @author futia
- * @date 2017-09-27 上午 10:06
- * Email:futianyi1994@126.com
- * Description: 封装一个通用的PopupWindow
  * <p>Example:
  * <pre><code>
  * popup = new CustomPopupWindow
@@ -42,6 +36,13 @@ import androidx.annotation.RequiresApi;
  *         () -> BarUtils.hideNavBar(popup.getContentView())
  * );
  * </code></pre>
+ * <p>
+ * Good programmer.
+ *
+ * @author futia
+ * @date 2017-09-27 上午 10:06
+ * @Email:futianyi1994@126.com
+ * @Description: 封装一个通用的PopupWindow
  */
 public class CustomPopupWindow extends PopupWindow {
     private static CountDownTimer timer;

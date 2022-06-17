@@ -79,33 +79,58 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View v) {
         int id = v.getId();
         if (id == R.id.ShowShadowDialog) {
-            ShadowDialog shadowDialog = new ShadowDialog(this, false)
+            //参数enableAnimation为是否开启弹出框动画效果（此方法会在设置动画后失效）
+            ShadowDialog shadowDialog = new ShadowDialog(this, true)
+                    //设置标题文字
                     .setTitleText("吟诗一首")
+                    //设置内容文字
                     .setContentText(TEST_TITLE)
+                    //设置左边按钮文字
                     .setConfirmText("确定")
-                    .setCancelText("取消").setAnimIn(R.anim.modal_in)
+                    //设置右边内容文字
+                    .setCancelText("取消")
+                    //设置弹出框弹出时动画
+                    .setAnimIn(R.anim.modal_in)
+                    //设置弹出框退出时动画
                     .setAnimOut(R.anim.modal_out)
+                    //设置弹出框弹出和退出时动画
+                    //.setAnim(R.anim.modal_in,R.anim.modal_out)
+                    //设置是否启动动画（此方法会在设置动画后失效）
+                    //.setEnableAnimation(true)
+                    //设置是否主屏全屏居中显示（设置为true时弹框仅在主屏应用区域内居中显示）
                     .setFullScreen(false)
-                    .setConfirmClickListener(dialog -> {
+                    //统一设置白天黑夜遮罩背景色
+                    //.setMaskResourceId(R.color.mask_popup_night)
+                    //单独设置白天和黑夜遮罩背景色
+                    .setMaskResourceId(R.color.mask_popup_light, R.color.mask_popup_night)
+                    //设置左边按钮点击事件
+                    .setConfirmClickListener((dialog, view) -> {
                         ToastUtils.showShort(this, "点击确定");
+                        //返回true时点击后自动消失；返回false时点击后不自动消失
                         return false;
                     })
-                    .setCancelClickListener(dialog -> {
+                    //设置右边按钮点击事件
+                    .setCancelClickListener((dialog, view) -> {
                         ToastUtils.showShort(this, "点击取消");
+                        //返回true时点击后自动消失；返回false时点击后不自动消失
                         return true;
                     });
+            //设置是否点击弹框遮罩部分可消失
             shadowDialog.setCanceledOnTouchOutside(true);
             shadowDialog.show();
+            //设置左边和右边两个按钮的点击事件
             shadowDialog.setOnClickListener(new DialogUtils.OnClickListener() {
                 @Override
                 public boolean onLeftClick(View v) {
                     ToastUtils.showShort(MainActivity.this, "点击左边按钮");
+                    //返回true时点击后自动消失；返回false时点击后不自动消失
                     return false;
                 }
 
                 @Override
                 public boolean onRightClick(View v) {
                     ToastUtils.showShort(MainActivity.this, "点击右边按钮");
+                    //返回true时点击后自动消失；返回false时点击后不自动消失
                     return DialogUtils.OnClickListener.super.onRightClick(v);
                 }
             });

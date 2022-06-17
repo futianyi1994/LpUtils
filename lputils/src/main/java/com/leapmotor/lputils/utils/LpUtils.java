@@ -63,7 +63,7 @@ public class LpUtils {
      * Refresh the dialog and toast layout theme.
      */
     public static void refreshScreenThemeMode() {
-        DialogUtils.refresh();
+        WinDialogUtils.refresh();
         ToastUtils.refresh();
     }
 }
