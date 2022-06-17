@@ -45,6 +45,8 @@ public class ToastUtils {
     public static final int TXT_PADING_START = 80 + TXT_BG_SHADOW_PADING, TXT_PADING_TOP = 40 + TXT_BG_SHADOW_PADING, TXT_PADING_END = 80 + TXT_BG_SHADOW_PADING, TXT_PADING_BOTTOM = 40 + TXT_BG_SHADOW_PADING;
     public static final int LENGTH_SHORT = 2000;
     public static final int LENGTH_LONG = 3500;
+    public static final int DEFAULT_Y_TOP_OFFSET_MAIN = 0;
+    private static final int DEFAULT_X_OFFSET = -1;
     private static final String TAG = "ToastUtils";
     private static final Map<Integer, WindowManager> WINDOW_MANAGER_MAP = new HashMap<>();
     private static final Map<Integer, View> VIEW_MANAGER_MAP = new HashMap<>();
@@ -95,7 +97,7 @@ public class ToastUtils {
      * @param msg       The text.
      */
     public static void showShort(int displayId, CharSequence msg) {
-        show(null, displayId, msg, TXT_MAX_WIDTH, false, ThemeUtils.getBgToastOrDialog(), ThemeUtils.getTextPrimaryColor(), -C11Util.Y_TOP_OFFSET / 2, false);
+        show(null, displayId, msg, TXT_MAX_WIDTH, false, ThemeUtils.getBgToastOrDialog(), ThemeUtils.getTextPrimaryColor(), DEFAULT_X_OFFSET, DEFAULT_Y_TOP_OFFSET_MAIN, false);
     }
 
     /**
@@ -105,7 +107,7 @@ public class ToastUtils {
      * @param msg       The text.
      */
     public static void showLong(int displayId, CharSequence msg) {
-        show(null, displayId, msg, TXT_MAX_WIDTH, true, ThemeUtils.getBgToastOrDialog(), ThemeUtils.getTextPrimaryColor(), -C11Util.Y_TOP_OFFSET / 2, false);
+        show(null, displayId, msg, TXT_MAX_WIDTH, true, ThemeUtils.getBgToastOrDialog(), ThemeUtils.getTextPrimaryColor(), DEFAULT_X_OFFSET, DEFAULT_Y_TOP_OFFSET_MAIN, false);
     }
 
     /**
@@ -117,7 +119,18 @@ public class ToastUtils {
      * @param isLong    True is show the toast for a long period of time, false otherwise.
      */
     private static void show(@Nullable Context context, int displayId, CharSequence msg, boolean isLong) {
-        show(context, displayId, msg, TXT_MAX_WIDTH, isLong, ThemeUtils.getBgToastOrDialog(), ThemeUtils.getTextPrimaryColor(), -C11Util.Y_TOP_OFFSET / 2, false);
+        show(context, displayId, msg, TXT_MAX_WIDTH, isLong, ThemeUtils.getBgToastOrDialog(), ThemeUtils.getTextPrimaryColor(), DEFAULT_X_OFFSET, DEFAULT_Y_TOP_OFFSET_MAIN, false);
+    }
+
+    /**
+     * Show the full screen toast according to the display.
+     *
+     * @param displayId The displayId.
+     * @param msg       The text.
+     * @param isLong    True is show the toast for a long period of time, false otherwise.
+     */
+    public static void showFullScreen(int displayId, CharSequence msg, boolean isLong) {
+        show(null, displayId, msg, TXT_MAX_WIDTH, isLong, ThemeUtils.getBgToastOrDialog(), ThemeUtils.getTextPrimaryColor(), 0, 0, false);
     }
 
     /**
@@ -130,10 +143,11 @@ public class ToastUtils {
      * @param isLong       True is show the toast for a long period of time, false otherwise.
      * @param bgResid      Background resource id.
      * @param textColorRes The text color resource.
+     * @param xOffset      X offset.
      * @param yOffset      Y offset.
      * @param isRecycle    True is recycle view,task,and window, false otherwise.
      */
-    public static void show(@Nullable Context context, int displayId, CharSequence msg, int maxWidth, boolean isLong, @DrawableRes int bgResid, @ColorRes int textColorRes, int yOffset, boolean isRecycle) {
+    public static void show(@Nullable Context context, int displayId, CharSequence msg, int maxWidth, boolean isLong, @DrawableRes int bgResid, @ColorRes int textColorRes, int xOffset, int yOffset, boolean isRecycle) {
         Application app = LpUtils.getApp();
         int currentDisplayId = Display.INVALID_DISPLAY;
         WindowManager wm;
@@ -185,10 +199,12 @@ public class ToastUtils {
         WindowManager.LayoutParams layoutParams = new WindowManager.LayoutParams();
         if (windowManager.getDefaultDisplay().getDisplayId() == Display.DEFAULT_DISPLAY) {
             layoutParams.gravity = Gravity.TOP;
-            layoutParams.x = C11Util.X_OFFSET / 2;
+            layoutParams.x = xOffset == DEFAULT_X_OFFSET ? C11Util.X_OFFSET / 2 : xOffset;
             layoutParams.y = Math.max(C11Util.Y_TOP_OFFSET + yOffset, 0);
         } else {
-            layoutParams.gravity = Gravity.CENTER;
+            layoutParams.gravity = Gravity.TOP;
+            layoutParams.x = xOffset == DEFAULT_X_OFFSET ? -C11Util.X_OFFSET_VICE / 2 : xOffset;
+            layoutParams.y = Math.max(yOffset, 0);
         }
         int contentWidth = (int) (msgWidth + TXT_PADING_START + TXT_PADING_END + TXT_BG_SHADOW_PADING * 2);
         layoutParams.width = Math.min(contentWidth, TXT_MAX_WIDTH);

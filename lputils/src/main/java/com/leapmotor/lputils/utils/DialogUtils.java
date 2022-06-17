@@ -15,9 +15,7 @@ import androidx.annotation.Nullable;
 
 import com.leapmotor.lputils.widget.ShadowDialog;
 
-import java.util.HashMap;
 import java.util.Locale;
-import java.util.Map;
 
 /**
  * good programmer.
@@ -28,18 +26,7 @@ import java.util.Map;
  * @description :
  */
 public class DialogUtils {
-    public static final int DIALOG_WIDTH = 720;
-    public static final int TXT_TITLE_MAX_WIDTH = 560;
-    public static final int TXT_TITLE_MAX_HEIGHT_DISPLAY0 = 720;
-    public static final int TXT_TITLE_MAX_HEIGHT_DISPLAY1 = 560;
-    public static final int TXT_TITLE_HEAD_HEIGHT = 95;
-    public static final int TXT_BG_SHADOW_PADING = 40;
     private static final String TAG = "DialogUtils";
-    private static final Map<Integer, WindowManager> WINDOW_MANAGER_MAP = new HashMap<>();
-    private static final Map<Integer, View> VIEW_MANAGER_MAP = new HashMap<>();
-    private static final Map<Integer, ThreadUtils.Task<Integer>> TASK_MAP = new HashMap<>();
-    private static final Map<Integer, OnClickListener> LISTENER_MAP = new HashMap<>();
-
 
     /**
      * Show the dialog on default display.

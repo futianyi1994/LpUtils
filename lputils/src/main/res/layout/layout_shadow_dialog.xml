@@ -55,7 +55,6 @@
                 android:ellipsize="marquee"
                 android:marqueeRepeatLimit="marquee_forever"
                 android:singleLine="true"
-                android:textColor="@null"
                 android:textSize="@dimen/size_L"
                 android:visibility="visible"
                 tools:text="OK" />

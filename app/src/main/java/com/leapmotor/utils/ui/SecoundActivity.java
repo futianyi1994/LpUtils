@@ -30,6 +30,8 @@ public class SecoundActivity extends AppCompatActivity implements View.OnClickLi
         FindViewUtlis.findViewById(this, R.id.tvHeadDialogAppointMain).setOnClickListener(this);
         FindViewUtlis.findViewById(this, R.id.tvHeadDialogAppointVice).setOnClickListener(this);
 
+        FindViewUtlis.findViewById(this, R.id.tvFullToastMain).setOnClickListener(this);
+        FindViewUtlis.findViewById(this, R.id.tvFullToastVice).setOnClickListener(this);
         FindViewUtlis.findViewById(this, R.id.tvToastMain).setOnClickListener(this);
         FindViewUtlis.findViewById(this, R.id.tvToastByContext).setOnClickListener(this);
         FindViewUtlis.findViewById(this, R.id.tvToastAppointMain).setOnClickListener(this);
@@ -79,6 +81,10 @@ public class SecoundActivity extends AppCompatActivity implements View.OnClickLi
             DialogUtils.show(0, "HeadTitle", "Title", "确定", "取消", this);
         } else if (id == R.id.tvHeadDialogAppointVice) {
             DialogUtils.show(1, "HeadTitle", "Title", "确定", "取消", this);
+        } else if (id == R.id.tvFullToastMain) {
+            ToastUtils.showFullScreen(0, "Hello", true);
+        } else if (id == R.id.tvFullToastVice) {
+            ToastUtils.showFullScreen(1, "Hello", true);
         } else if (id == R.id.tvToastMain) {
             ToastUtils.showShort("Hello");
         } else if (id == R.id.tvToastByContext) {

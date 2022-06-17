@@ -64,6 +64,8 @@ import com.leapmotor.lputils.utils.ThemeUtils;
  *          //.setMaskResourceId(R.color.mask_popup_night)
  *          //单独设置白天和黑夜遮罩背景色
  *          .setMaskResourceId(R.color.mask_popup_light, R.color.mask_popup_night)
+ *          //设置弹出框的Windows窗口类型
+ *          //.setWindowType(WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY)
  *          //设置左边按钮点击事件
  *          .setConfirmClickListener((dialog, view) -> {
  *              ToastUtils.showShort(this, "点击确定");
@@ -81,13 +83,13 @@ import com.leapmotor.lputils.utils.ThemeUtils;
  *  shadowDialog.show();
  *  //设置左边和右边两个按钮的点击事件
  *  shadowDialog.setOnClickListener(new DialogUtils.OnClickListener() {
- *      @Override
+ *      <code>@Override</code>
  *      public boolean onLeftClick(View v) {
  *          ToastUtils.showShort(MainActivity.this, "点击左边按钮");
  *          //返回true时点击后自动消失；返回false时点击后不自动消失
  *          return false;
  *      }
- *      @Override
+ *      <code>@Override</code>
  *      public boolean onRightClick(View v) {
  *          ToastUtils.showShort(MainActivity.this, "点击右边按钮");
  *          //返回true时点击后自动消失；返回false时点击后不自动消失
@@ -140,6 +142,7 @@ public class ShadowDialog extends Dialog implements View.OnClickListener {
             refresh();
         }
     };
+    private int windowType = 0;
 
     public ShadowDialog(Context context) {
         this(context, true);
@@ -206,6 +209,9 @@ public class ShadowDialog extends Dialog implements View.OnClickListener {
                 attributes.gravity = Gravity.END;
                 attributes.flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
             }
+        }
+        if (windowType != 0) {
+            attributes.type = windowType;
         }
         window.setAttributes(attributes);
 
@@ -402,6 +408,11 @@ public class ShadowDialog extends Dialog implements View.OnClickListener {
             tvCancel.setText(cancel);
             tvCancel.setVisibility(cancel == null ? View.GONE : View.VISIBLE);
         }
+        return this;
+    }
+
+    public ShadowDialog setWindowType(int windowType) {
+        this.windowType = windowType;
         return this;
     }
 
