@@ -215,7 +215,7 @@ public class ToastUtils {
         layoutParams.format = PixelFormat.RGBA_8888;
 
         if (!isAddView.getAndSet(true)) {
-            windowManager.addView(customToastView, layoutParams);
+            ThreadUtils.runOnUiThread(() -> windowManager.addView(customToastView, layoutParams));
         }
 
         if (TASK_MAP.get(currentDisplayId) != null) {

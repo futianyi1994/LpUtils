@@ -300,7 +300,8 @@ public class WinDialogUtils {
         }
 
         if (!isAddView.getAndSet(true)) {
-            windowManager.addView(customDialogView, layoutParams);
+            WindowManager.LayoutParams finalLayoutParams = layoutParams;
+            ThreadUtils.runOnUiThread(() -> windowManager.addView(customDialogView, finalLayoutParams));
         }
     }
 

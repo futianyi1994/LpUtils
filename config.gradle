@@ -6,7 +6,7 @@ ext {
             compileSdkVersion : 28,
             buildToolsVersion : "28.0.3",
             versionCode       : 114,
-            versionName       : "1.1.4",
+            versionName       : "1.1.5",
 
             roomVersion       : "2.2.6",
             workVersion       : "2.7.1",
@@ -83,7 +83,7 @@ ext {
 
             //Leapmotor
             lp_okgo                           : "com.leapmotor:okgo:1.0.14-SNAPSHOT",
-            lp_utils                          : "com.leapmotor.utils:toast:1.1.4-SNAPSHOT",
+            lp_utils                          : "com.leapmotor.utils:toast:1.1.5-SNAPSHOT",
     ]
 }
 
