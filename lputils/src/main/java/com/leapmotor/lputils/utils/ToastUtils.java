@@ -149,104 +149,107 @@ public class ToastUtils {
      */
     public static void show(@Nullable Context context, int displayId, CharSequence msg, int maxWidth, boolean isLong, @DrawableRes int bgResid, @ColorRes int textColorRes, int xOffset, int yOffset, boolean isRecycle) {
         Application app = LpUtils.getApp();
-        int currentDisplayId = Display.INVALID_DISPLAY;
-        WindowManager wm;
-        if (displayId != Display.INVALID_DISPLAY) {
-            Display display = DisplayUtils.getDisplay(app, displayId);
-            if (display != null) {
-                wm = (WindowManager) app.createDisplayContext(display).getSystemService(Context.WINDOW_SERVICE);
-                currentDisplayId = display.getDisplayId();
-            } else {
-                Log.e(TAG, "showOnDisplay: not find display please check displayId !");
-                return;
-            }
-        } else {
-            if (context != null) {
-                wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
-                currentDisplayId = wm.getDefaultDisplay().getDisplayId();
-            } else {
-                Log.e(TAG, String.format(Locale.getDefault(), "showOnDisplay error : contexy is null, displayId can't be %d !", Display.INVALID_DISPLAY));
-                return;
-            }
-        }
-        if (isRecycle) {
-            removeLayout(currentDisplayId);
-        } else {
-            hideLayout(currentDisplayId);
-        }
-
-        AtomicBoolean isAddView = new AtomicBoolean(true);
-        WindowManager windowManager = WINDOW_MANAGER_MAP.computeIfAbsent(currentDisplayId, k -> {
-            isAddView.set(false);
-            return wm;
-        });
-        View customToastView = VIEW_MANAGER_MAP.computeIfAbsent(currentDisplayId, k -> ViewUtils.layoutId2View(app, R.layout.layout_custom_toast));
-        customToastView.setVisibility(View.VISIBLE);
-        TextView tvMsg = FindViewUtlis.findViewById(customToastView, R.id.tvMsg);
-        float msgWidth = 0;
-        if (tvMsg != null) {
-            tvMsg.setText(msg);
-            tvMsg.setMaxWidth(maxWidth);
-            tvMsg.setMaxLines(TXT_MAX_LINES);
-            tvMsg.setMovementMethod(ScrollingMovementMethod.getInstance());
-            tvMsg.setTextColor(ContextCompat.getColor(app, textColorRes));
-            tvMsg.setBackgroundResource(bgResid);
-            tvMsg.setPadding(TXT_PADING_START, TXT_PADING_TOP, TXT_PADING_END, TXT_PADING_BOTTOM);
-            FrameLayout.LayoutParams tvLayoutParams = (FrameLayout.LayoutParams) tvMsg.getLayoutParams();
-            tvLayoutParams.setMargins(0, 0, 0, 0);
-            msgWidth = tvMsg.getPaint().measureText(msg.toString());
-        }
-        WindowManager.LayoutParams layoutParams = new WindowManager.LayoutParams();
-        if (windowManager.getDefaultDisplay().getDisplayId() == Display.DEFAULT_DISPLAY) {
-            layoutParams.gravity = Gravity.TOP;
-            layoutParams.x = xOffset == DEFAULT_X_OFFSET ? C11Util.X_OFFSET / 2 : xOffset;
-            layoutParams.y = Math.max(C11Util.Y_TOP_OFFSET + yOffset, 0);
-        } else {
-            layoutParams.gravity = Gravity.TOP;
-            layoutParams.x = xOffset == DEFAULT_X_OFFSET ? -C11Util.X_OFFSET_VICE / 2 : xOffset;
-            layoutParams.y = Math.max(yOffset, 0);
-        }
-        int contentWidth = (int) (msgWidth + TXT_PADING_START + TXT_PADING_END + TXT_BG_SHADOW_PADING * 2);
-        layoutParams.width = Math.min(contentWidth, TXT_MAX_WIDTH);
-        layoutParams.height = ViewGroup.LayoutParams.WRAP_CONTENT;
-        layoutParams.type = Build.VERSION.SDK_INT > Build.VERSION_CODES.O ? WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY : WindowManager.LayoutParams.TYPE_PHONE;
-        layoutParams.flags = WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
-                | WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
-        layoutParams.format = PixelFormat.RGBA_8888;
-
-        if (!isAddView.getAndSet(true)) {
-            ThreadUtils.runOnUiThread(() -> windowManager.addView(customToastView, layoutParams));
-        }
-
-        if (TASK_MAP.get(currentDisplayId) != null) {
-            ThreadUtils.cancel(TASK_MAP.get(currentDisplayId));
-        }
-        ThreadUtils.Task<Integer> integerTask = new ThreadUtils.SimpleTask<Integer>() {
-            @Override
-            public Integer doInBackground() {
-                List<Integer> collect = TASK_MAP
-                        .entrySet()
-                        .stream()
-                        .filter(integerTaskEntry -> integerTaskEntry.getValue() == this)
-                        .map(Map.Entry::getKey)
-                        .collect(Collectors.toList());
-                return collect.size() > 0 ? collect.get(0) : Display.INVALID_DISPLAY;
-            }
-
-            @Override
-            public void onSuccess(Integer displayId) {
-                if (isRecycle) {
-                    removeLayout(displayId);
+        ThreadUtils.runOnUiThread(() -> {
+            int currentDisplayId = Display.INVALID_DISPLAY;
+            WindowManager wm;
+            if (displayId != Display.INVALID_DISPLAY) {
+                Display display = DisplayUtils.getDisplay(app, displayId);
+                if (display != null) {
+                    wm = (WindowManager) app.createDisplayContext(display).getSystemService(Context.WINDOW_SERVICE);
+                    currentDisplayId = display.getDisplayId();
                 } else {
-                    hideLayout(displayId);
-                    WINDOW_MANAGER_MAP.remove(displayId);
-                    VIEW_MANAGER_MAP.remove(displayId);
-                    TASK_MAP.remove(displayId);
+                    Log.e(TAG, "showOnDisplay: not find display please check displayId !");
+                    return;
+                }
+            } else {
+                if (context != null) {
+                    wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+                    currentDisplayId = wm.getDefaultDisplay().getDisplayId();
+                } else {
+                    Log.e(TAG, String.format(Locale.getDefault(), "showOnDisplay error : contexy is null, displayId can't be %d !", Display.INVALID_DISPLAY));
+                    return;
                 }
             }
-        };
-        TASK_MAP.put(currentDisplayId, integerTask);
-        ThreadUtils.executeBySingleWithDelay(integerTask, isLong ? LENGTH_LONG : LENGTH_SHORT, TimeUnit.MILLISECONDS);
+            if (isRecycle) {
+                removeLayout(currentDisplayId);
+            } else {
+                hideLayout(currentDisplayId);
+            }
+
+            AtomicBoolean isAddView = new AtomicBoolean(true);
+            WindowManager windowManager = WINDOW_MANAGER_MAP.computeIfAbsent(currentDisplayId, k -> {
+                isAddView.set(false);
+                return wm;
+            });
+            View customToastView = VIEW_MANAGER_MAP.computeIfAbsent(currentDisplayId, k -> ViewUtils.layoutId2View(app, R.layout.layout_custom_toast));
+            customToastView.setVisibility(View.VISIBLE);
+            TextView tvMsg = FindViewUtlis.findViewById(customToastView, R.id.tvMsg);
+            float msgWidth = 0;
+            if (tvMsg != null) {
+                tvMsg.setText(msg);
+                tvMsg.setMaxWidth(maxWidth);
+                tvMsg.setMaxLines(TXT_MAX_LINES);
+                tvMsg.setMovementMethod(ScrollingMovementMethod.getInstance());
+                tvMsg.setTextColor(ContextCompat.getColor(app, textColorRes));
+                tvMsg.setBackgroundResource(bgResid);
+                tvMsg.setPadding(TXT_PADING_START, TXT_PADING_TOP, TXT_PADING_END, TXT_PADING_BOTTOM);
+                FrameLayout.LayoutParams tvLayoutParams = (FrameLayout.LayoutParams) tvMsg.getLayoutParams();
+                tvLayoutParams.setMargins(0, 0, 0, 0);
+                msgWidth = tvMsg.getPaint().measureText(msg.toString());
+            }
+            WindowManager.LayoutParams layoutParams = new WindowManager.LayoutParams();
+            if (windowManager.getDefaultDisplay().getDisplayId() == Display.DEFAULT_DISPLAY) {
+                layoutParams.gravity = Gravity.TOP;
+                layoutParams.x = xOffset == DEFAULT_X_OFFSET ? C11Util.X_OFFSET / 2 : xOffset;
+                layoutParams.y = Math.max(C11Util.Y_TOP_OFFSET + yOffset, 0);
+            } else {
+                layoutParams.gravity = Gravity.TOP;
+                layoutParams.x = xOffset == DEFAULT_X_OFFSET ? -C11Util.X_OFFSET_VICE / 2 : xOffset;
+                layoutParams.y = Math.max(yOffset, 0);
+            }
+            int contentWidth = (int) (msgWidth + TXT_PADING_START + TXT_PADING_END + TXT_BG_SHADOW_PADING * 2);
+            layoutParams.width = Math.min(contentWidth, TXT_MAX_WIDTH);
+            layoutParams.height = ViewGroup.LayoutParams.WRAP_CONTENT;
+            layoutParams.type = Build.VERSION.SDK_INT > Build.VERSION_CODES.O ? WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY : WindowManager.LayoutParams.TYPE_PHONE;
+            layoutParams.flags = WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
+                    | WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
+            layoutParams.format = PixelFormat.RGBA_8888;
+
+            if (!isAddView.getAndSet(true)) {
+                windowManager.addView(customToastView, layoutParams);
+            }
+
+            if (TASK_MAP.get(currentDisplayId) != null) {
+                ThreadUtils.cancel(TASK_MAP.get(currentDisplayId));
+            }
+            ThreadUtils.Task<Integer> integerTask = new ThreadUtils.SimpleTask<Integer>() {
+                @Override
+                public Integer doInBackground() {
+                    List<Integer> collect = TASK_MAP
+                            .entrySet()
+                            .stream()
+                            .filter(integerTaskEntry -> integerTaskEntry.getValue() == this)
+                            .map(Map.Entry::getKey)
+                            .collect(Collectors.toList());
+                    return collect.size() > 0 ? collect.get(0) : Display.INVALID_DISPLAY;
+                }
+
+                @Override
+                public void onSuccess(Integer displayId) {
+                    if (isRecycle) {
+                        removeLayout(displayId);
+                    } else {
+                        hideLayout(displayId);
+                        WINDOW_MANAGER_MAP.remove(displayId);
+                        VIEW_MANAGER_MAP.remove(displayId);
+                        TASK_MAP.remove(displayId);
+                    }
+                }
+            };
+            TASK_MAP.put(currentDisplayId, integerTask);
+            ThreadUtils.executeBySingleWithDelay(integerTask, isLong ? LENGTH_LONG : LENGTH_SHORT, TimeUnit.MILLISECONDS);
+
+        });
     }
 
     /**
@@ -258,7 +261,7 @@ public class ToastUtils {
         WindowManager windowManager = WINDOW_MANAGER_MAP.get(displayId);
         View customToastView = VIEW_MANAGER_MAP.get(displayId);
         if (windowManager != null && customToastView != null) {
-            windowManager.removeView(customToastView);
+            ThreadUtils.runOnUiThread(() -> windowManager.removeView(customToastView));
         }
         WINDOW_MANAGER_MAP.remove(displayId);
         VIEW_MANAGER_MAP.remove(displayId);
@@ -274,7 +277,7 @@ public class ToastUtils {
         WindowManager windowManager = WINDOW_MANAGER_MAP.get(displayId);
         View customToastView = VIEW_MANAGER_MAP.get(displayId);
         if (windowManager != null && customToastView != null) {
-            customToastView.setVisibility(View.GONE);
+            ThreadUtils.runOnUiThread(() -> customToastView.setVisibility(View.GONE));
         }
     }
 

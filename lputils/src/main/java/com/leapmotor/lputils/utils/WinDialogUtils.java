@@ -181,128 +181,131 @@ public class WinDialogUtils {
      */
     public static void show(@Nullable Activity activity, int displayId, @Nullable CharSequence headTitle, @NonNull CharSequence title, @Nullable CharSequence leftTitle, @Nullable CharSequence rightTitle, @DrawableRes int bgResid, @ColorRes int textColorRes, @Nullable WindowManager.LayoutParams layoutParams, @Nullable DialogUtils.OnClickListener onClickListener) {
         Application app = LpUtils.getApp();
-        boolean haveWindowToken;
-        int currentDisplayId = Display.INVALID_DISPLAY;
-        WindowManager wm;
-        if (displayId != Display.INVALID_DISPLAY) {
-            haveWindowToken = false;
-            Display display = DisplayUtils.getDisplay(app, displayId);
-            if (display != null) {
-                wm = (WindowManager) app.createDisplayContext(display).getSystemService(Context.WINDOW_SERVICE);
-                currentDisplayId = display.getDisplayId();
+        ThreadUtils.runOnUiThread(() -> {
+            boolean haveWindowToken;
+            int currentDisplayId = Display.INVALID_DISPLAY;
+            WindowManager wm;
+            WindowManager.LayoutParams lp = layoutParams;
+            if (displayId != Display.INVALID_DISPLAY) {
+                haveWindowToken = false;
+                Display display = DisplayUtils.getDisplay(app, displayId);
+                if (display != null) {
+                    wm = (WindowManager) app.createDisplayContext(display).getSystemService(Context.WINDOW_SERVICE);
+                    currentDisplayId = display.getDisplayId();
+                } else {
+                    Log.e(TAG, "showOnDisplay: not find display please check displayId !");
+                    return;
+                }
             } else {
-                Log.e(TAG, "showOnDisplay: not find display please check displayId !");
-                return;
+                if (activity != null) {
+                    haveWindowToken = true;
+                    wm = (WindowManager) activity.getSystemService(Context.WINDOW_SERVICE);
+                    currentDisplayId = wm.getDefaultDisplay().getDisplayId();
+                } else {
+                    Log.e(TAG, String.format(Locale.getDefault(), "showOnDisplay error : context is null, displayId can't be %d !", Display.INVALID_DISPLAY));
+                    return;
+                }
             }
-        } else {
-            if (activity != null) {
-                haveWindowToken = true;
-                wm = (WindowManager) activity.getSystemService(Context.WINDOW_SERVICE);
-                currentDisplayId = wm.getDefaultDisplay().getDisplayId();
-            } else {
-                Log.e(TAG, String.format(Locale.getDefault(), "showOnDisplay error : context is null, displayId can't be %d !", Display.INVALID_DISPLAY));
-                return;
-            }
-        }
-        removeLayout(currentDisplayId);
+            removeLayout(currentDisplayId);
 
-        if (TASK_MAP.get(currentDisplayId) != null) {
-            ThreadUtils.cancel(TASK_MAP.get(currentDisplayId));
-        }
-        ThreadUtils.Task<Integer> integerTask = new ThreadUtils.SimpleTask<Integer>() {
-            @Override
-            public Integer doInBackground() {
-                List<Integer> collect = TASK_MAP
-                        .entrySet()
-                        .stream()
-                        .filter(integerTaskEntry -> integerTaskEntry.getValue() == this)
-                        .map(Map.Entry::getKey)
-                        .collect(Collectors.toList());
-                return collect.size() > 0 ? collect.get(0) : Display.INVALID_DISPLAY;
+            if (TASK_MAP.get(currentDisplayId) != null) {
+                ThreadUtils.cancel(TASK_MAP.get(currentDisplayId));
+            }
+            ThreadUtils.Task<Integer> integerTask = new ThreadUtils.SimpleTask<Integer>() {
+                @Override
+                public Integer doInBackground() {
+                    List<Integer> collect = TASK_MAP
+                            .entrySet()
+                            .stream()
+                            .filter(integerTaskEntry -> integerTaskEntry.getValue() == this)
+                            .map(Map.Entry::getKey)
+                            .collect(Collectors.toList());
+                    return collect.size() > 0 ? collect.get(0) : Display.INVALID_DISPLAY;
+                }
+
+                @Override
+                public void onSuccess(Integer displayId) {
+                    removeLayout(displayId);
+                }
+            };
+            TASK_MAP.put(currentDisplayId, integerTask);
+
+            AtomicBoolean isAddView = new AtomicBoolean(true);
+            WindowManager windowManager = WINDOW_MANAGER_MAP.computeIfAbsent(currentDisplayId, k -> {
+                isAddView.set(false);
+                return wm;
+            });
+            View customDialogView = VIEW_MANAGER_MAP.computeIfAbsent(currentDisplayId, k -> ViewUtils.layoutId2View(app, R.layout.layout_custom_dialog));
+            customDialogView.setVisibility(View.VISIBLE);
+            LinearLayout llRoot = FindViewUtlis.findViewById(customDialogView, R.id.llRoot);
+            LinearLayout llConfirm = FindViewUtlis.findViewById(customDialogView, R.id.llConfirm);
+            TextView tvHeadTitle = FindViewUtlis.findViewById(customDialogView, R.id.tvHeadTitle);
+            TextView tvTitle = FindViewUtlis.findViewById(customDialogView, R.id.tvTitle);
+            View vLine = FindViewUtlis.findViewById(customDialogView, R.id.vLine);
+            TextView tvLeft = FindViewUtlis.findViewById(customDialogView, R.id.tvLeft);
+            TextView tvRight = FindViewUtlis.findViewById(customDialogView, R.id.tvRight);
+            if (llRoot != null && llConfirm != null && tvTitle != null && tvHeadTitle != null && vLine != null && tvLeft != null && tvRight != null) {
+                llRoot.setBackgroundResource(bgResid);
+                llRoot.setPadding(0, 0, 0, 0);
+                tvTitle.setText(title);
+                int tvTitleMaxHeight = currentDisplayId == Display.DEFAULT_DISPLAY ? TXT_TITLE_MAX_HEIGHT_DISPLAY0 : TXT_TITLE_MAX_HEIGHT_DISPLAY1;
+                tvTitle.setMaxHeight(headTitle == null ? tvTitleMaxHeight : tvTitleMaxHeight - TXT_TITLE_HEAD_HEIGHT);
+                tvTitle.setMovementMethod(ScrollingMovementMethod.getInstance());
+                tvTitle.setTextColor(ContextCompat.getColor(app, textColorRes));
+                LinearLayout.LayoutParams tvHeadTitleLayoutParams = (LinearLayout.LayoutParams) tvHeadTitle.getLayoutParams();
+                tvHeadTitleLayoutParams.setMargins(TXT_BG_SHADOW_PADING, TXT_BG_SHADOW_PADING, TXT_BG_SHADOW_PADING, 0);
+                LinearLayout.LayoutParams tvTitleLayoutParams = (LinearLayout.LayoutParams) tvTitle.getLayoutParams();
+                tvTitleLayoutParams.setMargins(TXT_BG_SHADOW_PADING, headTitle == null ? TXT_BG_SHADOW_PADING : 0, TXT_BG_SHADOW_PADING, 0);
+                LinearLayout.LayoutParams llConfirmLayoutParams = (LinearLayout.LayoutParams) llConfirm.getLayoutParams();
+                llConfirmLayoutParams.setMargins(TXT_BG_SHADOW_PADING, 0, TXT_BG_SHADOW_PADING, TXT_BG_SHADOW_PADING);
+                LinearLayout.LayoutParams vLineLayoutParams = (LinearLayout.LayoutParams) vLine.getLayoutParams();
+                vLineLayoutParams.setMargins(TXT_BG_SHADOW_PADING, 0, TXT_BG_SHADOW_PADING, 0);
+                float titleWidth = tvTitle.getPaint().measureText(title.toString());
+                if (titleWidth >= TXT_TITLE_MAX_WIDTH) {
+                    tvTitle.setGravity(Gravity.START);
+                } else {
+                    tvTitle.setGravity(Gravity.CENTER);
+                }
+                tvHeadTitle.setText(headTitle);
+                tvLeft.setText(leftTitle);
+                tvRight.setText(rightTitle);
+                tvHeadTitle.setSelected(true);
+                tvLeft.setSelected(true);
+                tvRight.setSelected(true);
+                tvHeadTitle.setTextColor(ContextCompat.getColor(app, textColorRes));
+                vLine.setBackgroundResource(ThemeUtils.getLineColor());
+                tvLeft.setTextColor(ContextCompat.getColor(app, ThemeUtils.getBtnTextHighlightColor()));
+                tvRight.setTextColor(ContextCompat.getColor(app, textColorRes));
+                tvHeadTitle.setVisibility(headTitle == null ? View.GONE : View.VISIBLE);
+                tvLeft.setVisibility(leftTitle == null ? View.GONE : View.VISIBLE);
+                tvRight.setVisibility(rightTitle == null ? View.GONE : View.VISIBLE);
+
+                DialogUtils.OnClickListener listener = LISTENER_MAP.computeIfAbsent(currentDisplayId, integer -> onClickListener);
+                tvLeft.setOnClickListener(v -> {
+                    if (listener != null) {
+                        if (listener.onLeftClick(v)) {
+                            ThreadUtils.executeBySingle(integerTask);
+                        }
+                    }
+                });
+                tvRight.setOnClickListener(v -> {
+                    if (listener != null) {
+                        if (listener.onRightClick(v)) {
+                            ThreadUtils.executeBySingle(integerTask);
+                        }
+                    }
+                });
+            }
+            if (lp == null) {
+                lp = getDefaultLayoutParams(currentDisplayId);
+                lp.type = haveWindowToken ? WindowManager.LayoutParams.TYPE_APPLICATION_ATTACHED_DIALOG : Build.VERSION.SDK_INT > Build.VERSION_CODES.O ? WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY : WindowManager.LayoutParams.TYPE_PHONE;
             }
 
-            @Override
-            public void onSuccess(Integer displayId) {
-                removeLayout(displayId);
+            if (!isAddView.getAndSet(true)) {
+                WindowManager.LayoutParams finalLayoutParams = lp;
+                windowManager.addView(customDialogView, finalLayoutParams);
             }
-        };
-        TASK_MAP.put(currentDisplayId, integerTask);
-
-        AtomicBoolean isAddView = new AtomicBoolean(true);
-        WindowManager windowManager = WINDOW_MANAGER_MAP.computeIfAbsent(currentDisplayId, k -> {
-            isAddView.set(false);
-            return wm;
         });
-        View customDialogView = VIEW_MANAGER_MAP.computeIfAbsent(currentDisplayId, k -> ViewUtils.layoutId2View(app, R.layout.layout_custom_dialog));
-        customDialogView.setVisibility(View.VISIBLE);
-        LinearLayout llRoot = FindViewUtlis.findViewById(customDialogView, R.id.llRoot);
-        LinearLayout llConfirm = FindViewUtlis.findViewById(customDialogView, R.id.llConfirm);
-        TextView tvHeadTitle = FindViewUtlis.findViewById(customDialogView, R.id.tvHeadTitle);
-        TextView tvTitle = FindViewUtlis.findViewById(customDialogView, R.id.tvTitle);
-        View vLine = FindViewUtlis.findViewById(customDialogView, R.id.vLine);
-        TextView tvLeft = FindViewUtlis.findViewById(customDialogView, R.id.tvLeft);
-        TextView tvRight = FindViewUtlis.findViewById(customDialogView, R.id.tvRight);
-        if (llRoot != null && llConfirm != null && tvTitle != null && tvHeadTitle != null && vLine != null && tvLeft != null && tvRight != null) {
-            llRoot.setBackgroundResource(bgResid);
-            llRoot.setPadding(0, 0, 0, 0);
-            tvTitle.setText(title);
-            int tvTitleMaxHeight = currentDisplayId == Display.DEFAULT_DISPLAY ? TXT_TITLE_MAX_HEIGHT_DISPLAY0 : TXT_TITLE_MAX_HEIGHT_DISPLAY1;
-            tvTitle.setMaxHeight(headTitle == null ? tvTitleMaxHeight : tvTitleMaxHeight - TXT_TITLE_HEAD_HEIGHT);
-            tvTitle.setMovementMethod(ScrollingMovementMethod.getInstance());
-            tvTitle.setTextColor(ContextCompat.getColor(app, textColorRes));
-            LinearLayout.LayoutParams tvHeadTitleLayoutParams = (LinearLayout.LayoutParams) tvHeadTitle.getLayoutParams();
-            tvHeadTitleLayoutParams.setMargins(TXT_BG_SHADOW_PADING, TXT_BG_SHADOW_PADING, TXT_BG_SHADOW_PADING, 0);
-            LinearLayout.LayoutParams tvTitleLayoutParams = (LinearLayout.LayoutParams) tvTitle.getLayoutParams();
-            tvTitleLayoutParams.setMargins(TXT_BG_SHADOW_PADING, headTitle == null ? TXT_BG_SHADOW_PADING : 0, TXT_BG_SHADOW_PADING, 0);
-            LinearLayout.LayoutParams llConfirmLayoutParams = (LinearLayout.LayoutParams) llConfirm.getLayoutParams();
-            llConfirmLayoutParams.setMargins(TXT_BG_SHADOW_PADING, 0, TXT_BG_SHADOW_PADING, TXT_BG_SHADOW_PADING);
-            LinearLayout.LayoutParams vLineLayoutParams = (LinearLayout.LayoutParams) vLine.getLayoutParams();
-            vLineLayoutParams.setMargins(TXT_BG_SHADOW_PADING, 0, TXT_BG_SHADOW_PADING, 0);
-            float titleWidth = tvTitle.getPaint().measureText(title.toString());
-            if (titleWidth >= TXT_TITLE_MAX_WIDTH) {
-                tvTitle.setGravity(Gravity.START);
-            } else {
-                tvTitle.setGravity(Gravity.CENTER);
-            }
-            tvHeadTitle.setText(headTitle);
-            tvLeft.setText(leftTitle);
-            tvRight.setText(rightTitle);
-            tvHeadTitle.setSelected(true);
-            tvLeft.setSelected(true);
-            tvRight.setSelected(true);
-            tvHeadTitle.setTextColor(ContextCompat.getColor(app, textColorRes));
-            vLine.setBackgroundResource(ThemeUtils.getLineColor());
-            tvLeft.setTextColor(ContextCompat.getColor(app, ThemeUtils.getBtnTextHighlightColor()));
-            tvRight.setTextColor(ContextCompat.getColor(app, textColorRes));
-            tvHeadTitle.setVisibility(headTitle == null ? View.GONE : View.VISIBLE);
-            tvLeft.setVisibility(leftTitle == null ? View.GONE : View.VISIBLE);
-            tvRight.setVisibility(rightTitle == null ? View.GONE : View.VISIBLE);
-
-            DialogUtils.OnClickListener listener = LISTENER_MAP.computeIfAbsent(currentDisplayId, integer -> onClickListener);
-            tvLeft.setOnClickListener(v -> {
-                if (listener != null) {
-                    if (listener.onLeftClick(v)) {
-                        ThreadUtils.executeBySingle(integerTask);
-                    }
-                }
-            });
-            tvRight.setOnClickListener(v -> {
-                if (listener != null) {
-                    if (listener.onRightClick(v)) {
-                        ThreadUtils.executeBySingle(integerTask);
-                    }
-                }
-            });
-        }
-        if (layoutParams == null) {
-            layoutParams = getDefaultLayoutParams(currentDisplayId);
-            layoutParams.type = haveWindowToken ? WindowManager.LayoutParams.TYPE_APPLICATION_ATTACHED_DIALOG : Build.VERSION.SDK_INT > Build.VERSION_CODES.O ? WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY : WindowManager.LayoutParams.TYPE_PHONE;
-        }
-
-        if (!isAddView.getAndSet(true)) {
-            WindowManager.LayoutParams finalLayoutParams = layoutParams;
-            ThreadUtils.runOnUiThread(() -> windowManager.addView(customDialogView, finalLayoutParams));
-        }
     }
 
     /**
@@ -314,7 +317,7 @@ public class WinDialogUtils {
         WindowManager windowManager = WINDOW_MANAGER_MAP.get(displayId);
         View customDialogView = VIEW_MANAGER_MAP.get(displayId);
         if (windowManager != null && customDialogView != null) {
-            windowManager.removeView(customDialogView);
+            ThreadUtils.runOnUiThread(() -> windowManager.removeView(customDialogView));
         }
         WINDOW_MANAGER_MAP.remove(displayId);
         VIEW_MANAGER_MAP.remove(displayId);
