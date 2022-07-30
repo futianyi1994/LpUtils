@@ -104,7 +104,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     //统一设置白天黑夜遮罩背景色
                     //.setMaskResourceId(R.color.mask_popup_night)
                     //单独设置白天和黑夜遮罩背景色
-                    .setMaskResourceId(R.color.mask_popup_light, R.color.mask_popup_night)
+                    .setMaskResourceId(R.drawable.mask_popup_light_radius40, R.drawable.mask_popup_night_radius40)
                     //设置弹出框的Windows窗口类型
                     //.setWindowType(WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY)
                     //设置左边按钮点击事件

@@ -15,7 +15,20 @@ import com.leapmotor.lputils.annotation.ScreenModeType;
  * @description :
  */
 public class ThemeUtils {
-    @ColorRes
+
+    @DrawableRes
+    public static int getRadiusMaskPopup() {
+        switch (SettingsUtils.screenMode()) {
+            case ScreenModeType.NIGHT:
+                return R.drawable.mask_popup_night_radius40;
+            case ScreenModeType.DAY:
+                return R.drawable.mask_popup_light_radius40;
+            default:
+                return R.drawable.mask_popup_night_radius40;
+        }
+    }
+
+    @DrawableRes
     public static int getMaskPopup() {
         switch (SettingsUtils.screenMode()) {
             case ScreenModeType.NIGHT:

@@ -24,6 +24,7 @@ import android.widget.TextView;
 import androidx.annotation.AnimRes;
 import androidx.annotation.AnimatorRes;
 import androidx.annotation.ColorRes;
+import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -63,7 +64,7 @@ import com.leapmotor.lputils.utils.ThemeUtils;
  *          //统一设置白天黑夜遮罩背景色
  *          //.setMaskResourceId(R.color.mask_popup_night)
  *          //单独设置白天和黑夜遮罩背景色
- *          .setMaskResourceId(R.color.mask_popup_light, R.color.mask_popup_night)
+ *          .setMaskResourceId(R.drawable.mask_popup_light_radius40, R.drawable.mask_popup_night_radius40)
  *          //设置弹出框的Windows窗口类型
  *          //.setWindowType(WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY)
  *          //设置左边按钮点击事件
@@ -133,7 +134,7 @@ public class ShadowDialog extends Dialog implements View.OnClickListener {
     private boolean isFullScreen = false;
     private boolean isCanceledOnTouchOutside = true;
     private boolean enableAnimation = true;
-    @ColorRes
+    @DrawableRes
     private int maskResourceIdLight, maskResourceIdNight;
     private final ContentObserver observer = new ContentObserver(new Handler()) {
         @Override
@@ -177,6 +178,7 @@ public class ShadowDialog extends Dialog implements View.OnClickListener {
         int currentDisplayId = windowManager.getDefaultDisplay().getDisplayId();
         boolean isDefaultScreen = currentDisplayId == Display.DEFAULT_DISPLAY;
         int maskPopup = getMaskResourceId();
+        int radiusMaskPopup = getRadiusMaskResourceId();
         Window window = getWindow();
         WindowManager.LayoutParams attributes = window.getAttributes();
         if (isFullScreen) {
@@ -188,7 +190,7 @@ public class ShadowDialog extends Dialog implements View.OnClickListener {
             window.getDecorView().setPadding(0, 0, 0, 0);
         } else {
             if (isDefaultScreen) {
-                flRoot.setBackgroundResource(maskPopup);
+                flRoot.setBackgroundResource(radiusMaskPopup);
                 window.setDimAmount(0f);
                 window.setLayout(C11Util.WIDTH, C11Util.HEIGHT);
                 window.setBackgroundDrawableResource(R.color.transparent);
@@ -416,6 +418,22 @@ public class ShadowDialog extends Dialog implements View.OnClickListener {
         return this;
     }
 
+    @DrawableRes
+    private int getRadiusMaskResourceId() {
+        if (maskResourceIdLight == 0 && maskResourceIdNight == 0) {
+            return ThemeUtils.getRadiusMaskPopup();
+        }
+        switch (SettingsUtils.screenMode()) {
+            case ScreenModeType.NIGHT:
+                return maskResourceIdNight;
+            case ScreenModeType.DAY:
+                return maskResourceIdLight;
+            default:
+                return maskResourceIdNight;
+        }
+    }
+
+    @DrawableRes
     private int getMaskResourceId() {
         if (maskResourceIdLight == 0 && maskResourceIdNight == 0) {
             return ThemeUtils.getMaskPopup();
@@ -435,7 +453,7 @@ public class ShadowDialog extends Dialog implements View.OnClickListener {
 
     }
 
-    public ShadowDialog setMaskResourceId(@ColorRes int maskResourceIdLight, @ColorRes int maskResourceIdNight) {
+    public ShadowDialog setMaskResourceId(@DrawableRes int maskResourceIdLight, @DrawableRes int maskResourceIdNight) {
         this.maskResourceIdLight = maskResourceIdLight;
         this.maskResourceIdNight = maskResourceIdNight;
         return this;

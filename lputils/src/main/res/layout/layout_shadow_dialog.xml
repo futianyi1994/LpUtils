@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_gravity="center"
-    tools:background="@color/mask_popup_night">
+    tools:background="@drawable/mask_popup_night_radius40">
 
     <LinearLayout
         android:id="@+id/llRoot"
