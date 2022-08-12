@@ -41,7 +41,19 @@ public class ThemeUtils {
     }
 
     @DrawableRes
-    public static int getBgToastOrDialog() {
+    public static int getbgPopup() {
+        switch (SettingsUtils.screenMode()) {
+            case ScreenModeType.NIGHT:
+                return R.mipmap.popup_bg_night;
+            case ScreenModeType.DAY:
+                return R.mipmap.popup_bg_light;
+            default:
+                return R.mipmap.popup_bg_night;
+        }
+    }
+
+    @DrawableRes
+    public static int getBgToast() {
         switch (SettingsUtils.screenMode()) {
             case ScreenModeType.NIGHT:
                 return R.mipmap.bg_toast_night;

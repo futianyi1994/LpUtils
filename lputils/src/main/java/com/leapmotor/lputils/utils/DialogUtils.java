@@ -81,7 +81,7 @@ public class DialogUtils {
      */
     @Deprecated
     private static void show(@Nullable Activity activity, int displayId, @NonNull CharSequence title, @Nullable CharSequence leftTitle, @Nullable CharSequence rightTitle, @Nullable OnClickListener onClickListener) {
-        show(activity, displayId, null, title, leftTitle, rightTitle, ThemeUtils.getBgToastOrDialog(), ThemeUtils.getTextPrimaryColor(), null, onClickListener);
+        show(activity, displayId, null, title, leftTitle, rightTitle, ThemeUtils.getbgPopup(), ThemeUtils.getTextPrimaryColor(), null, onClickListener);
     }
 
     /**
@@ -128,7 +128,7 @@ public class DialogUtils {
      */
     @Deprecated
     private static void show(@Nullable Activity activity, int displayId, @Nullable CharSequence headTitle, @NonNull CharSequence title, @Nullable CharSequence leftTitle, @Nullable CharSequence rightTitle, @Nullable OnClickListener onClickListener) {
-        show(activity, displayId, headTitle, title, leftTitle, rightTitle, ThemeUtils.getBgToastOrDialog(), ThemeUtils.getTextPrimaryColor(), null, onClickListener);
+        show(activity, displayId, headTitle, title, leftTitle, rightTitle, ThemeUtils.getbgPopup(), ThemeUtils.getTextPrimaryColor(), null, onClickListener);
     }
 
     /**
@@ -147,7 +147,7 @@ public class DialogUtils {
         layoutParams.y = 0;
         layoutParams.gravity = Gravity.CENTER;
         layoutParams.type = Build.VERSION.SDK_INT > Build.VERSION_CODES.O ? WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY : WindowManager.LayoutParams.TYPE_PHONE;
-        show(null, displayId, headTitle, title, leftTitle, rightTitle, ThemeUtils.getBgToastOrDialog(), ThemeUtils.getTextPrimaryColor(), layoutParams, onClickListener);
+        show(null, displayId, headTitle, title, leftTitle, rightTitle, ThemeUtils.getbgPopup(), ThemeUtils.getTextPrimaryColor(), layoutParams, onClickListener);
     }
 
     /**

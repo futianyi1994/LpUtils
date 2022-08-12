@@ -59,7 +59,7 @@ import com.leapmotor.lputils.utils.ThemeUtils;
  *          //.setAnim(R.anim.modal_in,R.anim.modal_out)
  *          //设置是否启动动画（此方法会在设置动画后失效）
  *          //.setEnableAnimation(true)
- *          //设置是否主屏全屏居中显示（设置为true时弹框仅在主屏应用区域内居中显示）
+ *          //设置是否主屏全屏居中显示（设置为false时弹框仅在主屏应用区域内居中显示）
  *          .setFullScreen(false)
  *          //统一设置白天黑夜遮罩背景色
  *          //.setMaskResourceId(R.color.mask_popup_night)
@@ -224,7 +224,7 @@ public class ShadowDialog extends Dialog implements View.OnClickListener {
         tvCancel.setOnClickListener(this);
 
         int textColorRes = ThemeUtils.getTextPrimaryColor();
-        llRoot.setBackgroundResource(ThemeUtils.getBgToastOrDialog());
+        llRoot.setBackgroundResource(ThemeUtils.getbgPopup());
         llRoot.setPadding(0, 0, 0, 0);
         int tvContentMaxHeight = isDefaultScreen ? TXT_CONTENT_MAX_HEIGHT_DISPLAY0 : TXT_CONTENT_MAX_HEIGHT_DISPLAY1;
         tvContent.setMaxHeight(title == null ? tvContentMaxHeight : tvContentMaxHeight - TXT_CONTENT_HEAD_HEIGHT);
@@ -505,7 +505,7 @@ public class ShadowDialog extends Dialog implements View.OnClickListener {
         if (isShowing()) {
             int textPrimaryColor = ContextCompat.getColor(getContext(), ThemeUtils.getTextPrimaryColor());
             flRoot.setBackgroundResource(getMaskResourceId());
-            llRoot.setBackgroundResource(ThemeUtils.getBgToastOrDialog());
+            llRoot.setBackgroundResource(ThemeUtils.getbgPopup());
             llRoot.setPadding(0, 0, 0, 0);
             tvTitle.setTextColor(textPrimaryColor);
             tvContent.setTextColor(textPrimaryColor);

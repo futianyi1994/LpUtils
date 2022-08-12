@@ -12,7 +12,7 @@
         android:layout_gravity="center"
         android:gravity="center"
         android:orientation="vertical"
-        tools:background="@mipmap/bg_toast_night">
+        tools:background="@mipmap/popup_bg_night">
 
         <TextView
             android:id="@+id/tvHeadTitle"

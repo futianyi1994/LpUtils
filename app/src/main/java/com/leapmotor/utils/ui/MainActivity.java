@@ -99,7 +99,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     //.setAnim(R.anim.modal_in,R.anim.modal_out)
                     //设置是否启动动画（此方法会在设置动画后失效）
                     //.setEnableAnimation(true)
-                    //设置是否主屏全屏居中显示（设置为true时弹框仅在主屏应用区域内居中显示）
+                    //设置是否主屏全屏居中显示（设置为false时弹框仅在主屏应用区域内居中显示）
                     .setFullScreen(false)
                     //统一设置白天黑夜遮罩背景色
                     //.setMaskResourceId(R.color.mask_popup_night)

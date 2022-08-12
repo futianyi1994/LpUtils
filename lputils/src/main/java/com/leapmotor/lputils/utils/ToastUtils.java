@@ -97,7 +97,7 @@ public class ToastUtils {
      * @param msg       The text.
      */
     public static void showShort(int displayId, CharSequence msg) {
-        show(null, displayId, msg, TXT_MAX_WIDTH, false, ThemeUtils.getBgToastOrDialog(), ThemeUtils.getTextPrimaryColor(), DEFAULT_X_OFFSET, DEFAULT_Y_TOP_OFFSET_MAIN, false);
+        show(null, displayId, msg, TXT_MAX_WIDTH, false, ThemeUtils.getBgToast(), ThemeUtils.getTextPrimaryColor(), DEFAULT_X_OFFSET, DEFAULT_Y_TOP_OFFSET_MAIN, false);
     }
 
     /**
@@ -107,7 +107,7 @@ public class ToastUtils {
      * @param msg       The text.
      */
     public static void showLong(int displayId, CharSequence msg) {
-        show(null, displayId, msg, TXT_MAX_WIDTH, true, ThemeUtils.getBgToastOrDialog(), ThemeUtils.getTextPrimaryColor(), DEFAULT_X_OFFSET, DEFAULT_Y_TOP_OFFSET_MAIN, false);
+        show(null, displayId, msg, TXT_MAX_WIDTH, true, ThemeUtils.getBgToast(), ThemeUtils.getTextPrimaryColor(), DEFAULT_X_OFFSET, DEFAULT_Y_TOP_OFFSET_MAIN, false);
     }
 
     /**
@@ -119,7 +119,7 @@ public class ToastUtils {
      * @param isLong    True is show the toast for a long period of time, false otherwise.
      */
     private static void show(@Nullable Context context, int displayId, CharSequence msg, boolean isLong) {
-        show(context, displayId, msg, TXT_MAX_WIDTH, isLong, ThemeUtils.getBgToastOrDialog(), ThemeUtils.getTextPrimaryColor(), DEFAULT_X_OFFSET, DEFAULT_Y_TOP_OFFSET_MAIN, false);
+        show(context, displayId, msg, TXT_MAX_WIDTH, isLong, ThemeUtils.getBgToast(), ThemeUtils.getTextPrimaryColor(), DEFAULT_X_OFFSET, DEFAULT_Y_TOP_OFFSET_MAIN, false);
     }
 
     /**
@@ -130,7 +130,7 @@ public class ToastUtils {
      * @param isLong    True is show the toast for a long period of time, false otherwise.
      */
     public static void showFullScreen(int displayId, CharSequence msg, boolean isLong) {
-        show(null, displayId, msg, TXT_MAX_WIDTH, isLong, ThemeUtils.getBgToastOrDialog(), ThemeUtils.getTextPrimaryColor(), 0, 0, false);
+        show(null, displayId, msg, TXT_MAX_WIDTH, isLong, ThemeUtils.getBgToast(), ThemeUtils.getTextPrimaryColor(), 0, 0, false);
     }
 
     /**
@@ -289,7 +289,7 @@ public class ToastUtils {
             TextView tvMsg = FindViewUtlis.findViewById(view, R.id.tvMsg);
             if (tvMsg != null) {
                 tvMsg.setTextColor(ContextCompat.getColor(LpUtils.getApp(), ThemeUtils.getTextPrimaryColor()));
-                tvMsg.setBackgroundResource(ThemeUtils.getBgToastOrDialog());
+                tvMsg.setBackgroundResource(ThemeUtils.getBgToast());
                 tvMsg.setPadding(TXT_PADING_START, TXT_PADING_TOP, TXT_PADING_END, TXT_PADING_BOTTOM);
             }
         });
