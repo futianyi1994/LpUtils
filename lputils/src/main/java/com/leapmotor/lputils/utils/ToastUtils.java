@@ -27,7 +27,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 /**
@@ -47,10 +46,11 @@ public class ToastUtils {
     public static final int LENGTH_LONG = 3500;
     public static final int DEFAULT_Y_TOP_OFFSET_MAIN = 0;
     private static final int DEFAULT_X_OFFSET = -1;
+    private static final int MAX_WINDOW_SIZE = 10;
     private static final String TAG = "ToastUtils";
-    private static final Map<Integer, WindowManager> WINDOW_MANAGER_MAP = new HashMap<>();
-    private static final Map<Integer, View> VIEW_MANAGER_MAP = new HashMap<>();
-    private static final Map<Integer, ThreadUtils.Task<Integer>> TASK_MAP = new HashMap<>();
+    private static final Map<Integer, WindowManager> WINDOW_MANAGER_MAP = new HashMap<>(MAX_WINDOW_SIZE);
+    private static final Map<Integer, View> VIEW_MANAGER_MAP = new HashMap<>(MAX_WINDOW_SIZE);
+    private static final Map<Integer, ThreadUtils.Task<Integer>> TASK_MAP = new HashMap<>(MAX_WINDOW_SIZE);
 
     /**
      * Show the toast for a short period of time on default display.
@@ -176,13 +176,8 @@ public class ToastUtils {
                 hideLayout(currentDisplayId);
             }
 
-            AtomicBoolean isAddView = new AtomicBoolean(true);
-            WindowManager windowManager = WINDOW_MANAGER_MAP.computeIfAbsent(currentDisplayId, k -> {
-                isAddView.set(false);
-                return wm;
-            });
+            WindowManager windowManager = WINDOW_MANAGER_MAP.computeIfAbsent(currentDisplayId, k -> wm);
             View customToastView = VIEW_MANAGER_MAP.computeIfAbsent(currentDisplayId, k -> ViewUtils.layoutId2View(app, R.layout.layout_custom_toast));
-            customToastView.setVisibility(View.VISIBLE);
             TextView tvMsg = FindViewUtlis.findViewById(customToastView, R.id.tvMsg);
             float msgWidth = 0;
             if (tvMsg != null) {
@@ -214,10 +209,7 @@ public class ToastUtils {
             layoutParams.flags = WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
                     | WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
             layoutParams.format = PixelFormat.RGBA_8888;
-
-            if (!isAddView.getAndSet(true)) {
-                windowManager.addView(customToastView, layoutParams);
-            }
+            windowManager.addView(customToastView, layoutParams);
 
             if (TASK_MAP.get(currentDisplayId) != null) {
                 ThreadUtils.cancel(TASK_MAP.get(currentDisplayId));
@@ -236,14 +228,7 @@ public class ToastUtils {
 
                 @Override
                 public void onSuccess(Integer displayId) {
-                    if (isRecycle) {
-                        removeLayout(displayId);
-                    } else {
-                        hideLayout(displayId);
-                        WINDOW_MANAGER_MAP.remove(displayId);
-                        VIEW_MANAGER_MAP.remove(displayId);
-                        TASK_MAP.remove(displayId);
-                    }
+                    removeLayout(displayId);
                 }
             };
             TASK_MAP.put(currentDisplayId, integerTask);
@@ -258,11 +243,7 @@ public class ToastUtils {
      * @param displayId The displayId.
      */
     public static void removeLayout(int displayId) {
-        WindowManager windowManager = WINDOW_MANAGER_MAP.get(displayId);
-        View customToastView = VIEW_MANAGER_MAP.get(displayId);
-        if (windowManager != null && customToastView != null) {
-            ThreadUtils.runOnUiThread(() -> windowManager.removeView(customToastView));
-        }
+        hideLayout(displayId);
         WINDOW_MANAGER_MAP.remove(displayId);
         VIEW_MANAGER_MAP.remove(displayId);
         TASK_MAP.remove(displayId);
@@ -277,7 +258,7 @@ public class ToastUtils {
         WindowManager windowManager = WINDOW_MANAGER_MAP.get(displayId);
         View customToastView = VIEW_MANAGER_MAP.get(displayId);
         if (windowManager != null && customToastView != null) {
-            ThreadUtils.runOnUiThread(() -> customToastView.setVisibility(View.GONE));
+            ThreadUtils.runOnUiThread(() -> windowManager.removeView(customToastView));
         }
     }
 

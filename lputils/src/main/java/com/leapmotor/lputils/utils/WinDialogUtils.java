@@ -27,7 +27,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 /**
@@ -45,11 +44,12 @@ public class WinDialogUtils {
     public static final int TXT_TITLE_MAX_HEIGHT_DISPLAY1 = 560;
     public static final int TXT_TITLE_HEAD_HEIGHT = 95;
     public static final int TXT_BG_SHADOW_PADING = 40;
+    private static final int MAX_WINDOW_SIZE = 10;
     private static final String TAG = "DialogUtils";
-    private static final Map<Integer, WindowManager> WINDOW_MANAGER_MAP = new HashMap<>();
-    private static final Map<Integer, View> VIEW_MANAGER_MAP = new HashMap<>();
-    private static final Map<Integer, ThreadUtils.Task<Integer>> TASK_MAP = new HashMap<>();
-    private static final Map<Integer, DialogUtils.OnClickListener> LISTENER_MAP = new HashMap<>();
+    private static final Map<Integer, WindowManager> WINDOW_MANAGER_MAP = new HashMap<>(MAX_WINDOW_SIZE);
+    private static final Map<Integer, View> VIEW_MANAGER_MAP = new HashMap<>(MAX_WINDOW_SIZE);
+    private static final Map<Integer, ThreadUtils.Task<Integer>> TASK_MAP = new HashMap<>(MAX_WINDOW_SIZE);
+    private static final Map<Integer, DialogUtils.OnClickListener> LISTENER_MAP = new HashMap<>(MAX_WINDOW_SIZE);
 
 
     /**
@@ -230,13 +230,8 @@ public class WinDialogUtils {
             };
             TASK_MAP.put(currentDisplayId, integerTask);
 
-            AtomicBoolean isAddView = new AtomicBoolean(true);
-            WindowManager windowManager = WINDOW_MANAGER_MAP.computeIfAbsent(currentDisplayId, k -> {
-                isAddView.set(false);
-                return wm;
-            });
+            WindowManager windowManager = WINDOW_MANAGER_MAP.computeIfAbsent(currentDisplayId, k -> wm);
             View customDialogView = VIEW_MANAGER_MAP.computeIfAbsent(currentDisplayId, k -> ViewUtils.layoutId2View(app, R.layout.layout_custom_dialog));
-            customDialogView.setVisibility(View.VISIBLE);
             LinearLayout llRoot = FindViewUtlis.findViewById(customDialogView, R.id.llRoot);
             LinearLayout llConfirm = FindViewUtlis.findViewById(customDialogView, R.id.llConfirm);
             TextView tvHeadTitle = FindViewUtlis.findViewById(customDialogView, R.id.tvHeadTitle);
@@ -301,10 +296,8 @@ public class WinDialogUtils {
                 lp.type = haveWindowToken ? WindowManager.LayoutParams.TYPE_APPLICATION_ATTACHED_DIALOG : Build.VERSION.SDK_INT > Build.VERSION_CODES.O ? WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY : WindowManager.LayoutParams.TYPE_PHONE;
             }
 
-            if (!isAddView.getAndSet(true)) {
-                WindowManager.LayoutParams finalLayoutParams = lp;
-                windowManager.addView(customDialogView, finalLayoutParams);
-            }
+            WindowManager.LayoutParams finalLayoutParams = lp;
+            windowManager.addView(customDialogView, finalLayoutParams);
         });
     }
 
