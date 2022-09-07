@@ -97,7 +97,7 @@ public class ToastUtils {
      * @param msg       The text.
      */
     public static void showShort(int displayId, CharSequence msg) {
-        show(null, displayId, msg, TXT_MAX_WIDTH, false, ThemeUtils.getBgToast(), ThemeUtils.getTextPrimaryColor(), DEFAULT_X_OFFSET, DEFAULT_Y_TOP_OFFSET_MAIN, false);
+        show(null, displayId, msg, TXT_MAX_WIDTH, false, ThemeUtils.getBgToast(), ThemeUtils.getTextPrimaryColor(), DEFAULT_X_OFFSET, DEFAULT_Y_TOP_OFFSET_MAIN, false, false);
     }
 
     /**
@@ -107,7 +107,7 @@ public class ToastUtils {
      * @param msg       The text.
      */
     public static void showLong(int displayId, CharSequence msg) {
-        show(null, displayId, msg, TXT_MAX_WIDTH, true, ThemeUtils.getBgToast(), ThemeUtils.getTextPrimaryColor(), DEFAULT_X_OFFSET, DEFAULT_Y_TOP_OFFSET_MAIN, false);
+        show(null, displayId, msg, TXT_MAX_WIDTH, true, ThemeUtils.getBgToast(), ThemeUtils.getTextPrimaryColor(), DEFAULT_X_OFFSET, DEFAULT_Y_TOP_OFFSET_MAIN, false, false);
     }
 
     /**
@@ -119,7 +119,7 @@ public class ToastUtils {
      * @param isLong    True is show the toast for a long period of time, false otherwise.
      */
     private static void show(@Nullable Context context, int displayId, CharSequence msg, boolean isLong) {
-        show(context, displayId, msg, TXT_MAX_WIDTH, isLong, ThemeUtils.getBgToast(), ThemeUtils.getTextPrimaryColor(), DEFAULT_X_OFFSET, DEFAULT_Y_TOP_OFFSET_MAIN, false);
+        show(context, displayId, msg, TXT_MAX_WIDTH, isLong, ThemeUtils.getBgToast(), ThemeUtils.getTextPrimaryColor(), DEFAULT_X_OFFSET, DEFAULT_Y_TOP_OFFSET_MAIN, false, false);
     }
 
     /**
@@ -130,24 +130,25 @@ public class ToastUtils {
      * @param isLong    True is show the toast for a long period of time, false otherwise.
      */
     public static void showFullScreen(int displayId, CharSequence msg, boolean isLong) {
-        show(null, displayId, msg, TXT_MAX_WIDTH, isLong, ThemeUtils.getBgToast(), ThemeUtils.getTextPrimaryColor(), 0, 0, false);
+        show(null, displayId, msg, TXT_MAX_WIDTH, isLong, ThemeUtils.getBgToast(), ThemeUtils.getTextPrimaryColor(), 0, 0, false, false);
     }
 
     /**
      * Show the toast according to the display or context.
      *
-     * @param context      The context.
-     * @param displayId    The displayId.
-     * @param msg          The text.
-     * @param maxWidth     The text maxWidth.
-     * @param isLong       True is show the toast for a long period of time, false otherwise.
-     * @param bgResid      Background resource id.
-     * @param textColorRes The text color resource.
-     * @param xOffset      X offset.
-     * @param yOffset      Y offset.
-     * @param isRecycle    True is recycle view,task,and window, false otherwise.
+     * @param context            The context.
+     * @param displayId          The displayId.
+     * @param msg                The text.
+     * @param maxWidth           The text maxWidth.
+     * @param isLong             True is show the toast for a long period of time, false otherwise.
+     * @param bgResid            Background resource id.
+     * @param textColorRes       The text color resource.
+     * @param xOffset            X offset.
+     * @param yOffset            Y offset.
+     * @param isRecycle          True is recycle view,task,and window, false otherwise.
+     * @param hideViewBeforeShow True is hide the previous view layout before each show toast, false otherwise.
      */
-    public static void show(@Nullable Context context, int displayId, CharSequence msg, int maxWidth, boolean isLong, @DrawableRes int bgResid, @ColorRes int textColorRes, int xOffset, int yOffset, boolean isRecycle) {
+    public static void show(@Nullable Context context, int displayId, CharSequence msg, int maxWidth, boolean isLong, @DrawableRes int bgResid, @ColorRes int textColorRes, int xOffset, int yOffset, boolean isRecycle, boolean hideViewBeforeShow) {
         Application app = LpUtils.getApp();
         ThreadUtils.runOnUiThread(() -> {
             int currentDisplayId = Display.INVALID_DISPLAY;
@@ -173,7 +174,9 @@ public class ToastUtils {
             if (isRecycle) {
                 removeLayout(currentDisplayId);
             } else {
-                hideLayout(currentDisplayId);
+                if (hideViewBeforeShow) {
+                    hideLayout(currentDisplayId);
+                }
             }
 
             WindowManager windowManager = WINDOW_MANAGER_MAP.computeIfAbsent(currentDisplayId, k -> wm);
@@ -209,7 +212,12 @@ public class ToastUtils {
             layoutParams.flags = WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
                     | WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
             layoutParams.format = PixelFormat.RGBA_8888;
-            windowManager.addView(customToastView, layoutParams);
+            if (customToastView.getParent() == null) {
+                windowManager.addView(customToastView, layoutParams);
+                Log.d(TAG, "start show toast !");
+            } else {
+                Log.d(TAG, "already show toast !");
+            }
 
             if (TASK_MAP.get(currentDisplayId) != null) {
                 ThreadUtils.cancel(TASK_MAP.get(currentDisplayId));
@@ -233,7 +241,6 @@ public class ToastUtils {
             };
             TASK_MAP.put(currentDisplayId, integerTask);
             ThreadUtils.executeBySingleWithDelay(integerTask, isLong ? LENGTH_LONG : LENGTH_SHORT, TimeUnit.MILLISECONDS);
-
         });
     }
 
