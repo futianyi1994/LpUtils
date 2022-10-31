@@ -361,7 +361,7 @@ public class WinDialogUtils {
         layoutParams.width = DIALOG_WIDTH;
         layoutParams.height = ViewGroup.LayoutParams.WRAP_CONTENT;
         layoutParams.type = WindowManager.LayoutParams.TYPE_APPLICATION_ATTACHED_DIALOG;
-        layoutParams.flags = WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON | WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
+        layoutParams.flags = WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON | WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL;
         layoutParams.format = PixelFormat.RGBA_8888;
         return layoutParams;
     }
@@ -400,7 +400,7 @@ public class WinDialogUtils {
             layoutParams.type = WindowManager.LayoutParams.TYPE_APPLICATION_ATTACHED_DIALOG;
         }
         if (layoutParams.flags == 0) {
-            layoutParams.flags = WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON | WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
+            layoutParams.flags = WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON | WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL;
         }
         if (layoutParams.format == 0) {
             layoutParams.format = PixelFormat.RGBA_8888;

@@ -199,7 +199,6 @@ public class ShadowDialog extends Dialog implements View.OnClickListener {
                 attributes.x = C11Util.X_OFFSET;
                 attributes.y = C11Util.Y_TOP_OFFSET;
                 attributes.gravity = Gravity.START | Gravity.TOP;
-                attributes.flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
             } else {
                 flRoot.setBackgroundResource(maskPopup);
                 window.setDimAmount(0f);
@@ -209,8 +208,8 @@ public class ShadowDialog extends Dialog implements View.OnClickListener {
                 window.getDecorView().setPadding(0, 0, 0, 0);
                 attributes.x = C11Util.X_OFFSET_VICE;
                 attributes.gravity = Gravity.END;
-                attributes.flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
             }
+            window.addFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL);
         }
         if (windowType != 0) {
             attributes.type = windowType;
