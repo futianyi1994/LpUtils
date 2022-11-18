@@ -5,9 +5,10 @@ ext {
             targetSdkVersion  : 28,
             compileSdkVersion : 28,
             buildToolsVersion : "28.0.3",
-            versionCode       : 121,
-            versionName       : "1.2.1",
+            versionCode       : 122,
+            versionName       : "1.2.2",
 
+            kotlinVersion     : "1.4.10",
             roomVersion       : "2.2.6",
             workVersion       : "2.7.1",
             retrofitSdkVersion: "2.7.2",
@@ -80,10 +81,13 @@ ext {
             persistent_cookiejar              : "com.github.franmontiel:PersistentCookieJar:v1.0.1",
             //adapter
             baseRecyclerViewAdapterHelper     : "com.github.CymChad:BaseRecyclerViewAdapterHelper:3.0.6",
+            //kotlin
+            kotlin_stdlib                     : "org.jetbrains.kotlin:kotlin-stdlib:${android["kotlinVersion"]}",
+            core_ktx                          : "androidx.core:core-ktx:1.6.0",
 
             //Leapmotor
             lp_okgo                           : "com.leapmotor:okgo:1.0.14-SNAPSHOT",
-            lp_utils                          : "com.leapmotor.utils:toast:1.2.1-SNAPSHOT",
+            lp_utils                          : "com.leapmotor.utils:toast:1.2.2-SNAPSHOT",
     ]
 }
 
