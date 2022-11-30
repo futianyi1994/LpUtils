@@ -1,5 +1,6 @@
 plugins {
     id 'com.android.application'
+    id 'org.jetbrains.kotlin.android'
 }
 
 android {
@@ -36,4 +37,7 @@ dependencies {
     implementation rootProject.ext.dependencies["supportv7"]
     //implementation rootProject.ext.dependencies["lp_utils"]
     implementation rootProject.ext.dependencies["utilcodex"]
+    //kotlin
+    implementation rootProject.ext.dependencies["core_ktx"]
+    implementation rootProject.ext.dependencies["kotlin_stdlib"]
 }

@@ -37,6 +37,7 @@ public class SecoundActivity extends AppCompatActivity implements View.OnClickLi
         FindViewUtlis.findViewById(this, R.id.tvToastAppointMain).setOnClickListener(this);
         FindViewUtlis.findViewById(this, R.id.tvToastAppointVice).setOnClickListener(this);
         FindViewUtlis.findViewById(this, R.id.tvJump).setOnClickListener(this);
+        FindViewUtlis.findViewById(this, R.id.tvFinish).setOnClickListener(this);
     }
 
     @Override
@@ -95,6 +96,8 @@ public class SecoundActivity extends AppCompatActivity implements View.OnClickLi
             ToastUtils.showShort(1, "Hello");
         } else if (id == R.id.tvJump) {
             CarUtil.startDisplay(getApplicationContext(), new Intent(this, SecoundActivity.class), 1);
+        } else if (id == R.id.tvFinish) {
+            finish();
         }
     }
 

@@ -2,11 +2,11 @@ package com.leapmotor.utils.ui;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.leapmotor.lputils.utils.C11Util;
 import com.leapmotor.lputils.utils.DialogUtils;
 import com.leapmotor.lputils.utils.FindViewUtlis;
 import com.leapmotor.lputils.utils.ToastUtils;
@@ -15,7 +15,6 @@ import com.leapmotor.utils.R;
 import com.leapmotor.utils.utils.CarUtil;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, DialogUtils.OnClickListener {
-
     public static final String TEST_TITLE = "君不见，黄河之水天上来，奔流到海不复回。\n"
             + "\n"
             + "君不见，高堂明镜悲白发，朝如青丝暮成雪。\n"
@@ -56,7 +55,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        C11Util.windowFlag(this);
         FindViewUtlis.findViewById(this, R.id.ShowShadowDialog).setOnClickListener(this);
         FindViewUtlis.findViewById(this, R.id.tvFullDialogMain).setOnClickListener(this);
         FindViewUtlis.findViewById(this, R.id.tvFullDialogVice).setOnClickListener(this);
@@ -75,6 +73,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         FindViewUtlis.findViewById(this, R.id.tvToastAppointMain).setOnClickListener(this);
         FindViewUtlis.findViewById(this, R.id.tvToastAppointVice).setOnClickListener(this);
         FindViewUtlis.findViewById(this, R.id.tvJump).setOnClickListener(this);
+        FindViewUtlis.findViewById(this, R.id.tvFinish).setOnClickListener(this);
     }
 
     @Override
@@ -100,7 +99,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     //设置是否启动动画（此方法会在设置动画后失效）
                     //.setEnableAnimation(true)
                     //设置是否主屏全屏居中显示（设置为false时弹框仅在主屏应用区域内居中显示）
-                    .setFullScreen(false)
+                    .setFullScreen(true)
+                    //设置弹出框背景
+                    .setBgResid(R.mipmap.popup_bg_light)
+                    //设置内容区文字颜色
+                    .setTextColorRes(R.color.blue)
+                    //设置弹出框的WindowManager.LayoutParams
+                    //.setLayoutParams(null)
+                    //设置X偏移，即WindowManager.LayoutParams中的x
+                    //.setxOffset(0)
+                    //设置Y偏移，即WindowManager.LayoutParams中的y
+                    //.setyOffset(0)
+                    //设置Gravity，即WindowManager.LayoutParams中的gravity
+                    //.setGravity(Gravity.CENTER)
                     //统一设置白天黑夜遮罩背景色
                     //.setMaskResourceId(R.color.mask_popup_night)
                     //单独设置白天和黑夜遮罩背景色
@@ -147,20 +158,55 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         } else if (id == R.id.tvDialogByContext) {
             DialogUtils.show(this, TEST_TITLE, "确定", "取消", this);
         } else if (id == R.id.tvDialogAppointMain) {
+            DialogUtils.clearUsedConfig();
+            DialogUtils
+                    .getConfig()
+                    .setFullScreen(true)
+                    .setFullScreenVice(true)
+                    .setTextColorRes(R.color.green)
+                    .setGravity(Gravity.START | Gravity.TOP)
+                    .setxOffset(0)
+                    .setyOffset(0)
+                    .create();
             DialogUtils.show(0, TEST_TITLE, "确定", "取消", this);
         } else if (id == R.id.tvDialogAppointVice) {
             DialogUtils.show(1, TEST_TITLE, "确定", "取消", this);
         } else if (id == R.id.tvHeadDialogByContext) {
             DialogUtils.show(this, "吟诗一首", TEST_TITLE, "确定", "取消", this);
         } else if (id == R.id.tvHeadDialogAppointMain) {
+            DialogUtils.clearUsedConfig();
+            DialogUtils
+                    .getConfig()
+                    .setFullScreen(false)
+                    .setFullScreenVice(false)
+                    .setTextColorRes(R.color.red)
+                    .setGravity(Gravity.BOTTOM)
+                    .setxOffsetVice(0)
+                    .setyOffsetVice(0)
+                    .create();
             DialogUtils.show(0, "吟诗一首", TEST_TITLE, "确定", "取消", this);
         } else if (id == R.id.tvHeadDialogAppointVice) {
             DialogUtils.show(1, "吟诗一首", TEST_TITLE, "确定", "取消", this);
         } else if (id == R.id.tvFullToastMain) {
+            ToastUtils
+                    .getConfig()
+                    .setTextColorRes(R.color.green)
+                    .setHideViewBeforeShow(true)
+                    .setyOffset(500)
+                    .setFullScreen(true)
+                    .create();
             ToastUtils.showFullScreen(0, "Hello", true);
         } else if (id == R.id.tvFullToastVice) {
             ToastUtils.showFullScreen(1, "Hello", true);
         } else if (id == R.id.tvToastMain) {
+            ToastUtils.clearUsedConfig();
+            ToastUtils
+                    .getConfig()
+                    .setTextColorRes(R.color.red)
+                    .setHideViewBeforeShow(true)
+                    .setFullScreen(false)
+                    .setyOffset(600)
+                    .create();
             ToastUtils.showShort(TEST_TITLE2);
         } else if (id == R.id.tvToastByContext) {
             ToastUtils.showShort(this, TEST_TITLE2);
@@ -170,6 +216,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             ToastUtils.showShort(1, TEST_TITLE2);
         } else if (id == R.id.tvJump) {
             CarUtil.startDisplay(getApplicationContext(), new Intent(this, SecoundActivity.class), 1);
+        } else if (id == R.id.tvKotlinTest) {
+            Test test = new Test();
+            test.vars(1, 2, 3, 4, 5, 6);
+            test.convert();
+            String tag1 = Test.TAG1;
+            String tag2 = Test.TAG2;
+            Test.Companion.test();
+            Test.test1();
+            Test.Companion.getTAG3();
+            Test.Companion.getTAG4();
+            Test.getTAG3();
+        } else if (id == R.id.tvFinish) {
+            finish();
         }
     }
 

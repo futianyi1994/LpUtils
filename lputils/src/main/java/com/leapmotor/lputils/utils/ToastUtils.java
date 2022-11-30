@@ -52,6 +52,12 @@ public class ToastUtils {
     private static final Map<Integer, View> VIEW_MANAGER_MAP = new HashMap<>(MAX_WINDOW_SIZE);
     private static final Map<Integer, ThreadUtils.Task<Integer>> TASK_MAP = new HashMap<>(MAX_WINDOW_SIZE);
 
+    private static final Config CONFIG = new Config();
+
+    public static Config getConfig() {
+        return CONFIG;
+    }
+
     /**
      * Show the toast for a short period of time on default display.
      *
@@ -171,10 +177,10 @@ public class ToastUtils {
                     return;
                 }
             }
-            if (isRecycle) {
+            if (CONFIG.isUseIsRecycleConfig() ? CONFIG.isRecycle() : isRecycle) {
                 removeLayout(currentDisplayId);
             } else {
-                if (hideViewBeforeShow) {
+                if (CONFIG.isUseHideViewBeforeShowConfig() ? CONFIG.isHideViewBeforeShow() : hideViewBeforeShow) {
                     hideLayout(currentDisplayId);
                 }
             }
@@ -185,11 +191,11 @@ public class ToastUtils {
             float msgWidth = 0;
             if (tvMsg != null) {
                 tvMsg.setText(msg);
-                tvMsg.setMaxWidth(maxWidth);
+                tvMsg.setMaxWidth(CONFIG.isUseMaxWidthConfig() ? CONFIG.getMaxWidth() : maxWidth);
                 tvMsg.setMaxLines(TXT_MAX_LINES);
                 tvMsg.setMovementMethod(ScrollingMovementMethod.getInstance());
-                tvMsg.setTextColor(ContextCompat.getColor(app, textColorRes));
-                tvMsg.setBackgroundResource(bgResid);
+                tvMsg.setTextColor(ContextCompat.getColor(app, CONFIG.isUseTextColorResConfig() ? CONFIG.getTextColorRes() : textColorRes));
+                tvMsg.setBackgroundResource(CONFIG.isUseBgResidConfig() ? CONFIG.getBgResid() : bgResid);
                 tvMsg.setPadding(TXT_PADING_START, TXT_PADING_TOP, TXT_PADING_END, TXT_PADING_BOTTOM);
                 FrameLayout.LayoutParams tvLayoutParams = (FrameLayout.LayoutParams) tvMsg.getLayoutParams();
                 tvLayoutParams.setMargins(0, 0, 0, 0);
@@ -198,12 +204,12 @@ public class ToastUtils {
             WindowManager.LayoutParams layoutParams = new WindowManager.LayoutParams();
             if (windowManager.getDefaultDisplay().getDisplayId() == Display.DEFAULT_DISPLAY) {
                 layoutParams.gravity = Gravity.TOP;
-                layoutParams.x = xOffset == DEFAULT_X_OFFSET ? C11Util.X_OFFSET / 2 : xOffset;
-                layoutParams.y = Math.max(C11Util.Y_TOP_OFFSET + yOffset, 0);
+                layoutParams.x = CONFIG.isUseXOffsetConfig() ? CONFIG.getxOffset() : xOffset == DEFAULT_X_OFFSET ? C11Util.X_OFFSET / 2 : xOffset;
+                layoutParams.y = CONFIG.isUseYOffsetConfig() ? CONFIG.getyOffset() : Math.max(C11Util.Y_TOP_OFFSET + yOffset, 0);
             } else {
                 layoutParams.gravity = Gravity.TOP;
-                layoutParams.x = xOffset == DEFAULT_X_OFFSET ? -C11Util.X_OFFSET_VICE / 2 : xOffset;
-                layoutParams.y = Math.max(yOffset, 0);
+                layoutParams.x = CONFIG.isUseXOffsetViceConfig() ? CONFIG.getxOffsetVice() : xOffset == DEFAULT_X_OFFSET ? -C11Util.X_OFFSET_VICE / 2 : xOffset;
+                layoutParams.y = CONFIG.isUseYOffsetViceConfig() ? CONFIG.getyOffsetVice() : Math.max(yOffset, 0);
             }
             int contentWidth = (int) (msgWidth + TXT_PADING_START + TXT_PADING_END + TXT_BG_SHADOW_PADING * 2);
             layoutParams.width = Math.min(contentWidth, TXT_MAX_WIDTH);
@@ -282,5 +288,226 @@ public class ToastUtils {
             }
         });
         Log.i(TAG, "refresh toast theme success !");
+    }
+
+    /**
+     * clear used configuration.
+     */
+    public static void clearUsedConfig() {
+        CONFIG.clearUsedConfig();
+    }
+
+    /**
+     * Created by futia on 2022/11/29 13:47
+     *
+     * @Description: Toast Parameter Configuration.
+     */
+    public static final class Config {
+        public static final int DEFAULT_VALUE = -10000;
+        private boolean useMaxWidthConfig = false;
+        private boolean useBgResidConfig = false;
+        private boolean useTextColorResConfig = false;
+        private boolean useXOffsetConfig = false;
+        private boolean useYOffsetConfig = false;
+        private boolean useXOffsetViceConfig = false;
+        private boolean useYOffsetViceConfig = false;
+        private boolean useIsRecycleConfig = false;
+        private boolean useHideViewBeforeShowConfig = false;
+        private int maxWidth = TXT_MAX_WIDTH;
+        @DrawableRes
+        private int bgResid = 0;
+        @ColorRes
+        private int textColorRes = 0;
+        private int xOffset = DEFAULT_VALUE;
+        private int yOffset = DEFAULT_VALUE;
+        private int xOffsetVice = DEFAULT_VALUE;
+        private int yOffsetVice = DEFAULT_VALUE;
+        private boolean isRecycle = false;
+        private boolean hideViewBeforeShow = false;
+        private boolean isFullScreen = false;
+        private boolean isFullScreenVice = false;
+
+        private Config() {
+        }
+
+        public boolean isUseMaxWidthConfig() {
+            return useMaxWidthConfig;
+        }
+
+        public boolean isUseBgResidConfig() {
+            return useBgResidConfig;
+        }
+
+        public boolean isUseTextColorResConfig() {
+            return useTextColorResConfig;
+        }
+
+        public boolean isUseXOffsetConfig() {
+            return useXOffsetConfig;
+        }
+
+        public boolean isUseYOffsetConfig() {
+            return useYOffsetConfig;
+        }
+
+        public boolean isUseXOffsetViceConfig() {
+            return useXOffsetViceConfig;
+        }
+
+        public boolean isUseYOffsetViceConfig() {
+            return useYOffsetViceConfig;
+        }
+
+        public boolean isUseIsRecycleConfig() {
+            return useIsRecycleConfig;
+        }
+
+        public boolean isUseHideViewBeforeShowConfig() {
+            return useHideViewBeforeShowConfig;
+        }
+
+        public int getMaxWidth() {
+            return maxWidth;
+        }
+
+        public Config setMaxWidth(int maxWidth) {
+            useMaxWidthConfig = true;
+            this.maxWidth = maxWidth;
+            return this;
+        }
+
+        @DrawableRes
+        public int getBgResid() {
+            return bgResid;
+        }
+
+        public Config setBgResid(@DrawableRes int bgResid) {
+            useBgResidConfig = true;
+            this.bgResid = bgResid;
+            return this;
+        }
+
+        @ColorRes
+        public int getTextColorRes() {
+            return textColorRes;
+        }
+
+        public Config setTextColorRes(@ColorRes int textColorRes) {
+            useTextColorResConfig = true;
+            this.textColorRes = textColorRes;
+            return this;
+        }
+
+        public int getxOffset() {
+            return xOffset;
+        }
+
+        public Config setxOffset(int xOffset) {
+            useXOffsetConfig = true;
+            this.xOffset = xOffset;
+            return this;
+        }
+
+        public int getyOffset() {
+            return yOffset;
+        }
+
+        public Config setyOffset(int yOffset) {
+            useYOffsetConfig = true;
+            this.yOffset = yOffset;
+            return this;
+        }
+
+        public int getxOffsetVice() {
+            return xOffsetVice;
+        }
+
+        public Config setxOffsetVice(int xOffsetVice) {
+            useXOffsetViceConfig = true;
+            this.xOffsetVice = xOffsetVice;
+            return this;
+        }
+
+        public int getyOffsetVice() {
+            return yOffsetVice;
+        }
+
+        public Config setyOffsetVice(int yOffsetVice) {
+            useYOffsetViceConfig = true;
+            this.yOffsetVice = yOffsetVice;
+            return this;
+        }
+
+        public boolean isRecycle() {
+            return isRecycle;
+        }
+
+        public Config setRecycle(boolean recycle) {
+            useIsRecycleConfig = true;
+            isRecycle = recycle;
+            return this;
+        }
+
+        public boolean isHideViewBeforeShow() {
+            return hideViewBeforeShow;
+        }
+
+        public Config setHideViewBeforeShow(boolean hideViewBeforeShow) {
+            useHideViewBeforeShowConfig = true;
+            this.hideViewBeforeShow = hideViewBeforeShow;
+            return this;
+        }
+
+        public boolean isFullScreen() {
+            return isFullScreen;
+        }
+
+        public Config setFullScreen(boolean fullScreen) {
+            isFullScreen = fullScreen;
+            return this;
+        }
+
+        public boolean isFullScreenVice() {
+            return isFullScreenVice;
+        }
+
+        public Config setFullScreenVice(boolean fullScreenVice) {
+            isFullScreenVice = fullScreenVice;
+            return this;
+        }
+
+        public Config clearUsedConfig() {
+            useMaxWidthConfig = false;
+            useBgResidConfig = false;
+            useTextColorResConfig = false;
+            useXOffsetConfig = false;
+            useYOffsetConfig = false;
+            useXOffsetViceConfig = false;
+            useYOffsetViceConfig = false;
+            useIsRecycleConfig = false;
+            useHideViewBeforeShowConfig = false;
+            isFullScreen = false;
+            isFullScreenVice = false;
+            return this;
+        }
+
+        public void create() {
+            if (isFullScreen) {
+                if (!isUseXOffsetConfig()) {
+                    setxOffset(0);
+                }
+                if (!isUseYOffsetConfig()) {
+                    setyOffset(0);
+                }
+            }
+            if (isFullScreenVice) {
+                if (!isUseXOffsetViceConfig()) {
+                    setxOffsetVice(0);
+                }
+                if (!isUseYOffsetViceConfig()) {
+                    setyOffsetVice(0);
+                }
+            }
+        }
     }
 }

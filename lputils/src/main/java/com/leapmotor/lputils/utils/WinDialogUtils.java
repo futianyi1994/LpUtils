@@ -51,6 +51,11 @@ public class WinDialogUtils {
     private static final Map<Integer, ThreadUtils.Task<Integer>> TASK_MAP = new HashMap<>(MAX_WINDOW_SIZE);
     private static final Map<Integer, DialogUtils.OnClickListener> LISTENER_MAP = new HashMap<>(MAX_WINDOW_SIZE);
 
+    private static final Config CONFIG = new Config();
+
+    public static Config getConfig() {
+        return CONFIG;
+    }
 
     /**
      * Show the dialog on default display.
@@ -185,7 +190,7 @@ public class WinDialogUtils {
             boolean haveWindowToken;
             int currentDisplayId = Display.INVALID_DISPLAY;
             WindowManager wm;
-            WindowManager.LayoutParams lp = layoutParams;
+            WindowManager.LayoutParams lp = CONFIG.isUseLayoutParamsConfig() ? CONFIG.getLayoutParams() : layoutParams;
             if (displayId != Display.INVALID_DISPLAY) {
                 haveWindowToken = false;
                 Display display = DisplayUtils.getDisplay(app, displayId);
@@ -240,13 +245,14 @@ public class WinDialogUtils {
             TextView tvLeft = FindViewUtlis.findViewById(customDialogView, R.id.tvLeft);
             TextView tvRight = FindViewUtlis.findViewById(customDialogView, R.id.tvRight);
             if (llRoot != null && llConfirm != null && tvTitle != null && tvHeadTitle != null && vLine != null && tvLeft != null && tvRight != null) {
-                llRoot.setBackgroundResource(bgResid);
+                @ColorRes int mTextColorRes = CONFIG.isUseTextColorResConfig() ? CONFIG.getTextColorRes() : textColorRes;
+                llRoot.setBackgroundResource(CONFIG.isUseBgResidConfig() ? CONFIG.getBgResid() : bgResid);
                 llRoot.setPadding(0, 0, 0, 0);
                 tvTitle.setText(title);
                 int tvTitleMaxHeight = currentDisplayId == Display.DEFAULT_DISPLAY ? TXT_TITLE_MAX_HEIGHT_DISPLAY0 : TXT_TITLE_MAX_HEIGHT_DISPLAY1;
                 tvTitle.setMaxHeight(headTitle == null ? tvTitleMaxHeight : tvTitleMaxHeight - TXT_TITLE_HEAD_HEIGHT);
                 tvTitle.setMovementMethod(ScrollingMovementMethod.getInstance());
-                tvTitle.setTextColor(ContextCompat.getColor(app, textColorRes));
+                tvTitle.setTextColor(ContextCompat.getColor(app, mTextColorRes));
                 LinearLayout.LayoutParams tvHeadTitleLayoutParams = (LinearLayout.LayoutParams) tvHeadTitle.getLayoutParams();
                 tvHeadTitleLayoutParams.setMargins(TXT_BG_SHADOW_PADING, TXT_BG_SHADOW_PADING, TXT_BG_SHADOW_PADING, 0);
                 LinearLayout.LayoutParams tvTitleLayoutParams = (LinearLayout.LayoutParams) tvTitle.getLayoutParams();
@@ -267,10 +273,10 @@ public class WinDialogUtils {
                 tvHeadTitle.setSelected(true);
                 tvLeft.setSelected(true);
                 tvRight.setSelected(true);
-                tvHeadTitle.setTextColor(ContextCompat.getColor(app, textColorRes));
+                tvHeadTitle.setTextColor(ContextCompat.getColor(app, mTextColorRes));
                 vLine.setBackgroundResource(ThemeUtils.getLineColor());
                 tvLeft.setTextColor(ContextCompat.getColor(app, ThemeUtils.getBtnTextHighlightColor()));
-                tvRight.setTextColor(ContextCompat.getColor(app, textColorRes));
+                tvRight.setTextColor(ContextCompat.getColor(app, mTextColorRes));
                 tvHeadTitle.setVisibility(headTitle == null ? View.GONE : View.VISIBLE);
                 tvLeft.setVisibility(leftTitle == null ? View.GONE : View.VISIBLE);
                 tvRight.setVisibility(rightTitle == null ? View.GONE : View.VISIBLE);
@@ -352,11 +358,13 @@ public class WinDialogUtils {
     public static WindowManager.LayoutParams getDefaultLayoutParams(int displayId) {
         WindowManager.LayoutParams layoutParams = new WindowManager.LayoutParams();
         if (displayId == Display.DEFAULT_DISPLAY) {
-            layoutParams.gravity = Gravity.CENTER;
-            layoutParams.x = C11Util.X_OFFSET / 2;
-            layoutParams.y = (C11Util.Y_TOP_OFFSET - C11Util.Y_BOTTOM_OFFSET) / 2;
+            layoutParams.gravity = CONFIG.getGravity() != Config.DEFAULT_VALUE ? CONFIG.getGravity() : Gravity.CENTER;
+            layoutParams.x = CONFIG.getxOffset() != Config.DEFAULT_VALUE ? CONFIG.getxOffset() : C11Util.X_OFFSET / 2;
+            layoutParams.y = CONFIG.getyOffset() != Config.DEFAULT_VALUE ? CONFIG.getyOffset() : (C11Util.Y_TOP_OFFSET - C11Util.Y_BOTTOM_OFFSET) / 2;
         } else {
-            layoutParams.gravity = Gravity.CENTER;
+            layoutParams.gravity = CONFIG.getGravity() != Config.DEFAULT_VALUE ? CONFIG.getGravity() : Gravity.CENTER;
+            layoutParams.x = CONFIG.getxOffsetVice() != Config.DEFAULT_VALUE ? CONFIG.getxOffsetVice() : 0;
+            layoutParams.y = CONFIG.getyOffsetVice() != Config.DEFAULT_VALUE ? CONFIG.getyOffsetVice() : 0;
         }
         layoutParams.width = DIALOG_WIDTH;
         layoutParams.height = ViewGroup.LayoutParams.WRAP_CONTENT;
@@ -367,44 +375,179 @@ public class WinDialogUtils {
     }
 
     /**
-     * Get merged windowManager layoutParams.
-     *
-     * @param displayId    The displayId.
-     * @param layoutParams The source windowManager layoutParams.
-     * @return The merged windowManager layoutParams.
+     * clear used configuration.
      */
-    public static WindowManager.LayoutParams mergeLayoutParams(int displayId, WindowManager.LayoutParams layoutParams) {
-        if (displayId == Display.DEFAULT_DISPLAY) {
-            if (layoutParams.gravity == Gravity.NO_GRAVITY) {
-                layoutParams.gravity = Gravity.CENTER;
-            }
-            if (layoutParams.x == 0) {
-                layoutParams.x = C11Util.X_OFFSET / 2;
-            }
-            if (layoutParams.y == 0) {
-                layoutParams.y = (C11Util.Y_TOP_OFFSET - C11Util.Y_BOTTOM_OFFSET) / 2;
-            }
-        } else {
-            if (layoutParams.gravity == Gravity.NO_GRAVITY) {
-                layoutParams.gravity = Gravity.CENTER;
-            }
+    public static void clearUsedConfig() {
+        CONFIG.clearUsedConfig();
+    }
+
+    /**
+     * Created by futia on 2022/11/29 13:46
+     *
+     * @Description: WinDialog Parameter Configuration.
+     */
+    public static final class Config {
+        public static final int DEFAULT_VALUE = -10000;
+        private boolean useBgResidConfig = false;
+        private boolean useTextColorResConfig = false;
+        private boolean useLayoutParamsConfig = false;
+        @DrawableRes
+        private int bgResid = 0;
+        @ColorRes
+        private int textColorRes = 0;
+        private WindowManager.LayoutParams layoutParams = null;
+        private int xOffset = DEFAULT_VALUE;
+        private int yOffset = DEFAULT_VALUE;
+        private int xOffsetVice = DEFAULT_VALUE;
+        private int yOffsetVice = DEFAULT_VALUE;
+        private int gravity = DEFAULT_VALUE;
+        private boolean isFullScreen = false;
+        private boolean isFullScreenVice = false;
+
+        Config() {
         }
 
-        if (layoutParams.width == 0) {
-            layoutParams.width = DIALOG_WIDTH;
+        public boolean isUseBgResidConfig() {
+            return useBgResidConfig;
         }
-        if (layoutParams.height == 0) {
-            layoutParams.height = ViewGroup.LayoutParams.WRAP_CONTENT;
+
+        public boolean isUseTextColorResConfig() {
+            return useTextColorResConfig;
         }
-        if (layoutParams.type == 0) {
-            layoutParams.type = WindowManager.LayoutParams.TYPE_APPLICATION_ATTACHED_DIALOG;
+
+        public boolean isUseLayoutParamsConfig() {
+            return useLayoutParamsConfig;
         }
-        if (layoutParams.flags == 0) {
-            layoutParams.flags = WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON | WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL;
+
+        @DrawableRes
+        public int getBgResid() {
+            return bgResid;
         }
-        if (layoutParams.format == 0) {
-            layoutParams.format = PixelFormat.RGBA_8888;
+
+        public Config setBgResid(@DrawableRes int bgResid) {
+            useBgResidConfig = true;
+            this.bgResid = bgResid;
+            return this;
         }
-        return layoutParams;
+
+        @ColorRes
+        public int getTextColorRes() {
+            return textColorRes;
+        }
+
+        public Config setTextColorRes(@ColorRes int textColorRes) {
+            useTextColorResConfig = true;
+            this.textColorRes = textColorRes;
+            return this;
+        }
+
+        public WindowManager.LayoutParams getLayoutParams() {
+            return layoutParams;
+        }
+
+        public Config setLayoutParams(WindowManager.LayoutParams layoutParams) {
+            useLayoutParamsConfig = true;
+            this.layoutParams = layoutParams;
+            return this;
+        }
+
+        public int getxOffset() {
+            return xOffset;
+        }
+
+        public Config setxOffset(int xOffset) {
+            this.xOffset = xOffset;
+            return this;
+        }
+
+        public int getyOffset() {
+            return yOffset;
+        }
+
+        public Config setyOffset(int yOffset) {
+            this.yOffset = yOffset;
+            return this;
+        }
+
+        public int getxOffsetVice() {
+            return xOffsetVice;
+        }
+
+        public Config setxOffsetVice(int xOffsetVice) {
+            this.xOffsetVice = xOffsetVice;
+            return this;
+        }
+
+        public int getyOffsetVice() {
+            return yOffsetVice;
+        }
+
+        public Config setyOffsetVice(int yOffsetVice) {
+            this.yOffsetVice = yOffsetVice;
+            return this;
+        }
+
+        public int getGravity() {
+            return gravity;
+        }
+
+        public Config setGravity(int gravity) {
+            this.gravity = gravity;
+            return this;
+        }
+
+        public boolean isFullScreen() {
+            return isFullScreen;
+        }
+
+        public Config setFullScreen(boolean fullScreen) {
+            isFullScreen = fullScreen;
+            return this;
+        }
+
+        public boolean isFullScreenVice() {
+            return isFullScreenVice;
+        }
+
+        public Config setFullScreenVice(boolean fullScreenVice) {
+            isFullScreenVice = fullScreenVice;
+            return this;
+        }
+
+        public Config clearUsedConfig() {
+            useBgResidConfig = false;
+            useTextColorResConfig = false;
+            useLayoutParamsConfig = false;
+            bgResid = 0;
+            textColorRes = 0;
+            layoutParams = null;
+            xOffset = DEFAULT_VALUE;
+            yOffset = DEFAULT_VALUE;
+            xOffsetVice = DEFAULT_VALUE;
+            yOffsetVice = DEFAULT_VALUE;
+            gravity = DEFAULT_VALUE;
+            isFullScreen = false;
+            isFullScreenVice = false;
+            return this;
+        }
+
+        public void create() {
+            if (isFullScreen) {
+                if (xOffset == Config.DEFAULT_VALUE) {
+                    setxOffset(0);
+                }
+                if (yOffset == Config.DEFAULT_VALUE) {
+                    setyOffset(0);
+                }
+            }
+            if (isFullScreenVice) {
+                if (xOffsetVice == Config.DEFAULT_VALUE) {
+                    setxOffsetVice(0);
+                }
+                if (yOffsetVice == Config.DEFAULT_VALUE) {
+                    setyOffsetVice(0);
+                }
+            }
+        }
     }
 }

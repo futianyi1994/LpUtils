@@ -148,9 +148,13 @@ public class TLog {
         LogUtils
                 .getConfig()
                 .setDir(Constant.LOG_PATH)
+                //关闭头部日志
                 .setLogHeadSwitch(false)
+                //关闭日志边界
                 .setBorderSwitch(false)
-                .setFileFilter(fileFilter)
+                //日志写入文件过滤器
+                .setFileFilter(LogUtils.E)
+                //日志的文件名前缀
                 .setFilePrefix(logerName);
     }
 }

@@ -61,6 +61,18 @@ import com.leapmotor.lputils.utils.ThemeUtils;
  *          //.setEnableAnimation(true)
  *          //设置是否主屏全屏居中显示（设置为false时弹框仅在主屏应用区域内居中显示）
  *          .setFullScreen(false)
+ *          //设置弹出框背景
+ *          .setBgResid(R.mipmap.popup_bg_light)
+ *          //设置内容区文字颜色
+ *          .setTextColorRes(R.color.blue)
+ *          //设置弹出框的WindowManager.LayoutParams
+ *          //.setLayoutParams(null)
+ *          //设置X偏移，即WindowManager.LayoutParams中的x
+ *          //.setxOffset(0)
+ *          //设置Y偏移，即WindowManager.LayoutParams中的y
+ *          //.setyOffset(0)
+ *          //设置Gravity，即WindowManager.LayoutParams中的gravity
+ *          //.setGravity(Gravity.CENTER)
  *          //统一设置白天黑夜遮罩背景色
  *          //.setMaskResourceId(R.color.mask_popup_night)
  *          //单独设置白天和黑夜遮罩背景色
@@ -107,6 +119,7 @@ import com.leapmotor.lputils.utils.ThemeUtils;
  * @description :
  */
 public class ShadowDialog extends Dialog implements View.OnClickListener {
+    public static final int DEFAULT_VALUE = -10000;
     public static final int DIALOG_WIDTH = 720;
     public static final int TXT_CONTENT_MAX_WIDTH = 560;
     public static final int TXT_CONTENT_MAX_HEIGHT_DISPLAY0 = 720;
@@ -134,6 +147,14 @@ public class ShadowDialog extends Dialog implements View.OnClickListener {
     private boolean isFullScreen = false;
     private boolean isCanceledOnTouchOutside = true;
     private boolean enableAnimation = true;
+    @DrawableRes
+    private int bgResid = 0;
+    @ColorRes
+    private int textColorRes = 0;
+    private WindowManager.LayoutParams layoutParams = null;
+    private int xOffset = DEFAULT_VALUE;
+    private int yOffset = DEFAULT_VALUE;
+    private int gravity = DEFAULT_VALUE;
     @DrawableRes
     private int maskResourceIdLight, maskResourceIdNight;
     private final ContentObserver observer = new ContentObserver(new Handler()) {
@@ -188,6 +209,9 @@ public class ShadowDialog extends Dialog implements View.OnClickListener {
             window.setBackgroundDrawableResource(R.color.transparent);
             //设置背景之后设置才生效
             window.getDecorView().setPadding(0, 0, 0, 0);
+            attributes.x = xOffset != DEFAULT_VALUE ? xOffset : 0;
+            attributes.y = yOffset != DEFAULT_VALUE ? yOffset : 0;
+            attributes.gravity = gravity != DEFAULT_VALUE ? gravity : Gravity.NO_GRAVITY;
         } else {
             if (isDefaultScreen) {
                 flRoot.setBackgroundResource(radiusMaskPopup);
@@ -196,9 +220,9 @@ public class ShadowDialog extends Dialog implements View.OnClickListener {
                 window.setBackgroundDrawableResource(R.color.transparent);
                 //设置背景之后设置才生效
                 window.getDecorView().setPadding(0, 0, 0, 0);
-                attributes.x = C11Util.X_OFFSET;
-                attributes.y = C11Util.Y_TOP_OFFSET;
-                attributes.gravity = Gravity.START | Gravity.TOP;
+                attributes.x = xOffset != DEFAULT_VALUE ? xOffset : C11Util.X_OFFSET;
+                attributes.y = yOffset != DEFAULT_VALUE ? yOffset : C11Util.Y_TOP_OFFSET;
+                attributes.gravity = gravity != DEFAULT_VALUE ? gravity : Gravity.START | Gravity.TOP;
             } else {
                 flRoot.setBackgroundResource(maskPopup);
                 window.setDimAmount(0f);
@@ -206,13 +230,17 @@ public class ShadowDialog extends Dialog implements View.OnClickListener {
                 window.setBackgroundDrawableResource(R.color.transparent);
                 //设置背景之后设置才生效
                 window.getDecorView().setPadding(0, 0, 0, 0);
-                attributes.x = C11Util.X_OFFSET_VICE;
-                attributes.gravity = Gravity.END;
+                attributes.x = xOffset != DEFAULT_VALUE ? xOffset : C11Util.X_OFFSET_VICE;
+                attributes.y = yOffset != DEFAULT_VALUE ? yOffset : 0;
+                attributes.gravity = gravity != DEFAULT_VALUE ? gravity : Gravity.END;
             }
             window.addFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL);
         }
         if (windowType != 0) {
             attributes.type = windowType;
+        }
+        if (layoutParams != null) {
+            attributes.copyFrom(layoutParams);
         }
         window.setAttributes(attributes);
 
@@ -222,8 +250,8 @@ public class ShadowDialog extends Dialog implements View.OnClickListener {
         tvConfirm.setOnClickListener(this);
         tvCancel.setOnClickListener(this);
 
-        int textColorRes = ThemeUtils.getTextPrimaryColor();
-        llRoot.setBackgroundResource(ThemeUtils.getbgPopup());
+        @ColorRes int textColorRes = this.textColorRes != 0 ? this.textColorRes : ThemeUtils.getTextPrimaryColor();
+        llRoot.setBackgroundResource(bgResid != 0 ? bgResid : ThemeUtils.getbgPopup());
         llRoot.setPadding(0, 0, 0, 0);
         int tvContentMaxHeight = isDefaultScreen ? TXT_CONTENT_MAX_HEIGHT_DISPLAY0 : TXT_CONTENT_MAX_HEIGHT_DISPLAY1;
         tvContent.setMaxHeight(title == null ? tvContentMaxHeight : tvContentMaxHeight - TXT_CONTENT_HEAD_HEIGHT);
@@ -414,6 +442,60 @@ public class ShadowDialog extends Dialog implements View.OnClickListener {
 
     public ShadowDialog setWindowType(int windowType) {
         this.windowType = windowType;
+        return this;
+    }
+
+    public int getBgResid() {
+        return bgResid;
+    }
+
+    public ShadowDialog setBgResid(int bgResid) {
+        this.bgResid = bgResid;
+        return this;
+    }
+
+    public int getTextColorRes() {
+        return textColorRes;
+    }
+
+    public ShadowDialog setTextColorRes(int textColorRes) {
+        this.textColorRes = textColorRes;
+        return this;
+    }
+
+    public WindowManager.LayoutParams getLayoutParams() {
+        return layoutParams;
+    }
+
+    public ShadowDialog setLayoutParams(WindowManager.LayoutParams layoutParams) {
+        this.layoutParams = layoutParams;
+        return this;
+    }
+
+    public int getxOffset() {
+        return xOffset;
+    }
+
+    public ShadowDialog setxOffset(int xOffset) {
+        this.xOffset = xOffset;
+        return this;
+    }
+
+    public int getyOffset() {
+        return yOffset;
+    }
+
+    public ShadowDialog setyOffset(int yOffset) {
+        this.yOffset = yOffset;
+        return this;
+    }
+
+    public int getGravity() {
+        return gravity;
+    }
+
+    public ShadowDialog setGravity(int gravity) {
+        this.gravity = gravity;
         return this;
     }
 

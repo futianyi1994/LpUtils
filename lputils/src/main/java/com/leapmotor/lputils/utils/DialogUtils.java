@@ -1,6 +1,7 @@
 package com.leapmotor.lputils.utils;
 
 import android.app.Activity;
+import android.content.Context;
 import android.os.Build;
 import android.util.Log;
 import android.view.Display;
@@ -27,6 +28,14 @@ import java.util.Locale;
  */
 public class DialogUtils {
     private static final String TAG = "DialogUtils";
+
+    public static WinDialogUtils.Config getConfig() {
+        return WinDialogUtils.getConfig();
+    }
+
+    public static void clearUsedConfig() {
+        WinDialogUtils.clearUsedConfig();
+    }
 
     /**
      * Show the dialog on default display.
@@ -170,11 +179,21 @@ public class DialogUtils {
             WinDialogUtils.show(activity, displayId, headTitle, title, leftTitle, rightTitle, bgResid, textColorRes, layoutParams, onClickListener);
         } else {
             if (activity != null) {
+                int currentDisplayId = ((WindowManager) activity.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay().getDisplayId();
+                WinDialogUtils.Config config = getConfig();
+                boolean isFullScreen = currentDisplayId == Display.DEFAULT_DISPLAY ? config.isFullScreen() : config.isFullScreenVice();
                 new ShadowDialog(activity)
                         .setTitleText(headTitle == null ? null : headTitle.toString())
                         .setContentText(title.toString())
                         .setConfirmText(leftTitle == null ? null : leftTitle.toString())
                         .setCancelText(rightTitle == null ? null : rightTitle.toString())
+                        .setFullScreen(isFullScreen)
+                        .setBgResid(config.getBgResid())
+                        .setTextColorRes(config.getTextColorRes())
+                        .setLayoutParams(config.getLayoutParams())
+                        .setxOffset(config.getxOffset())
+                        .setyOffset(config.getyOffset())
+                        .setGravity(config.getGravity())
                         .setConfirmClickListener((dialog, view) -> {
                             if (onClickListener != null) {
                                 return onClickListener.onLeftClick(view);

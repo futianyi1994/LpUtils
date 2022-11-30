@@ -66,4 +66,12 @@ public class LpUtils {
         WinDialogUtils.refresh();
         ToastUtils.refresh();
     }
+
+    /**
+     * adapter to full-screen mode, for dialog and toast.
+     */
+    public static void adapterFullScreen() {
+        WinDialogUtils.getConfig().setFullScreen(true).create();
+        ToastUtils.getConfig().setFullScreen(true).create();
+    }
 }
