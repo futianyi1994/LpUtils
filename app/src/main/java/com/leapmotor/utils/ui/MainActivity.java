@@ -1,12 +1,14 @@
 package com.leapmotor.utils.ui;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.blankj.utilcode.util.BarUtils;
 import com.leapmotor.lputils.utils.DialogUtils;
 import com.leapmotor.lputils.utils.FindViewUtlis;
 import com.leapmotor.lputils.utils.ToastUtils;
@@ -54,6 +56,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        BarUtils.setStatusBarColor(this, Color.alpha(0));
         setContentView(R.layout.activity_main);
         FindViewUtlis.findViewById(this, R.id.ShowShadowDialog).setOnClickListener(this);
         FindViewUtlis.findViewById(this, R.id.tvFullDialogMain).setOnClickListener(this);
@@ -100,6 +103,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     //.setEnableAnimation(true)
                     //设置是否主屏全屏居中显示（设置为false时弹框仅在主屏应用区域内居中显示）
                     .setFullScreen(true)
+                    //设置是否沉浸式体验
+                    .setImmersion(true)
                     //设置弹出框背景
                     .setBgResid(R.mipmap.popup_bg_light)
                     //设置内容区文字颜色

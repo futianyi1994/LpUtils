@@ -3,7 +3,9 @@ package com.leapmotor.lputils.widget;
 import android.app.Dialog;
 import android.content.Context;
 import android.database.ContentObserver;
+import android.graphics.Color;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.Settings;
@@ -61,6 +63,8 @@ import com.leapmotor.lputils.utils.ThemeUtils;
  *          //.setEnableAnimation(true)
  *          //设置是否主屏全屏居中显示（设置为false时弹框仅在主屏应用区域内居中显示）
  *          .setFullScreen(false)
+ *          //设置是否沉浸式体验
+ *          .setImmersion(true)
  *          //设置弹出框背景
  *          .setBgResid(R.mipmap.popup_bg_light)
  *          //设置内容区文字颜色
@@ -119,6 +123,7 @@ import com.leapmotor.lputils.utils.ThemeUtils;
  * @description :
  */
 public class ShadowDialog extends Dialog implements View.OnClickListener {
+    public static final int LAYOUT_FULLSCREEN = View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_LAYOUT_STABLE;
     public static final int DEFAULT_VALUE = -10000;
     public static final int DIALOG_WIDTH = 720;
     public static final int TXT_CONTENT_MAX_WIDTH = 560;
@@ -130,7 +135,7 @@ public class ShadowDialog extends Dialog implements View.OnClickListener {
     private AnimationSet animModalIn;
     private AnimationSet animModalOut;
     private Animation overlayOutAnim;
-    private View dialogView;
+    private View decorView, dialogView;
     private FrameLayout flRoot;
     private LinearLayout llRoot;
     private TextView tvTitle, tvContent;
@@ -144,7 +149,7 @@ public class ShadowDialog extends Dialog implements View.OnClickListener {
     private OnClickListener confirmClickListener, cancelClickListener;
     private DialogUtils.OnClickListener clickListener;
     private boolean closeFromCancel;
-    private boolean isFullScreen = false;
+    private boolean isFullScreen = false, isImmersion = true;
     private boolean isCanceledOnTouchOutside = true;
     private boolean enableAnimation = true;
     @DrawableRes
@@ -185,7 +190,8 @@ public class ShadowDialog extends Dialog implements View.OnClickListener {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.layout_shadow_dialog);
-        dialogView = getWindow().getDecorView().findViewById(android.R.id.content);
+        decorView = getWindow().getDecorView();
+        dialogView = decorView.findViewById(android.R.id.content);
         flRoot = findViewById(R.id.flRoot);
         llRoot = findViewById(R.id.llRoot);
         tvTitle = findViewById(R.id.tvTitle);
@@ -203,12 +209,24 @@ public class ShadowDialog extends Dialog implements View.OnClickListener {
         Window window = getWindow();
         WindowManager.LayoutParams attributes = window.getAttributes();
         if (isFullScreen) {
+            if (isImmersion) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+                    window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+                    decorView.setSystemUiVisibility(LAYOUT_FULLSCREEN | decorView.getSystemUiVisibility());
+                    window.setStatusBarColor(Color.TRANSPARENT);
+                    window.setNavigationBarColor(Color.TRANSPARENT);
+                } else {
+                    window.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+                }
+            }
+
             flRoot.setBackgroundResource(maskPopup);
             window.setDimAmount(0f);
             window.setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.MATCH_PARENT);
             window.setBackgroundDrawableResource(R.color.transparent);
             //设置背景之后设置才生效
-            window.getDecorView().setPadding(0, 0, 0, 0);
+            decorView.setPadding(0, 0, 0, 0);
             attributes.x = xOffset != DEFAULT_VALUE ? xOffset : 0;
             attributes.y = yOffset != DEFAULT_VALUE ? yOffset : 0;
             attributes.gravity = gravity != DEFAULT_VALUE ? gravity : Gravity.NO_GRAVITY;
@@ -219,7 +237,7 @@ public class ShadowDialog extends Dialog implements View.OnClickListener {
                 window.setLayout(C11Util.WIDTH, C11Util.HEIGHT);
                 window.setBackgroundDrawableResource(R.color.transparent);
                 //设置背景之后设置才生效
-                window.getDecorView().setPadding(0, 0, 0, 0);
+                decorView.setPadding(0, 0, 0, 0);
                 attributes.x = xOffset != DEFAULT_VALUE ? xOffset : C11Util.X_OFFSET;
                 attributes.y = yOffset != DEFAULT_VALUE ? yOffset : C11Util.Y_TOP_OFFSET;
                 attributes.gravity = gravity != DEFAULT_VALUE ? gravity : Gravity.START | Gravity.TOP;
@@ -229,7 +247,7 @@ public class ShadowDialog extends Dialog implements View.OnClickListener {
                 window.setLayout(C11Util.WIDTH_VICE, WindowManager.LayoutParams.MATCH_PARENT);
                 window.setBackgroundDrawableResource(R.color.transparent);
                 //设置背景之后设置才生效
-                window.getDecorView().setPadding(0, 0, 0, 0);
+                decorView.setPadding(0, 0, 0, 0);
                 attributes.x = xOffset != DEFAULT_VALUE ? xOffset : C11Util.X_OFFSET_VICE;
                 attributes.y = yOffset != DEFAULT_VALUE ? yOffset : 0;
                 attributes.gravity = gravity != DEFAULT_VALUE ? gravity : Gravity.END;
@@ -546,7 +564,21 @@ public class ShadowDialog extends Dialog implements View.OnClickListener {
     }
 
     public ShadowDialog setFullScreen(boolean isFullScreen) {
+        return setFullScreen(isFullScreen, true);
+    }
+
+    public ShadowDialog setFullScreen(boolean isFullScreen, boolean isImmersion) {
         this.isFullScreen = isFullScreen;
+        this.isImmersion = isImmersion;
+        return this;
+    }
+
+    public boolean isImmersion() {
+        return isImmersion;
+    }
+
+    public ShadowDialog setImmersion(boolean isImmersion) {
+        this.isImmersion = isImmersion;
         return this;
     }
 
