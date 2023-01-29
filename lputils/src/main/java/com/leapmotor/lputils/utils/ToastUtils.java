@@ -214,7 +214,7 @@ public class ToastUtils {
             int contentWidth = (int) (msgWidth + TXT_PADING_START + TXT_PADING_END + TXT_BG_SHADOW_PADING * 2);
             layoutParams.width = Math.min(contentWidth, TXT_MAX_WIDTH);
             layoutParams.height = ViewGroup.LayoutParams.WRAP_CONTENT;
-            layoutParams.type = Build.VERSION.SDK_INT > Build.VERSION_CODES.O ? WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY : WindowManager.LayoutParams.TYPE_PHONE;
+            layoutParams.type = CONFIG.getWindowType();
             layoutParams.flags = WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
                     | WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
             layoutParams.format = PixelFormat.RGBA_8888;
@@ -326,6 +326,7 @@ public class ToastUtils {
         private boolean hideViewBeforeShow = false;
         private boolean isFullScreen = false;
         private boolean isFullScreenVice = false;
+        private int windowType = Build.VERSION.SDK_INT > Build.VERSION_CODES.O ? WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY : WindowManager.LayoutParams.TYPE_PHONE;
 
         private Config() {
         }
@@ -476,6 +477,15 @@ public class ToastUtils {
             return this;
         }
 
+        public int getWindowType() {
+            return windowType;
+        }
+
+        public Config setWindowType(int windowType) {
+            this.windowType = windowType;
+            return this;
+        }
+
         public Config clearUsedConfig() {
             useMaxWidthConfig = false;
             useBgResidConfig = false;
@@ -488,6 +498,7 @@ public class ToastUtils {
             useHideViewBeforeShowConfig = false;
             isFullScreen = false;
             isFullScreenVice = false;
+            windowType = Build.VERSION.SDK_INT > Build.VERSION_CODES.O ? WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY : WindowManager.LayoutParams.TYPE_PHONE;
             return this;
         }
 

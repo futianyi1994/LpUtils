@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.View;
+import android.view.WindowManager;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -172,6 +173,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     .setGravity(Gravity.START | Gravity.TOP)
                     .setxOffset(0)
                     .setyOffset(0)
+                    .setWindowType(WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY)
                     .create();
             DialogUtils.show(0, TEST_TITLE, "确定", "取消", this);
         } else if (id == R.id.tvDialogAppointVice) {
@@ -211,6 +213,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     .setHideViewBeforeShow(true)
                     .setFullScreen(false)
                     .setyOffset(600)
+                    .setWindowType(WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY)
                     .create();
             ToastUtils.showShort(TEST_TITLE2);
         } else if (id == R.id.tvToastByContext) {

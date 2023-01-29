@@ -2,7 +2,6 @@ package com.leapmotor.lputils.utils;
 
 import android.app.Activity;
 import android.content.Context;
-import android.os.Build;
 import android.util.Log;
 import android.view.Display;
 import android.view.Gravity;
@@ -155,7 +154,7 @@ public class DialogUtils {
         layoutParams.x = 0;
         layoutParams.y = 0;
         layoutParams.gravity = Gravity.CENTER;
-        layoutParams.type = Build.VERSION.SDK_INT > Build.VERSION_CODES.O ? WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY : WindowManager.LayoutParams.TYPE_PHONE;
+        layoutParams.type = getConfig().getWindowType();
         show(null, displayId, headTitle, title, leftTitle, rightTitle, ThemeUtils.getbgPopup(), ThemeUtils.getTextPrimaryColor(), layoutParams, onClickListener);
     }
 

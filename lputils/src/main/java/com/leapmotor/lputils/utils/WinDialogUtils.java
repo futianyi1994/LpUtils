@@ -167,7 +167,7 @@ public class WinDialogUtils {
         layoutParams.x = 0;
         layoutParams.y = 0;
         layoutParams.gravity = Gravity.CENTER;
-        layoutParams.type = Build.VERSION.SDK_INT > Build.VERSION_CODES.O ? WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY : WindowManager.LayoutParams.TYPE_PHONE;
+        layoutParams.type = CONFIG.getWindowType();
         show(null, displayId, headTitle, title, leftTitle, rightTitle, ThemeUtils.getbgPopup(), ThemeUtils.getTextPrimaryColor(), layoutParams, onClickListener);
     }
 
@@ -299,7 +299,7 @@ public class WinDialogUtils {
             }
             if (lp == null) {
                 lp = getDefaultLayoutParams(currentDisplayId);
-                lp.type = haveWindowToken ? WindowManager.LayoutParams.TYPE_APPLICATION_ATTACHED_DIALOG : Build.VERSION.SDK_INT > Build.VERSION_CODES.O ? WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY : WindowManager.LayoutParams.TYPE_PHONE;
+                lp.type = haveWindowToken ? WindowManager.LayoutParams.TYPE_APPLICATION_ATTACHED_DIALOG : CONFIG.getWindowType();
             }
 
             WindowManager.LayoutParams finalLayoutParams = lp;
@@ -403,6 +403,7 @@ public class WinDialogUtils {
         private int gravity = DEFAULT_VALUE;
         private boolean isFullScreen = false;
         private boolean isFullScreenVice = false;
+        private int windowType = Build.VERSION.SDK_INT > Build.VERSION_CODES.O ? WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY : WindowManager.LayoutParams.TYPE_PHONE;
 
         Config() {
         }
@@ -514,6 +515,15 @@ public class WinDialogUtils {
             return this;
         }
 
+        public int getWindowType() {
+            return windowType;
+        }
+
+        public Config setWindowType(int windowType) {
+            this.windowType = windowType;
+            return this;
+        }
+
         public Config clearUsedConfig() {
             useBgResidConfig = false;
             useTextColorResConfig = false;
@@ -528,6 +538,7 @@ public class WinDialogUtils {
             gravity = DEFAULT_VALUE;
             isFullScreen = false;
             isFullScreenVice = false;
+            windowType = Build.VERSION.SDK_INT > Build.VERSION_CODES.O ? WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY : WindowManager.LayoutParams.TYPE_PHONE;
             return this;
         }
 
