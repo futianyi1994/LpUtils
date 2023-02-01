@@ -201,6 +201,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     .setHideViewBeforeShow(true)
                     .setyOffset(500)
                     .setFullScreen(true)
+                    .setAnimShowHide(R.anim.toast_show, R.anim.modal_out)
+                    .setEnableAnimation(false)
                     .create();
             ToastUtils.showFullScreen(0, "Hello", true);
         } else if (id == R.id.tvFullToastVice) {
@@ -214,6 +216,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     .setFullScreen(false)
                     .setyOffset(600)
                     .setWindowType(WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY)
+                    .setEnableAnimation(true)
                     .create();
             ToastUtils.showShort(TEST_TITLE2);
         } else if (id == R.id.tvToastByContext) {

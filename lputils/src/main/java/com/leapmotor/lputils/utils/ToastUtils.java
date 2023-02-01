@@ -11,15 +11,20 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.view.animation.Animation;
+import android.view.animation.AnimationSet;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
+import androidx.annotation.AnimRes;
+import androidx.annotation.AnimatorRes;
 import androidx.annotation.ColorRes;
 import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.leapmotor.lputils.R;
+import com.leapmotor.lputils.animation.OptAnimationLoader;
 import com.leapmotor.lputils.content.ContextCompat;
 
 import java.util.HashMap;
@@ -53,6 +58,8 @@ public class ToastUtils {
     private static final Map<Integer, ThreadUtils.Task<Integer>> TASK_MAP = new HashMap<>(MAX_WINDOW_SIZE);
 
     private static final Config CONFIG = new Config();
+    private static AnimationSet animModalShow;
+    private static AnimationSet animModalHide;
 
     public static Config getConfig() {
         return CONFIG;
@@ -220,6 +227,28 @@ public class ToastUtils {
             layoutParams.format = PixelFormat.RGBA_8888;
             if (customToastView.getParent() == null) {
                 windowManager.addView(customToastView, layoutParams);
+                if (CONFIG.isEnableAnimation()) {
+                    animModalShow = (AnimationSet) OptAnimationLoader.loadAnimation(LpUtils.getApp(), CONFIG.getAnimShow());
+                    animModalHide = (AnimationSet) OptAnimationLoader.loadAnimation(LpUtils.getApp(), CONFIG.getAnimHide());
+                    animModalShow.setAnimationListener(new Animation.AnimationListener() {
+                        @Override
+                        public void onAnimationStart(Animation animation) {
+                            Log.v(TAG, "show onAnimationStart");
+                        }
+
+                        @Override
+                        public void onAnimationEnd(Animation animation) {
+                            Log.v(TAG, "show onAnimationEnd");
+                        }
+
+                        @Override
+                        public void onAnimationRepeat(Animation animation) {
+                            Log.v(TAG, "show onAnimationRepeat");
+                        }
+                    });
+                    FrameLayout layoutCustomToastRootView = FindViewUtlis.findViewById(customToastView, R.id.layout_custom_toast_root);
+                    layoutCustomToastRootView.startAnimation(animModalShow);
+                }
                 Log.d(TAG, "start show toast !");
             } else {
                 Log.d(TAG, "already show toast !");
@@ -242,7 +271,11 @@ public class ToastUtils {
 
                 @Override
                 public void onSuccess(Integer displayId) {
-                    removeLayout(displayId);
+                    if (CONFIG.isEnableAnimation()) {
+                        removeLayoutWithAnim(displayId);
+                    } else {
+                        removeLayout(displayId);
+                    }
                 }
             };
             TASK_MAP.put(currentDisplayId, integerTask);
@@ -272,6 +305,53 @@ public class ToastUtils {
         View customToastView = VIEW_MANAGER_MAP.get(displayId);
         if (windowManager != null && customToastView != null) {
             ThreadUtils.runOnUiThread(() -> windowManager.removeView(customToastView));
+            Log.d(TAG, "hide toast !");
+        }
+    }
+
+    /**
+     * Remove the toast layout with anim according to the display.
+     *
+     * @param displayId The displayId.
+     */
+    public static void removeLayoutWithAnim(int displayId) {
+        hideLayoutWithAnim(displayId);
+        WINDOW_MANAGER_MAP.remove(displayId);
+        VIEW_MANAGER_MAP.remove(displayId);
+        TASK_MAP.remove(displayId);
+    }
+
+    /**
+     * Hide the toast layout with anim according to the display.
+     *
+     * @param displayId The displayId.
+     */
+    public static void hideLayoutWithAnim(int displayId) {
+        WindowManager windowManager = WINDOW_MANAGER_MAP.get(displayId);
+        View customToastView = VIEW_MANAGER_MAP.get(displayId);
+        if (windowManager != null && customToastView != null) {
+            ThreadUtils.runOnUiThread(() -> {
+                animModalHide.setAnimationListener(new Animation.AnimationListener() {
+                    @Override
+                    public void onAnimationStart(Animation animation) {
+                        Log.v(TAG, "hide onAnimationStart");
+                    }
+
+                    @Override
+                    public void onAnimationEnd(Animation animation) {
+                        customToastView.post(() -> windowManager.removeView(customToastView));
+                        Log.v(TAG, "hide onAnimationEnd");
+                        Log.d(TAG, "hide toast !");
+                    }
+
+                    @Override
+                    public void onAnimationRepeat(Animation animation) {
+                        Log.v(TAG, "hide onAnimationRepeat");
+                    }
+                });
+                FrameLayout layoutCustomToastRootView = FindViewUtlis.findViewById(customToastView, R.id.layout_custom_toast_root);
+                layoutCustomToastRootView.startAnimation(animModalHide);
+            });
         }
     }
 
@@ -327,6 +407,10 @@ public class ToastUtils {
         private boolean isFullScreen = false;
         private boolean isFullScreenVice = false;
         private int windowType = Build.VERSION.SDK_INT > Build.VERSION_CODES.O ? WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY : WindowManager.LayoutParams.TYPE_PHONE;
+        private boolean enableAnimation = true;
+        @AnimatorRes
+        @AnimRes
+        private int animShow = R.anim.toast_show, animHide = R.anim.toast_hide;
 
         private Config() {
         }
@@ -486,6 +570,39 @@ public class ToastUtils {
             return this;
         }
 
+        public boolean isEnableAnimation() {
+            return enableAnimation;
+        }
+
+        public Config setEnableAnimation(boolean enableAnimation) {
+            this.enableAnimation = enableAnimation;
+            return this;
+        }
+
+        public int getAnimShow() {
+            return animShow;
+        }
+
+        public Config setAnimShow(@AnimatorRes @AnimRes int animShow) {
+            this.animShow = animShow;
+            return this;
+        }
+
+        public int getAnimHide() {
+            return animHide;
+        }
+
+        public Config setAnimHide(@AnimatorRes @AnimRes int animHide) {
+            this.animHide = animHide;
+            return this;
+        }
+
+        public Config setAnimShowHide(@AnimatorRes @AnimRes int animShow, @AnimatorRes @AnimRes int animHide) {
+            this.animShow = animShow;
+            this.animHide = animHide;
+            return this;
+        }
+
         public Config clearUsedConfig() {
             useMaxWidthConfig = false;
             useBgResidConfig = false;
@@ -499,6 +616,9 @@ public class ToastUtils {
             isFullScreen = false;
             isFullScreenVice = false;
             windowType = Build.VERSION.SDK_INT > Build.VERSION_CODES.O ? WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY : WindowManager.LayoutParams.TYPE_PHONE;
+            enableAnimation = true;
+            animShow = R.anim.toast_show;
+            animHide = R.anim.toast_hide;
             return this;
         }
 

@@ -132,6 +132,8 @@ public class ShadowDialog extends Dialog implements View.OnClickListener {
     public static final int TXT_CONTENT_HEAD_HEIGHT = 95;
     public static final int TXT_BG_SHADOW_PADING = 40;
     private static final String TAG = "ShadowDialog";
+    private static final int DEFAULT_DIALOG_SHOW_ANIM = R.anim.dialog_show;
+    private static final int DEFAULT_DIALOG_HIDE_ANIM = R.anim.dialog_hide;
     private AnimationSet animModalIn;
     private AnimationSet animModalOut;
     private Animation overlayOutAnim;
@@ -176,7 +178,7 @@ public class ShadowDialog extends Dialog implements View.OnClickListener {
     }
 
     public ShadowDialog(Context context, boolean enableAnimation) {
-        this(context, enableAnimation ? R.anim.modal_in : 0, enableAnimation ? R.anim.modal_out : 0);
+        this(context, enableAnimation ? DEFAULT_DIALOG_SHOW_ANIM : 0, enableAnimation ? DEFAULT_DIALOG_HIDE_ANIM : 0);
     }
 
     public ShadowDialog(Context context, @AnimatorRes @AnimRes int animIn, @AnimatorRes @AnimRes int animOut) {
@@ -374,11 +376,11 @@ public class ShadowDialog extends Dialog implements View.OnClickListener {
     }
 
     public ShadowDialog setAnimIn(@AnimatorRes @AnimRes int animIn) {
-        return setAnim(animIn, R.anim.modal_out);
+        return setAnim(animIn, DEFAULT_DIALOG_HIDE_ANIM);
     }
 
     public ShadowDialog setAnimOut(@AnimatorRes @AnimRes int animOut) {
-        return setAnim(R.anim.modal_in, animOut);
+        return setAnim(DEFAULT_DIALOG_SHOW_ANIM, animOut);
     }
 
     public ShadowDialog setAnim(@AnimatorRes @AnimRes int animIn, @AnimatorRes @AnimRes int animOut) {
