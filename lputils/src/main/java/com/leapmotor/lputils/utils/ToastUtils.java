@@ -68,6 +68,38 @@ public class ToastUtils {
     /**
      * Show the toast for a short period of time on default display.
      *
+     * @param msg      The text.
+     * @param duration The toast display duration.
+     */
+    public static void show(CharSequence msg, int duration) {
+        show(null, Display.DEFAULT_DISPLAY, msg, duration);
+    }
+
+    /**
+     * Show the toast for a short period of time according to the context.
+     *
+     * @param context  The content.
+     * @param msg      The text.
+     * @param duration The toast display duration.
+     */
+    public static void show(@NonNull Context context, CharSequence msg, int duration) {
+        show(context, Display.INVALID_DISPLAY, msg, duration);
+    }
+
+    /**
+     * Show the toast for a short period of time according to the display.
+     *
+     * @param displayId The displayId.
+     * @param msg       The text.
+     * @param duration  The toast display duration.
+     */
+    public static void show(int displayId, CharSequence msg, int duration) {
+        show(null, displayId, msg, duration);
+    }
+
+    /**
+     * Show the toast for a short period of time on default display.
+     *
      * @param msg The text.
      */
     public static void showShort(CharSequence msg) {
@@ -110,7 +142,7 @@ public class ToastUtils {
      * @param msg       The text.
      */
     public static void showShort(int displayId, CharSequence msg) {
-        show(null, displayId, msg, TXT_MAX_WIDTH, false, ThemeUtils.getBgToast(), ThemeUtils.getTextPrimaryColor(), DEFAULT_X_OFFSET, DEFAULT_Y_TOP_OFFSET_MAIN, false, false);
+        show(null, displayId, msg, false);
     }
 
     /**
@@ -120,7 +152,7 @@ public class ToastUtils {
      * @param msg       The text.
      */
     public static void showLong(int displayId, CharSequence msg) {
-        show(null, displayId, msg, TXT_MAX_WIDTH, true, ThemeUtils.getBgToast(), ThemeUtils.getTextPrimaryColor(), DEFAULT_X_OFFSET, DEFAULT_Y_TOP_OFFSET_MAIN, false, false);
+        show(null, displayId, msg, true);
     }
 
     /**
@@ -132,7 +164,19 @@ public class ToastUtils {
      * @param isLong    True is show the toast for a long period of time, false otherwise.
      */
     private static void show(@Nullable Context context, int displayId, CharSequence msg, boolean isLong) {
-        show(context, displayId, msg, TXT_MAX_WIDTH, isLong, ThemeUtils.getBgToast(), ThemeUtils.getTextPrimaryColor(), DEFAULT_X_OFFSET, DEFAULT_Y_TOP_OFFSET_MAIN, false, false);
+        show(context, displayId, msg, TXT_MAX_WIDTH, isLong ? LENGTH_LONG : LENGTH_SHORT, ThemeUtils.getBgToast(), ThemeUtils.getTextPrimaryColor(), DEFAULT_X_OFFSET, DEFAULT_Y_TOP_OFFSET_MAIN, false, false);
+    }
+
+    /**
+     * Show the toast according to the display or context.
+     *
+     * @param context   The context.
+     * @param displayId The displayId.
+     * @param msg       The text.
+     * @param duration  The toast display duration.
+     */
+    private static void show(@Nullable Context context, int displayId, CharSequence msg, int duration) {
+        show(context, displayId, msg, TXT_MAX_WIDTH, duration, ThemeUtils.getBgToast(), ThemeUtils.getTextPrimaryColor(), DEFAULT_X_OFFSET, DEFAULT_Y_TOP_OFFSET_MAIN, false, false);
     }
 
     /**
@@ -143,7 +187,7 @@ public class ToastUtils {
      * @param isLong    True is show the toast for a long period of time, false otherwise.
      */
     public static void showFullScreen(int displayId, CharSequence msg, boolean isLong) {
-        show(null, displayId, msg, TXT_MAX_WIDTH, isLong, ThemeUtils.getBgToast(), ThemeUtils.getTextPrimaryColor(), 0, 0, false, false);
+        show(null, displayId, msg, TXT_MAX_WIDTH, isLong ? LENGTH_LONG : LENGTH_SHORT, ThemeUtils.getBgToast(), ThemeUtils.getTextPrimaryColor(), 0, 0, false, false);
     }
 
     /**
@@ -153,7 +197,7 @@ public class ToastUtils {
      * @param displayId          The displayId.
      * @param msg                The text.
      * @param maxWidth           The text maxWidth.
-     * @param isLong             True is show the toast for a long period of time, false otherwise.
+     * @param duration           The toast display duration.
      * @param bgResid            Background resource id.
      * @param textColorRes       The text color resource.
      * @param xOffset            X offset.
@@ -161,7 +205,7 @@ public class ToastUtils {
      * @param isRecycle          True is recycle view,task,and window, false otherwise.
      * @param hideViewBeforeShow True is hide the previous view layout before each show toast, false otherwise.
      */
-    public static void show(@Nullable Context context, int displayId, CharSequence msg, int maxWidth, boolean isLong, @DrawableRes int bgResid, @ColorRes int textColorRes, int xOffset, int yOffset, boolean isRecycle, boolean hideViewBeforeShow) {
+    public static void show(@Nullable Context context, int displayId, CharSequence msg, int maxWidth, int duration, @DrawableRes int bgResid, @ColorRes int textColorRes, int xOffset, int yOffset, boolean isRecycle, boolean hideViewBeforeShow) {
         Application app = LpUtils.getApp();
         ThreadUtils.runOnUiThread(() -> {
             int currentDisplayId = Display.INVALID_DISPLAY;
@@ -271,6 +315,12 @@ public class ToastUtils {
 
                 @Override
                 public void onSuccess(Integer displayId) {
+                    Log.d(TAG, "integerTask onSuccess ：" + displayId);
+                    if (displayId == Display.INVALID_DISPLAY) {
+                        clearView();
+                        clearMapData(displayId);
+                        return;
+                    }
                     if (CONFIG.isEnableAnimation()) {
                         removeLayoutWithAnim(displayId);
                     } else {
@@ -279,8 +329,32 @@ public class ToastUtils {
                 }
             };
             TASK_MAP.put(currentDisplayId, integerTask);
-            ThreadUtils.executeBySingleWithDelay(integerTask, isLong ? LENGTH_LONG : LENGTH_SHORT, TimeUnit.MILLISECONDS);
+            ThreadUtils.executeBySingleWithDelay(integerTask, duration, TimeUnit.MILLISECONDS);
         });
+    }
+
+    private static void clearView() {
+        WINDOW_MANAGER_MAP.forEach((displayId, windowManager) -> {
+            Log.w(TAG, "clearView ：" + displayId);
+            View customToastView = VIEW_MANAGER_MAP.get(displayId);
+            try {
+                windowManager.removeView(customToastView);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
+    private static void clearMapData(int displayId) {
+        if (displayId == Display.INVALID_DISPLAY) {
+            WINDOW_MANAGER_MAP.clear();
+            VIEW_MANAGER_MAP.clear();
+            TASK_MAP.clear();
+        } else {
+            WINDOW_MANAGER_MAP.remove(displayId);
+            VIEW_MANAGER_MAP.remove(displayId);
+            TASK_MAP.remove(displayId);
+        }
     }
 
     /**
@@ -290,9 +364,7 @@ public class ToastUtils {
      */
     public static void removeLayout(int displayId) {
         hideLayout(displayId);
-        WINDOW_MANAGER_MAP.remove(displayId);
-        VIEW_MANAGER_MAP.remove(displayId);
-        TASK_MAP.remove(displayId);
+        clearMapData(displayId);
     }
 
     /**
@@ -316,9 +388,7 @@ public class ToastUtils {
      */
     public static void removeLayoutWithAnim(int displayId) {
         hideLayoutWithAnim(displayId);
-        WINDOW_MANAGER_MAP.remove(displayId);
-        VIEW_MANAGER_MAP.remove(displayId);
-        TASK_MAP.remove(displayId);
+        clearMapData(displayId);
     }
 
     /**
