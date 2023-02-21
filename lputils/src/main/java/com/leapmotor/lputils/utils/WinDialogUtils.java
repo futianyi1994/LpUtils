@@ -401,7 +401,7 @@ public class WinDialogUtils {
         private int xOffsetVice = DEFAULT_VALUE;
         private int yOffsetVice = DEFAULT_VALUE;
         private int gravity = DEFAULT_VALUE;
-        private boolean isFullScreen = false;
+        private boolean isFullScreen = false, isImmersion = true;
         private boolean isFullScreenVice = false;
         private int windowType = Build.VERSION.SDK_INT > Build.VERSION_CODES.O ? WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY : WindowManager.LayoutParams.TYPE_PHONE;
 
@@ -497,6 +497,15 @@ public class WinDialogUtils {
             return this;
         }
 
+        public boolean isImmersion() {
+            return isImmersion;
+        }
+
+        public Config setImmersion(boolean immersion) {
+            isImmersion = immersion;
+            return this;
+        }
+
         public boolean isFullScreen() {
             return isFullScreen;
         }
@@ -536,6 +545,7 @@ public class WinDialogUtils {
             xOffsetVice = DEFAULT_VALUE;
             yOffsetVice = DEFAULT_VALUE;
             gravity = DEFAULT_VALUE;
+            isImmersion = true;
             isFullScreen = false;
             isFullScreenVice = false;
             windowType = Build.VERSION.SDK_INT > Build.VERSION_CODES.O ? WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY : WindowManager.LayoutParams.TYPE_PHONE;

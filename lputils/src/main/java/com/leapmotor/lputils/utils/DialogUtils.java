@@ -187,6 +187,7 @@ public class DialogUtils {
                         .setConfirmText(leftTitle == null ? null : leftTitle.toString())
                         .setCancelText(rightTitle == null ? null : rightTitle.toString())
                         .setFullScreen(isFullScreen)
+                        .setImmersion(config.isImmersion())
                         .setBgResid(config.getBgResid())
                         .setTextColorRes(config.getTextColorRes())
                         .setLayoutParams(config.getLayoutParams())

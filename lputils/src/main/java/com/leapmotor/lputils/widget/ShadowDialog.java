@@ -152,7 +152,7 @@ public class ShadowDialog extends Dialog implements View.OnClickListener {
     private DialogUtils.OnClickListener clickListener;
     private boolean closeFromCancel;
     private boolean isFullScreen = false, isImmersion = true;
-    private boolean isCanceledOnTouchOutside = true;
+    private boolean isCanceledOnTouchOutside = true, isDismissingAnimation = false;
     private boolean enableAnimation = true;
     @DrawableRes
     private int bgResid = 0;
@@ -311,6 +311,7 @@ public class ShadowDialog extends Dialog implements View.OnClickListener {
 
     @Override
     protected void onStart() {
+        isDismissingAnimation = false;
         if (enableAnimation && animModalIn != null) {
             llRoot.startAnimation(animModalIn);
         }
@@ -393,10 +394,12 @@ public class ShadowDialog extends Dialog implements View.OnClickListener {
             animModalOut.setAnimationListener(new Animation.AnimationListener() {
                 @Override
                 public void onAnimationStart(Animation animation) {
+                    isDismissingAnimation = true;
                 }
 
                 @Override
                 public void onAnimationEnd(Animation animation) {
+                    isDismissingAnimation = false;
                     dialogView.setVisibility(View.GONE);
                     dialogView.post(() -> {
                         if (closeFromCancel) {
@@ -415,9 +418,12 @@ public class ShadowDialog extends Dialog implements View.OnClickListener {
             overlayOutAnim = new Animation() {
                 @Override
                 protected void applyTransformation(float interpolatedTime, Transformation t) {
-                    WindowManager.LayoutParams wlp = getWindow().getAttributes();
-                    wlp.alpha = 1 - interpolatedTime;
-                    getWindow().setAttributes(wlp);
+                    float alpha = 1 - interpolatedTime;
+                    // FIX: 2023/2/21 Fty: 操作window会导致状态栏黑一下
+                    /*WindowManager.LayoutParams wlp = getWindow().getAttributes();
+                    wlp.alpha = alpha;
+                    getWindow().setAttributes(wlp);*/
+                    flRoot.setAlpha(alpha);
                 }
             };
             overlayOutAnim.setDuration(animModalOut.getDuration());
@@ -602,10 +608,16 @@ public class ShadowDialog extends Dialog implements View.OnClickListener {
         if (enableAnimation) {
             closeFromCancel = fromCancel;
             if (animModalOut != null) {
-                llRoot.startAnimation(animModalOut);
+                if (!isDismissingAnimation) {
+                    llRoot.startAnimation(animModalOut);
+                } else {
+                    Log.w(TAG, "dismissWithAnimation : isDismissingAnimation");
+                }
             }
             if (overlayOutAnim != null) {
-                tvConfirm.startAnimation(overlayOutAnim);
+                if (!isDismissingAnimation) {
+                    tvConfirm.startAnimation(overlayOutAnim);
+                }
             }
         } else {
             if (fromCancel) {

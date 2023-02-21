@@ -71,7 +71,23 @@ public class LpUtils {
      * adapter to full-screen mode, for dialog and toast.
      */
     public static void adapterFullScreen() {
-        WinDialogUtils.getConfig().setFullScreen(true).create();
-        ToastUtils.getConfig().setFullScreen(true).create();
+        adapterFullScreen(false);
+    }
+
+    /**
+     * adapter to full-screen mode, for dialog and toast.
+     *
+     * @param isImmersion is immersion.
+     */
+    public static void adapterFullScreen(boolean isImmersion) {
+        WinDialogUtils
+                .getConfig()
+                .setFullScreen(true)
+                .setImmersion(isImmersion)
+                .create();
+        ToastUtils
+                .getConfig()
+                .setFullScreen(true)
+                .create();
     }
 }
