@@ -480,7 +480,7 @@ public class ToastUtils {
         private boolean enableAnimation = true;
         @AnimatorRes
         @AnimRes
-        private int animShow = R.anim.toast_show, animHide = R.anim.toast_hide;
+        private int animShow = R.anim.toast_show_scale, animHide = R.anim.toast_hide_scale;
 
         private Config() {
         }
@@ -687,8 +687,8 @@ public class ToastUtils {
             isFullScreenVice = false;
             windowType = Build.VERSION.SDK_INT > Build.VERSION_CODES.O ? WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY : WindowManager.LayoutParams.TYPE_PHONE;
             enableAnimation = true;
-            animShow = R.anim.toast_show;
-            animHide = R.anim.toast_hide;
+            animShow = R.anim.toast_show_scale;
+            animHide = R.anim.toast_hide_scale;
             return this;
         }
 
