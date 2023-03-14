@@ -34,8 +34,10 @@ import com.leapmotor.lputils.R;
 import com.leapmotor.lputils.animation.OptAnimationLoader;
 import com.leapmotor.lputils.annotation.ScreenModeType;
 import com.leapmotor.lputils.content.ContextCompat;
+import com.leapmotor.lputils.utils.BarUtils;
 import com.leapmotor.lputils.utils.C11Util;
 import com.leapmotor.lputils.utils.DialogUtils;
+import com.leapmotor.lputils.utils.ScreenUtils;
 import com.leapmotor.lputils.utils.SettingsUtils;
 import com.leapmotor.lputils.utils.ThemeUtils;
 
@@ -211,27 +213,28 @@ public class ShadowDialog extends Dialog implements View.OnClickListener {
         Window window = getWindow();
         WindowManager.LayoutParams attributes = window.getAttributes();
         if (isFullScreen) {
-            if (isImmersion) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-                    window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-                    decorView.setSystemUiVisibility(LAYOUT_FULLSCREEN | decorView.getSystemUiVisibility());
-                    window.setStatusBarColor(Color.TRANSPARENT);
-                    window.setNavigationBarColor(Color.TRANSPARENT);
-                } else {
-                    window.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-                }
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+                window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+                decorView.setSystemUiVisibility(LAYOUT_FULLSCREEN | decorView.getSystemUiVisibility());
+                window.setStatusBarColor(Color.TRANSPARENT);
+                window.setNavigationBarColor(Color.TRANSPARENT);
+            } else {
+                window.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
             }
 
+            int screenHeight = ScreenUtils.getScreenHeight();
+            int statusBarHeight = BarUtils.getStatusBarHeight();
+            int navBarHeight = BarUtils.getNavBarHeight();
             flRoot.setBackgroundResource(maskPopup);
             window.setDimAmount(0f);
-            window.setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.MATCH_PARENT);
+            window.setLayout(WindowManager.LayoutParams.MATCH_PARENT, isImmersion ? WindowManager.LayoutParams.MATCH_PARENT : screenHeight - statusBarHeight - navBarHeight);
             window.setBackgroundDrawableResource(R.color.transparent);
             //设置背景之后设置才生效
             decorView.setPadding(0, 0, 0, 0);
             attributes.x = xOffset != DEFAULT_VALUE ? xOffset : 0;
-            attributes.y = yOffset != DEFAULT_VALUE ? yOffset : 0;
-            attributes.gravity = gravity != DEFAULT_VALUE ? gravity : Gravity.NO_GRAVITY;
+            attributes.y = yOffset != DEFAULT_VALUE ? yOffset : isImmersion ? 0 : statusBarHeight;
+            attributes.gravity = gravity != DEFAULT_VALUE ? gravity : isImmersion ? Gravity.NO_GRAVITY : Gravity.TOP;
         } else {
             if (isDefaultScreen) {
                 flRoot.setBackgroundResource(radiusMaskPopup);
