@@ -22,6 +22,7 @@ import androidx.annotation.Nullable;
 
 import com.leapmotor.lputils.R;
 import com.leapmotor.lputils.content.ContextCompat;
+import com.leapmotor.lputils.widget.ShadowDialog;
 
 import java.util.HashMap;
 import java.util.List;
@@ -357,14 +358,21 @@ public class WinDialogUtils {
      */
     public static WindowManager.LayoutParams getDefaultLayoutParams(int displayId) {
         WindowManager.LayoutParams layoutParams = new WindowManager.LayoutParams();
+        int configGravity = CONFIG.getGravity();
         if (displayId == Display.DEFAULT_DISPLAY) {
-            layoutParams.gravity = CONFIG.getGravity() != Config.DEFAULT_VALUE ? CONFIG.getGravity() : Gravity.CENTER;
-            layoutParams.x = CONFIG.getxOffset() != Config.DEFAULT_VALUE ? CONFIG.getxOffset() : C11Util.X_OFFSET / 2;
-            layoutParams.y = CONFIG.getyOffset() != Config.DEFAULT_VALUE ? CONFIG.getyOffset() : (C11Util.Y_TOP_OFFSET - C11Util.Y_BOTTOM_OFFSET) / 2;
+            layoutParams.gravity = configGravity != Config.DEFAULT_VALUE ? configGravity : Gravity.CENTER;
+            int xOffset = CONFIG.getxOffset();
+            int yOffset = CONFIG.getyOffset();
+            boolean fullScreen = CONFIG.isFullScreen();
+            layoutParams.x = fullScreen ? 0 : xOffset != Config.DEFAULT_VALUE ? xOffset : C11Util.X_OFFSET / 2;
+            layoutParams.y = fullScreen ? 0 : yOffset != Config.DEFAULT_VALUE ? yOffset : (C11Util.Y_TOP_OFFSET - C11Util.Y_BOTTOM_OFFSET) / 2;
         } else {
-            layoutParams.gravity = CONFIG.getGravity() != Config.DEFAULT_VALUE ? CONFIG.getGravity() : Gravity.CENTER;
-            layoutParams.x = CONFIG.getxOffsetVice() != Config.DEFAULT_VALUE ? CONFIG.getxOffsetVice() : 0;
-            layoutParams.y = CONFIG.getyOffsetVice() != Config.DEFAULT_VALUE ? CONFIG.getyOffsetVice() : 0;
+            layoutParams.gravity = configGravity != Config.DEFAULT_VALUE ? configGravity : Gravity.CENTER;
+            int xOffsetVice = CONFIG.getxOffsetVice();
+            int yOffsetVice = CONFIG.getyOffsetVice();
+            boolean fullScreenVice = CONFIG.isFullScreenVice();
+            layoutParams.x = fullScreenVice ? 0 : xOffsetVice != Config.DEFAULT_VALUE ? xOffsetVice : 0;
+            layoutParams.y = fullScreenVice ? 0 : yOffsetVice != Config.DEFAULT_VALUE ? yOffsetVice : 0;
         }
         layoutParams.width = DIALOG_WIDTH;
         layoutParams.height = ViewGroup.LayoutParams.WRAP_CONTENT;
@@ -387,7 +395,7 @@ public class WinDialogUtils {
      * @Description: WinDialog Parameter Configuration.
      */
     public static final class Config {
-        public static final int DEFAULT_VALUE = -10000;
+        public static final int DEFAULT_VALUE = ShadowDialog.DEFAULT_VALUE;
         private boolean useBgResidConfig = false;
         private boolean useTextColorResConfig = false;
         private boolean useLayoutParamsConfig = false;
@@ -553,22 +561,6 @@ public class WinDialogUtils {
         }
 
         public void create() {
-            if (isFullScreen) {
-                if (xOffset == Config.DEFAULT_VALUE) {
-                    setxOffset(0);
-                }
-                if (yOffset == Config.DEFAULT_VALUE) {
-                    setyOffset(0);
-                }
-            }
-            if (isFullScreenVice) {
-                if (xOffsetVice == Config.DEFAULT_VALUE) {
-                    setxOffsetVice(0);
-                }
-                if (yOffsetVice == Config.DEFAULT_VALUE) {
-                    setyOffsetVice(0);
-                }
-            }
         }
     }
 }
