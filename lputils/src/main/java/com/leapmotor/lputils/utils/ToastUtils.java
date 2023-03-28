@@ -295,6 +295,9 @@ public class ToastUtils {
                 }
                 Log.d(TAG, "start show toast !");
             } else {
+                customToastView.setVisibility(View.INVISIBLE);
+                windowManager.updateViewLayout(customToastView, layoutParams);
+                customToastView.post(() -> customToastView.setVisibility(View.VISIBLE));
                 Log.d(TAG, "already show toast !");
             }
 
