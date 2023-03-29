@@ -240,10 +240,11 @@ public class ToastUtils {
             View customToastView = VIEW_MANAGER_MAP.computeIfAbsent(currentDisplayId, k -> ViewUtils.layoutId2View(app, R.layout.layout_custom_toast));
             TextView tvMsg = FindViewUtlis.findViewById(customToastView, R.id.tvMsg);
             float msgWidth = 0;
+            int msgMaxWidth = CONFIG.isUseMaxWidthConfig() ? CONFIG.getMaxWidth() : maxWidth;
             if (tvMsg != null) {
                 tvMsg.setText(msg);
-                tvMsg.setMaxWidth(CONFIG.isUseMaxWidthConfig() ? CONFIG.getMaxWidth() : maxWidth);
-                tvMsg.setMaxLines(TXT_MAX_LINES);
+                tvMsg.setMaxWidth(msgMaxWidth);
+                tvMsg.setMaxLines(CONFIG.getMaxLines());
                 tvMsg.setMovementMethod(ScrollingMovementMethod.getInstance());
                 tvMsg.setTextColor(ContextCompat.getColor(app, CONFIG.isUseTextColorResConfig() ? CONFIG.getTextColorRes() : textColorRes));
                 tvMsg.setBackgroundResource(CONFIG.isUseBgResidConfig() ? CONFIG.getBgResid() : bgResid);
@@ -262,12 +263,15 @@ public class ToastUtils {
                 layoutParams.x = CONFIG.isUseXOffsetViceConfig() ? CONFIG.getxOffsetVice() : xOffset == DEFAULT_X_OFFSET ? -C11Util.X_OFFSET_VICE / 2 : xOffset;
                 layoutParams.y = CONFIG.isUseYOffsetViceConfig() ? CONFIG.getyOffsetVice() : Math.max(yOffset, 0);
             }
-            int contentWidth = (int) (msgWidth + TXT_PADING_START + TXT_PADING_END + TXT_BG_SHADOW_PADING * 2);
-            layoutParams.width = Math.min(contentWidth, TXT_MAX_WIDTH);
+            int contentWidth = (int) (msgWidth + TXT_PADING_START + TXT_PADING_END);
+            layoutParams.width = Math.min(contentWidth, msgMaxWidth);
             layoutParams.height = ViewGroup.LayoutParams.WRAP_CONTENT;
             layoutParams.type = CONFIG.getWindowType();
             layoutParams.flags = WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
                     | WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
+            if (!CONFIG.isCanTouch()) {
+                layoutParams.flags |= WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE;
+            }
             layoutParams.format = PixelFormat.RGBA_8888;
             if (customToastView.getParent() == null) {
                 windowManager.addView(customToastView, layoutParams);
@@ -484,6 +488,8 @@ public class ToastUtils {
         @AnimatorRes
         @AnimRes
         private int animShow = R.anim.toast_show_scale, animHide = R.anim.toast_hide_scale;
+        private boolean canTouch = false;
+        private int maxLines = TXT_MAX_LINES;
 
         private Config() {
         }
@@ -676,6 +682,24 @@ public class ToastUtils {
             return this;
         }
 
+        public boolean isCanTouch() {
+            return canTouch;
+        }
+
+        public Config setCanTouch(boolean canTouch) {
+            this.canTouch = canTouch;
+            return this;
+        }
+
+        public int getMaxLines() {
+            return maxLines;
+        }
+
+        public Config setMaxLines(int maxLines) {
+            this.maxLines = maxLines;
+            return this;
+        }
+
         public Config clearUsedConfig() {
             useMaxWidthConfig = false;
             useBgResidConfig = false;
@@ -692,6 +716,8 @@ public class ToastUtils {
             enableAnimation = true;
             animShow = R.anim.toast_show_scale;
             animHide = R.anim.toast_hide_scale;
+            canTouch = false;
+            maxLines = TXT_MAX_LINES;
             return this;
         }
 
