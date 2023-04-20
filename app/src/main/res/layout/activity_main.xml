@@ -184,6 +184,15 @@
             android:text="测试" />
 
         <Button
+            android:id="@+id/tvMediaTest"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="多媒体测试" />
+
+        <Button
             android:id="@+id/tvFinish"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

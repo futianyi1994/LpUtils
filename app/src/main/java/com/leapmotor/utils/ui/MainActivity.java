@@ -15,6 +15,7 @@ import com.leapmotor.lputils.utils.FindViewUtlis;
 import com.leapmotor.lputils.utils.ToastUtils;
 import com.leapmotor.lputils.widget.ShadowDialog;
 import com.leapmotor.utils.R;
+import com.leapmotor.utils.utils.ActivityUtils;
 import com.leapmotor.utils.utils.CarUtil;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, DialogUtils.OnClickListener {
@@ -77,6 +78,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         FindViewUtlis.findViewById(this, R.id.tvToastAppointMain).setOnClickListener(this);
         FindViewUtlis.findViewById(this, R.id.tvToastAppointVice).setOnClickListener(this);
         FindViewUtlis.findViewById(this, R.id.tvJump).setOnClickListener(this);
+        FindViewUtlis.findViewById(this, R.id.tvKotlinTest).setOnClickListener(this);
+        FindViewUtlis.findViewById(this, R.id.tvMediaTest).setOnClickListener(this);
         FindViewUtlis.findViewById(this, R.id.tvFinish).setOnClickListener(this);
     }
 
@@ -238,6 +241,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             Test.Companion.getTAG3();
             Test.Companion.getTAG4();
             Test.getTAG3();
+        } else if (id == R.id.tvMediaTest) {
+            ActivityUtils.startActivity(this, MediaActivity.class);
         } else if (id == R.id.tvFinish) {
             finish();
         }

@@ -34,8 +34,10 @@ dependencies {
     androidTestImplementation rootProject.ext.dependencies["espresso_core"]
 
     implementation project(path: ':lputils')
+    implementation project(path: ':play')
     implementation rootProject.ext.dependencies["supportv7"]
     //implementation rootProject.ext.dependencies["lp_utils"]
+    //implementation rootProject.ext.dependencies["lp_media"]
     implementation rootProject.ext.dependencies["utilcodex"]
     //kotlin
     implementation rootProject.ext.dependencies["core_ktx"]

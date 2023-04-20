@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.leapmotor.play">
+
+    <uses-permission android:name="com.leapmotor.media.MediaService.permission.ACCESS_SERVICE" />
+
+    <uses-permission
+        android:name="android.permission.QUERY_ALL_PACKAGES"
+        tools:ignore="QueryAllPackagesPermission" />
+
+    <queries>
+        <package android:name="com.leapmotor.multimedia" />
+        <intent>
+            <action android:name="com.leapmotor.mediac11.MediaService" />
+        </intent>
+    </queries>
+
+</manifest>
