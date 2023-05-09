@@ -6,6 +6,7 @@ import android.os.IBinder;
 import android.os.RemoteException;
 import android.text.method.ScrollingMovementMethod;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -35,6 +36,7 @@ import com.leapmotor.play.db.LpRadioPlayList;
 import com.leapmotor.play.db.OnlineRadioBroadcastList;
 import com.leapmotor.play.db.UdiskPlayList;
 import com.leapmotor.play.db.UltimatetvPlayList;
+import com.leapmotor.play.listener.LocalDbListener;
 import com.leapmotor.play.listener.PlayStateListener;
 import com.leapmotor.play.listener.SeekListener;
 import com.leapmotor.utils.R;
@@ -53,6 +55,7 @@ public class MediaActivity extends AppCompatActivity implements View.OnClickList
     private IMediaAidlInterface iMediaAidlInterface;
     private SeekListener.Stub seekListener;
     private PlayStateListener.Stub playStateListener;
+    private LocalDbListener.Stub localDbListener;
     private TextView tvTitle;
     private TextView tvSinger;
     private TextView tvPlayPause;
@@ -63,6 +66,7 @@ public class MediaActivity extends AppCompatActivity implements View.OnClickList
     private TextView tvStarTime;
     private SeekBar seekBar;
     private EditText etSwitchMediaTab;
+    private Button playLikeMusic, playBluetoothMusicList, playHistory;
     private EditText etLpRadioProgramId;
     private EditText etXmlyAlbumId;
     private SeekBody seekBody;
@@ -300,6 +304,10 @@ public class MediaActivity extends AppCompatActivity implements View.OnClickList
                     if (playStateListener != null) {
                         iMediaAidlInterface.unRegisterPlayStateListener(playStateListener);
                     }
+                } else if (id == R.id.unRegisterLocalDbListener) {
+                    if (localDbListener != null) {
+                        iMediaAidlInterface.unRegisterLocalDbListener(localDbListener);
+                    }
                 }
             }
             if (id == R.id.tvFinish) {
@@ -314,10 +322,7 @@ public class MediaActivity extends AppCompatActivity implements View.OnClickList
         FindViewUtlis.findViewById(this, R.id.tvPre).setOnClickListener(this);
         FindViewUtlis.findViewById(this, R.id.tvPlayPause).setOnClickListener(this);
         FindViewUtlis.findViewById(this, R.id.tvNext).setOnClickListener(this);
-        FindViewUtlis.findViewById(this, R.id.playLikeMusic).setOnClickListener(this);
         FindViewUtlis.findViewById(this, R.id.playRecMusic).setOnClickListener(this);
-        FindViewUtlis.findViewById(this, R.id.playBluetoothMusicList).setOnClickListener(this);
-        FindViewUtlis.findViewById(this, R.id.playHistory).setOnClickListener(this);
         FindViewUtlis.findViewById(this, R.id.playLpRadioListTimeProgram).setOnClickListener(this);
         FindViewUtlis.findViewById(this, R.id.playLpRadioProgram).setOnClickListener(this);
         FindViewUtlis.findViewById(this, R.id.playXmlyByAlbumId).setOnClickListener(this);
@@ -352,6 +357,12 @@ public class MediaActivity extends AppCompatActivity implements View.OnClickList
         tvEndTime = FindViewUtlis.findViewById(this, R.id.tvEndTime);
         seekBar = FindViewUtlis.findViewById(this, R.id.seekBar);
         etSwitchMediaTab = FindViewUtlis.findViewById(this, R.id.etSwitchMediaTab);
+        playLikeMusic = FindViewUtlis.findViewById(this, R.id.playLikeMusic);
+        playLikeMusic.setOnClickListener(this);
+        playBluetoothMusicList = FindViewUtlis.findViewById(this, R.id.playBluetoothMusicList);
+        playBluetoothMusicList.setOnClickListener(this);
+        playHistory = FindViewUtlis.findViewById(this, R.id.playHistory);
+        playHistory.setOnClickListener(this);
         etLpRadioProgramId = FindViewUtlis.findViewById(this, R.id.etLpRadioProgramId);
         etXmlyAlbumId = FindViewUtlis.findViewById(this, R.id.etXmlyAlbumId);
         tvContent.setMovementMethod(new ScrollingMovementMethod());
@@ -473,6 +484,37 @@ public class MediaActivity extends AppCompatActivity implements View.OnClickList
                     };
                     iMediaAidlInterface.registerPlayStateListener(playStateListener);
                 }
+
+                if (localDbListener == null) {
+                    localDbListener = new LocalDbListener.Stub() {
+                        @Override
+                        public void onKgUltimatetvLikeCount(int count) throws RemoteException {
+                            ThreadUtils.runOnUiThread(() -> playLikeMusic.setText("播放酷狗我喜欢".concat(" : " + count)));
+                            TLog.v(TAG, "onKgUltimatetvLikeCount: " + count);
+                        }
+
+                        @Override
+                        public void onKgBluetoothMusicCount(int count) throws RemoteException {
+                            ThreadUtils.runOnUiThread(() -> playBluetoothMusicList.setText("播放酷狗蓝牙音乐历史".concat(" : " + count)));
+                            TLog.v(TAG, "onKgBluetoothMusicCount: " + count);
+                        }
+
+                        @Override
+                        public void onKgHistoryCount(int count) throws RemoteException {
+                            ThreadUtils.runOnUiThread(() -> playHistory.setText("播放酷狗历史".concat(" : " + count)));
+                            TLog.v(TAG, "onKgHistoryCount: " + count);
+                        }
+
+                        @Override
+                        public void onError(String error) throws RemoteException {
+                            TLog.e(TAG, error);
+                        }
+                    };
+                    iMediaAidlInterface.registerLocalDbListener(localDbListener);
+                }
+                playLikeMusic.setText("播放酷狗我喜欢".concat(" : " + iMediaAidlInterface.getKgUltimatetvLikeCount()));
+                playBluetoothMusicList.setText("播放酷狗蓝牙音乐历史".concat(" : " + iMediaAidlInterface.getKgBluetoothMusicCount()));
+                playHistory.setText("播放酷狗历史".concat(" : " + iMediaAidlInterface.getKgHistoryCount()));
             }
         } catch (RemoteException e) {
             e.printStackTrace();
@@ -484,6 +526,7 @@ public class MediaActivity extends AppCompatActivity implements View.OnClickList
             iMediaAidlInterface.queryKgIsLikeFromDb(songId, new FavCallback.Stub() {
                 @Override
                 public void onFav(boolean isFav) throws RemoteException {
+                    TLog.v(TAG, "onFav: " + Thread.currentThread());
                     ThreadUtils.runOnUiThread(() -> tvIsFav.setText(isFav ? "取消收藏" : "收藏"));
                 }
             });

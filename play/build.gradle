@@ -25,7 +25,6 @@ android {
 }
 
 dependencies {
-    compileOnly rootProject.ext.dependencies["supportv7"]
     compileOnly rootProject.ext.dependencies["media"]
     compileOnly rootProject.ext.dependencies["gson"]
 }

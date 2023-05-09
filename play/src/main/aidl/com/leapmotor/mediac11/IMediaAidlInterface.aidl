@@ -12,6 +12,7 @@ import com.leapmotor.play.callback.UdiskCallback;
 import com.leapmotor.play.callback.XmlyCallback;
 import com.leapmotor.play.listener.PlayStateListener;
 import com.leapmotor.play.listener.SeekListener;
+import com.leapmotor.play.listener.LocalDbListener;
 import com.leapmotor.xmly.model.bean.RadioBean;
 
 
@@ -128,5 +129,17 @@ interface IMediaAidlInterface {
     oneway void getXmlySubAlbumsByUid(long timeline, int offset, XmlyCallback xmlyCallback);
 
     oneway void getHisAlbumsByUid(int offset, int limit, int category_id, XmlyCallback xmlyCallback);
+
+    void playByMeidaType(int mediaType);
+
+    long getKgUltimatetvLikeCount();
+
+    long getKgBluetoothMusicCount();
+
+    long getKgHistoryCount();
+
+    void registerLocalDbListener(LocalDbListener localDbListener);
+
+    void unRegisterLocalDbListener(LocalDbListener localDbListener);
 
 }

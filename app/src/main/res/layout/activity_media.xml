@@ -403,6 +403,15 @@
                     android:layout_weight="1"
                     android:gravity="center"
                     android:text="解除注册歌曲状态信息" />
+
+                <Button
+                    android:id="@+id/unRegisterLocalDbListener"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="解除注册本地数据库信息" />
             </LinearLayout>
 
             <Button
