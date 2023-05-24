@@ -14,6 +14,8 @@ interface LocalDbListener {
 
     void onKgHistoryCount(int count);
 
+    void onUdiskHistoryCount(int count);
+
     void onError(String error);
 
 }

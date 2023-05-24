@@ -18,6 +18,7 @@ import com.blankj.utilcode.util.JsonUtils;
 import com.blankj.utilcode.util.ThreadUtils;
 import com.leapmotor.baselib.net.http.HttpCallback;
 import com.leapmotor.baselib.utils.SecondUtil;
+import com.leapmotor.lpradio.model.bean.AlbumInfoBean;
 import com.leapmotor.lpradio.model.bean.RecommendListBean;
 import com.leapmotor.lputils.utils.FindViewUtlis;
 import com.leapmotor.mediac11.Constants;
@@ -36,12 +37,15 @@ import com.leapmotor.play.db.LpRadioPlayList;
 import com.leapmotor.play.db.OnlineRadioBroadcastList;
 import com.leapmotor.play.db.UdiskPlayList;
 import com.leapmotor.play.db.UltimatetvPlayList;
+import com.leapmotor.play.db.XmlyPlayList;
 import com.leapmotor.play.listener.LocalDbListener;
 import com.leapmotor.play.listener.PlayStateListener;
 import com.leapmotor.play.listener.SeekListener;
+import com.leapmotor.ultimatetv.entity.AlbumInfo;
 import com.leapmotor.utils.R;
 import com.leapmotor.utils.utils.TLog;
 import com.leapmotor.xmly.annotation.SortType;
+import com.leapmotor.xmly.model.bean.AlbumRichBean;
 import com.leapmotor.xmly.model.bean.HistoryPlayRecordFullBean;
 import com.leapmotor.xmly.model.bean.RecommendInfoBean;
 import com.leapmotor.xmly.model.page.AlbumSubscribedPage;
@@ -65,10 +69,9 @@ public class MediaActivity extends AppCompatActivity implements View.OnClickList
     private TextView tvEndTime;
     private TextView tvStarTime;
     private SeekBar seekBar;
-    private EditText etSwitchMediaTab;
-    private Button playLikeMusic, playBluetoothMusicList, playHistory;
-    private EditText etLpRadioProgramId;
-    private EditText etXmlyAlbumId;
+    private TextView tvIsBtAvailable;
+    private EditText etSwitchMediaTab, etId;
+    private Button playLikeMusic, playBluetoothMusicList, playHistory, playGuessLikeMusic, playNextGuessLikeMusic, playUdiskHistory;
     private SeekBody seekBody;
     private boolean seekFromUser;
     private MediaBody mediaBody;
@@ -160,6 +163,8 @@ public class MediaActivity extends AppCompatActivity implements View.OnClickList
                                     }
                                 });
                     }
+                } else if (id == R.id.tvIsBtAvailable) {
+                    iMediaAidlInterface.playBtMusic();
                 } else if (id == R.id.playLikeMusic) {
                     iMediaAidlInterface.playKgLikeMusic(0);
                 } else if (id == R.id.playRecMusic) {
@@ -168,12 +173,18 @@ public class MediaActivity extends AppCompatActivity implements View.OnClickList
                     iMediaAidlInterface.playKgBluetoothMusicList(0);
                 } else if (id == R.id.playHistory) {
                     iMediaAidlInterface.playKgHistory(0);
+                } else if (id == R.id.playGuessLikeMusic) {
+                    iMediaAidlInterface.playGuessLikeMusic();
+                } else if (id == R.id.playNextGuessLikeMusic) {
+                    iMediaAidlInterface.playNextGuessLikeMusic();
+                } else if (id == R.id.playUdiskHistory) {
+                    iMediaAidlInterface.playUdiskHistory(0);
                 } else if (id == R.id.playLpRadioListTimeProgram) {
                     iMediaAidlInterface.playLpRadioListTimeProgram(true);
                 } else if (id == R.id.playLpRadioProgram) {
-                    iMediaAidlInterface.playLpRadioProgram(etLpRadioProgramId.getText().toString(), 0);
+                    iMediaAidlInterface.playLpRadioProgram(etId.getText().toString(), 0);
                 } else if (id == R.id.playXmlyByAlbumId) {
-                    iMediaAidlInterface.playXmlyByAlbumId(Long.parseLong(etXmlyAlbumId.getText().toString()), 0, 4, SortType.ASC, 0);
+                    iMediaAidlInterface.playXmlyByAlbumId(Long.parseLong(etId.getText().toString()), 0, 4, SortType.ASC, 0);
                 } else if (id == R.id.playOnlineRadioLocal) {
                     iMediaAidlInterface.playOnlineRadioLocal(Constants.ONLINE_RADIO_PAGE_FIRST, 4, 2);
                 } else if (id == R.id.playOnlineRadioSub) {
@@ -200,6 +211,26 @@ public class MediaActivity extends AppCompatActivity implements View.OnClickList
                                     ThreadUtils.runOnUiThread(() -> tvContent.setText(JsonUtils.formatJson(GsonUtils.toJson(ultimatetvPlayLists))));
                                 }
                             });
+                } else if (id == R.id.getKgAlbumInfoList) {
+                    ApiInterface
+                            .getInstance()
+                            .getKgAlbumInfoList(iMediaAidlInterface, etId.getText().toString(), Constants.KG_PAGE_FIRST, 1, new HttpCallback<AlbumInfo>() {
+                                @Override
+                                public void onSuccess(AlbumInfo albumInfo) {
+                                    TLog.v(TAG, "getKgAlbumInfoList: " + Thread.currentThread());
+                                    ThreadUtils.runOnUiThread(() -> tvContent.setText(JsonUtils.formatJson(GsonUtils.toJson(albumInfo))));
+                                }
+                            });
+                } else if (id == R.id.getAllLpRadioPlayList) {
+                    ApiInterface
+                            .getInstance()
+                            .getAllLpRadioPlayList(iMediaAidlInterface, new HttpCallback<List<LpRadioPlayList>>() {
+                                @Override
+                                public void onSuccess(List<LpRadioPlayList> lpRadioPlayLists) {
+                                    TLog.v(TAG, "getAllLpRadioPlayList: " + Thread.currentThread());
+                                    tvContent.setText(JsonUtils.formatJson(GsonUtils.toJson(lpRadioPlayLists)));
+                                }
+                            });
                 } else if (id == R.id.getLpRadioListTimeProgram) {
                     ApiInterface
                             .getInstance()
@@ -208,6 +239,16 @@ public class MediaActivity extends AppCompatActivity implements View.OnClickList
                                 public void onSuccess(List<LpRadioPlayList> lpRadioPlayLists) {
                                     TLog.v(TAG, "getLpRadioListTimeProgram: " + Thread.currentThread());
                                     tvContent.setText(JsonUtils.formatJson(GsonUtils.toJson(lpRadioPlayLists)));
+                                }
+                            });
+                } else if (id == R.id.getLpRadioAlbumInfo) {
+                    ApiInterface
+                            .getInstance()
+                            .getLpRadioAlbumInfo(iMediaAidlInterface, etId.getText().toString(), new HttpCallback<AlbumInfoBean>() {
+                                @Override
+                                public void onSuccess(AlbumInfoBean albumInfoBean) {
+                                    TLog.v(TAG, "getLpRadioAlbumInfo: " + Thread.currentThread());
+                                    tvContent.setText(JsonUtils.formatJson(GsonUtils.toJson(albumInfoBean)));
                                 }
                             });
                 } else if (id == R.id.getLpRadioRecommendList) {
@@ -260,6 +301,26 @@ public class MediaActivity extends AppCompatActivity implements View.OnClickList
                                     ThreadUtils.runOnUiThread(() -> tvContent.setText(JsonUtils.formatJson(GsonUtils.toJson(udiskPlayLists))));
                                 }
                             });
+                } else if (id == R.id.getAllXmlyPlayList) {
+                    ApiInterface
+                            .getInstance()
+                            .getAllXmlyPlayList(iMediaAidlInterface, new HttpCallback<List<XmlyPlayList>>() {
+                                @Override
+                                public void onSuccess(List<XmlyPlayList> xmlyPlayLists) {
+                                    TLog.v(TAG, "getAllXmlyPlayList: " + Thread.currentThread());
+                                    tvContent.setText(JsonUtils.formatJson(GsonUtils.toJson(xmlyPlayLists)));
+                                }
+                            });
+                } else if (id == R.id.getXmlyAlbumInfo) {
+                    ApiInterface
+                            .getInstance()
+                            .getXmlyAlbumInfo(iMediaAidlInterface, Long.parseLong(etId.getText().toString()), null, new HttpCallback<AlbumRichBean>() {
+                                @Override
+                                public void onSuccess(AlbumRichBean albumRichBean) {
+                                    TLog.v(TAG, "getXmlyAlbumInfo: " + Thread.currentThread());
+                                    tvContent.setText(JsonUtils.formatJson(GsonUtils.toJson(albumRichBean)));
+                                }
+                            });
                 } else if (id == R.id.getXmlyRecVehicle) {
                     ApiInterface
                             .getInstance()
@@ -294,7 +355,7 @@ public class MediaActivity extends AppCompatActivity implements View.OnClickList
                             });
                 } else if (id == R.id.getMediaBody) {
                     MediaBody mediaBody = ApiInterface.getInstance().getMediaBody(iMediaAidlInterface);
-                    TLog.v(TAG, "getMediaBody: " + Thread.currentThread());
+                    TLog.v(TAG, "getMediaBody: " + mediaBody.toString() + ", " + Thread.currentThread());
                     tvContent.setText(JsonUtils.formatJson(GsonUtils.toJson(mediaBody)));
                 } else if (id == R.id.unRegisterSeekListener) {
                     if (seekListener != null) {
@@ -331,12 +392,17 @@ public class MediaActivity extends AppCompatActivity implements View.OnClickList
         FindViewUtlis.findViewById(this, R.id.playOnlineRadioHis).setOnClickListener(this);
         FindViewUtlis.findViewById(this, R.id.getKgAllUltimatetvPlayList).setOnClickListener(this);
         FindViewUtlis.findViewById(this, R.id.getKgDailyRecPlayList).setOnClickListener(this);
+        FindViewUtlis.findViewById(this, R.id.getKgAlbumInfoList).setOnClickListener(this);
+        FindViewUtlis.findViewById(this, R.id.getAllLpRadioPlayList).setOnClickListener(this);
         FindViewUtlis.findViewById(this, R.id.getLpRadioListTimeProgram).setOnClickListener(this);
+        FindViewUtlis.findViewById(this, R.id.getLpRadioAlbumInfo).setOnClickListener(this);
         FindViewUtlis.findViewById(this, R.id.getLpRadioRecommendList).setOnClickListener(this);
         FindViewUtlis.findViewById(this, R.id.getFmFreqFromDb).setOnClickListener(this);
         FindViewUtlis.findViewById(this, R.id.getFmCollectFreqFromDb).setOnClickListener(this);
         FindViewUtlis.findViewById(this, R.id.getAllOnlineRadioBroadcastList).setOnClickListener(this);
         FindViewUtlis.findViewById(this, R.id.getAllUdiskPlayList).setOnClickListener(this);
+        FindViewUtlis.findViewById(this, R.id.getAllXmlyPlayList).setOnClickListener(this);
+        FindViewUtlis.findViewById(this, R.id.getXmlyAlbumInfo).setOnClickListener(this);
         FindViewUtlis.findViewById(this, R.id.getXmlyRecVehicle).setOnClickListener(this);
         FindViewUtlis.findViewById(this, R.id.getXmlySubAlbumsByUid).setOnClickListener(this);
         FindViewUtlis.findViewById(this, R.id.getHisAlbumsByUid).setOnClickListener(this);
@@ -356,15 +422,22 @@ public class MediaActivity extends AppCompatActivity implements View.OnClickList
         tvStarTime = FindViewUtlis.findViewById(this, R.id.tvStarTime);
         tvEndTime = FindViewUtlis.findViewById(this, R.id.tvEndTime);
         seekBar = FindViewUtlis.findViewById(this, R.id.seekBar);
+        tvIsBtAvailable = FindViewUtlis.findViewById(this, R.id.tvIsBtAvailable);
+        tvIsBtAvailable.setOnClickListener(this);
         etSwitchMediaTab = FindViewUtlis.findViewById(this, R.id.etSwitchMediaTab);
+        etId = FindViewUtlis.findViewById(this, R.id.etId);
         playLikeMusic = FindViewUtlis.findViewById(this, R.id.playLikeMusic);
         playLikeMusic.setOnClickListener(this);
         playBluetoothMusicList = FindViewUtlis.findViewById(this, R.id.playBluetoothMusicList);
         playBluetoothMusicList.setOnClickListener(this);
         playHistory = FindViewUtlis.findViewById(this, R.id.playHistory);
         playHistory.setOnClickListener(this);
-        etLpRadioProgramId = FindViewUtlis.findViewById(this, R.id.etLpRadioProgramId);
-        etXmlyAlbumId = FindViewUtlis.findViewById(this, R.id.etXmlyAlbumId);
+        playGuessLikeMusic = FindViewUtlis.findViewById(this, R.id.playGuessLikeMusic);
+        playGuessLikeMusic.setOnClickListener(this);
+        playNextGuessLikeMusic = FindViewUtlis.findViewById(this, R.id.playNextGuessLikeMusic);
+        playNextGuessLikeMusic.setOnClickListener(this);
+        playUdiskHistory = FindViewUtlis.findViewById(this, R.id.playUdiskHistory);
+        playUdiskHistory.setOnClickListener(this);
         tvContent.setMovementMethod(new ScrollingMovementMethod());
         etSwitchMediaTab.setOnEditorActionListener((v, actionId, event) -> {
             try {
@@ -506,15 +579,23 @@ public class MediaActivity extends AppCompatActivity implements View.OnClickList
                         }
 
                         @Override
+                        public void onUdiskHistoryCount(int count) throws RemoteException {
+                            ThreadUtils.runOnUiThread(() -> playUdiskHistory.setText("播放U盘音乐历史".concat(" : " + count)));
+                            TLog.v(TAG, "onUdiskHistoryCount: " + count);
+                        }
+
+                        @Override
                         public void onError(String error) throws RemoteException {
                             TLog.e(TAG, error);
                         }
                     };
                     iMediaAidlInterface.registerLocalDbListener(localDbListener);
                 }
+                tvIsBtAvailable.setText(iMediaAidlInterface.isBtAvailable() ? "已连接蓝牙设备（可点击播放）：".concat(iMediaAidlInterface.getBtDeviceName()) : "还没连接蓝牙音乐");
                 playLikeMusic.setText("播放酷狗我喜欢".concat(" : " + iMediaAidlInterface.getKgUltimatetvLikeCount()));
                 playBluetoothMusicList.setText("播放酷狗蓝牙音乐历史".concat(" : " + iMediaAidlInterface.getKgBluetoothMusicCount()));
                 playHistory.setText("播放酷狗历史".concat(" : " + iMediaAidlInterface.getKgHistoryCount()));
+                playUdiskHistory.setText("播放U盘音乐历史".concat(" : " + iMediaAidlInterface.getUdiskHistoryCount()));
             }
         } catch (RemoteException e) {
             e.printStackTrace();

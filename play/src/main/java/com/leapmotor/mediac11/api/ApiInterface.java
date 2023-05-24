@@ -13,6 +13,7 @@ import com.leapmotor.baselib.exception.ApiException;
 import com.leapmotor.baselib.net.http.HttpCallback;
 import com.leapmotor.baselib.utils.GsonUtils;
 import com.leapmotor.baselib.utils.ThreadUtils;
+import com.leapmotor.lpradio.model.bean.AlbumInfoBean;
 import com.leapmotor.lpradio.model.bean.RecommendListBean;
 import com.leapmotor.mediac11.IMediaAidlInterface;
 import com.leapmotor.play.annotation.MediaType;
@@ -30,9 +31,12 @@ import com.leapmotor.play.db.LpRadioPlayList;
 import com.leapmotor.play.db.OnlineRadioBroadcastList;
 import com.leapmotor.play.db.UdiskPlayList;
 import com.leapmotor.play.db.UltimatetvPlayList;
+import com.leapmotor.play.db.XmlyPlayList;
+import com.leapmotor.ultimatetv.entity.AlbumInfo;
 import com.leapmotor.xmly.annotation.SortType;
 import com.leapmotor.xmly.model.ErrorResponse;
 import com.leapmotor.xmly.model.bean.AlbumPayBean;
+import com.leapmotor.xmly.model.bean.AlbumRichBean;
 import com.leapmotor.xmly.model.bean.HistoryPlayRecordFullBean;
 import com.leapmotor.xmly.model.bean.RecommendInfoBean;
 import com.leapmotor.xmly.model.bean.TrackFullBean;
@@ -221,6 +225,11 @@ public class ApiInterface {
                 }
 
                 @Override
+                public void onJsonData(String json) throws RemoteException {
+
+                }
+
+                @Override
                 public void onFail(String json) throws RemoteException {
                     ThreadUtils.runOnUiThread(() -> httpCallback.onFailed(json));
                 }
@@ -245,8 +254,65 @@ public class ApiInterface {
                 }
 
                 @Override
+                public void onJsonData(String json) throws RemoteException {
+
+                }
+
+                @Override
                 public void onFail(String json) throws RemoteException {
                     ThreadUtils.runOnUiThread(() -> httpCallback.onFailed(json));
+                }
+
+                @Override
+                public void onError(String error) throws RemoteException {
+                    Log.e(TAG, error);
+                    ThreadUtils.runOnUiThread(() -> httpCallback.onError(new ApiException(error)));
+                }
+            });
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void getKgAlbumInfoList(@NonNull IMediaAidlInterface iMediaAidlInterface, String albumId, int page, int size, @NonNull HttpCallback<AlbumInfo> httpCallback) {
+        try {
+            iMediaAidlInterface.getKgAlbumInfoList(albumId, page, size, new UltimatetvCallback.Stub() {
+                @Override
+                public void onUltimatetvPlayList(List<UltimatetvPlayList> ultimatetvPlayLists) throws RemoteException {
+                }
+
+                @Override
+                public void onJsonData(String json) throws RemoteException {
+                    AlbumInfo albumInfo = GsonUtils.fromJson(json, AlbumInfo.class);
+                    ThreadUtils.runOnUiThread(() -> httpCallback.onSuccess(albumInfo));
+                }
+
+                @Override
+                public void onFail(String json) throws RemoteException {
+                    ThreadUtils.runOnUiThread(() -> httpCallback.onFailed(json));
+                }
+
+                @Override
+                public void onError(String error) throws RemoteException {
+                    Log.e(TAG, error);
+                    ThreadUtils.runOnUiThread(() -> httpCallback.onError(new ApiException(error)));
+                }
+            });
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void getAllLpRadioPlayList(@NonNull IMediaAidlInterface iMediaAidlInterface, @NonNull HttpCallback<List<LpRadioPlayList>> httpCallback) {
+        try {
+            iMediaAidlInterface.getAllLpRadioPlayList(new LpRadioCallback.Stub() {
+                @Override
+                public void onLpRadioPlayList(List<LpRadioPlayList> lpRadioPlayLists) throws RemoteException {
+                    ThreadUtils.runOnUiThread(() -> httpCallback.onSuccess(lpRadioPlayLists));
+                }
+
+                @Override
+                public void onRecommendList(String json) throws RemoteException {
                 }
 
                 @Override
@@ -301,6 +367,43 @@ public class ApiInterface {
                         } else {
                             try {
                                 httpCallback.onFailed(recommendListBean);
+                            } catch (Exception e) {
+                                Log.e(TAG, e.toString());
+                                ThreadUtils.runOnUiThread(() -> httpCallback.onError(new ApiException(e.getMessage())));
+                            }
+                        }
+                    });
+                }
+
+                @Override
+                public void onError(String error) throws RemoteException {
+                    Log.e(TAG, error);
+                    ThreadUtils.runOnUiThread(() -> httpCallback.onError(new ApiException(error)));
+                }
+            });
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void getLpRadioAlbumInfo(@NonNull IMediaAidlInterface iMediaAidlInterface, String albumId, @NonNull HttpCallback<AlbumInfoBean> httpCallback) {
+        try {
+            iMediaAidlInterface.getLpRadioAlbumInfo(albumId, new LpRadioCallback.Stub() {
+                @Override
+                public void onLpRadioPlayList(List<LpRadioPlayList> lpRadioPlayLists) throws RemoteException {
+
+                }
+
+                @Override
+                public void onRecommendList(String json) throws RemoteException {
+                    AlbumInfoBean albumInfoBean = GsonUtils.fromJson(json, AlbumInfoBean.class);
+                    ThreadUtils.runOnUiThread(() -> {
+                        if (albumInfoBean.isOk()) {
+                            httpCallback.onSuccess(albumInfoBean);
+                            httpCallback.onComplete();
+                        } else {
+                            try {
+                                httpCallback.onFailed(albumInfoBean);
                             } catch (Exception e) {
                                 Log.e(TAG, e.toString());
                                 ThreadUtils.runOnUiThread(() -> httpCallback.onError(new ApiException(e.getMessage())));
@@ -405,9 +508,48 @@ public class ApiInterface {
         }
     }
 
+    public void getAllXmlyPlayList(@NonNull IMediaAidlInterface iMediaAidlInterface, @NonNull HttpCallback<List<XmlyPlayList>> httpCallback) {
+        try {
+            iMediaAidlInterface.getAllXmlyPlayListBySingle(new XmlyCallback.Stub() {
+                @Override
+                public void onXmlyPlayList(List<XmlyPlayList> xmlyPlayLists) throws RemoteException {
+                    ThreadUtils.runOnUiThread(() -> httpCallback.onSuccess(xmlyPlayLists));
+                }
+
+                @Override
+                public void onJsonData(String json) throws RemoteException {
+
+                }
+
+                @Override
+                public void onFail(String json) throws RemoteException {
+                    try {
+                        httpCallback.onFailed(GsonUtils.fromJson(json, ErrorResponse.class));
+                    } catch (Exception e) {
+                        Log.e(TAG, e.toString());
+                        ThreadUtils.runOnUiThread(() -> httpCallback.onError(new ApiException(e.getMessage())));
+                    }
+                }
+
+                @Override
+                public void onError(String error) throws RemoteException {
+                    Log.e(TAG, error);
+                    ThreadUtils.runOnUiThread(() -> httpCallback.onError(new ApiException(error)));
+                }
+            });
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+    }
+
     public void getXmlyRecVehicle(@NonNull IMediaAidlInterface iMediaAidlInterface, int limit, @NonNull HttpCallback<List<RecommendInfoBean>> httpCallback) {
         try {
             iMediaAidlInterface.getXmlyRecVehicle(limit, new XmlyCallback.Stub() {
+                @Override
+                public void onXmlyPlayList(List<XmlyPlayList> xmlyPlayLists) throws RemoteException {
+
+                }
+
                 @Override
                 public void onJsonData(String json) throws RemoteException {
                     List<RecommendInfoBean> recommendInfoBeans = GsonUtils.fromJson(json, new TypeToken<List<RecommendInfoBean>>() {
@@ -440,6 +582,11 @@ public class ApiInterface {
         try {
             iMediaAidlInterface.getXmlySubAlbumsByUid(timeline, offset, new XmlyCallback.Stub() {
                 @Override
+                public void onXmlyPlayList(List<XmlyPlayList> xmlyPlayLists) throws RemoteException {
+
+                }
+
+                @Override
                 public void onJsonData(String json) throws RemoteException {
                     AlbumSubscribedPage albumSubscribedPage = GsonUtils.fromJson(json, AlbumSubscribedPage.class);
                     ThreadUtils.runOnUiThread(() -> httpCallback.onSuccess(albumSubscribedPage));
@@ -470,9 +617,49 @@ public class ApiInterface {
         try {
             iMediaAidlInterface.getHisAlbumsByUid(offset, limit, category_id, new XmlyCallback.Stub() {
                 @Override
+                public void onXmlyPlayList(List<XmlyPlayList> xmlyPlayLists) throws RemoteException {
+
+                }
+
+                @Override
                 public void onJsonData(String json) throws RemoteException {
                     HistoryPlayRecordFullPage historyPlayRecordFullPage = GsonUtils.fromJson(json, HistoryPlayRecordFullPage.class);
                     ThreadUtils.runOnUiThread(() -> httpCallback.onSuccess(historyPlayRecordFullPage));
+                }
+
+                @Override
+                public void onFail(String json) throws RemoteException {
+                    try {
+                        httpCallback.onFailed(GsonUtils.fromJson(json, ErrorResponse.class));
+                    } catch (Exception e) {
+                        Log.e(TAG, e.toString());
+                        ThreadUtils.runOnUiThread(() -> httpCallback.onError(new ApiException(e.getMessage())));
+                    }
+                }
+
+                @Override
+                public void onError(String error) throws RemoteException {
+                    Log.e(TAG, error);
+                    ThreadUtils.runOnUiThread(() -> httpCallback.onError(new ApiException(error)));
+                }
+            });
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void getXmlyAlbumInfo(@NonNull IMediaAidlInterface iMediaAidlInterface, long albumId, String rich_info, @NonNull HttpCallback<AlbumRichBean> httpCallback) {
+        try {
+            iMediaAidlInterface.getXmlyAlbumInfo(albumId, rich_info, new XmlyCallback.Stub() {
+                @Override
+                public void onXmlyPlayList(List<XmlyPlayList> xmlyPlayLists) throws RemoteException {
+
+                }
+
+                @Override
+                public void onJsonData(String json) throws RemoteException {
+                    AlbumRichBean albumRichBean = GsonUtils.fromJson(json, AlbumRichBean.class);
+                    ThreadUtils.runOnUiThread(() -> httpCallback.onSuccess(albumRichBean));
                 }
 
                 @Override

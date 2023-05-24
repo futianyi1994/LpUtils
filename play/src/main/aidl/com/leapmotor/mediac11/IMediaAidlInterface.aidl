@@ -142,4 +142,26 @@ interface IMediaAidlInterface {
 
     void unRegisterLocalDbListener(LocalDbListener localDbListener);
 
+    boolean isBtAvailable();
+
+    void playBtMusic();
+
+    void playGuessLikeMusic();
+
+    void playNextGuessLikeMusic();
+
+    void playUdiskHistory(int position);
+
+    long getUdiskHistoryCount();
+
+    oneway void getKgAlbumInfoList(String albumId, int page, int size, UltimatetvCallback ultimatetvCallback);
+
+    oneway void getAllXmlyPlayListBySingle(XmlyCallback xmlyCallback);
+
+    oneway void getXmlyAlbumInfo(long albumId, String rich_info,XmlyCallback xmlyCallback);
+
+    oneway void getLpRadioAlbumInfo(String albumId, LpRadioCallback lpRadioCallback);
+
+    oneway void getAllLpRadioPlayList(LpRadioCallback lpRadioCallback);
+
 }

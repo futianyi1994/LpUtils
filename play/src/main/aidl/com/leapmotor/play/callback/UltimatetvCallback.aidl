@@ -11,6 +11,8 @@ interface UltimatetvCallback {
      */
     void onUltimatetvPlayList(in List<UltimatetvPlayList> ultimatetvPlayLists);
 
+    void onJsonData(String json);
+
     void onFail(String json);
 
     void onError(String error);

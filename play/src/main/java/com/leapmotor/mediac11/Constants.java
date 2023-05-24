@@ -21,4 +21,9 @@ public interface Constants {
      * 云听广播默认第一页
      */
     int ONLINE_RADIO_PAGE_FIRST = 1;
+
+    /**
+     * 酷狗音乐默认第一页
+     */
+    int KG_PAGE_FIRST = 1;
 }

@@ -118,14 +118,34 @@
                 android:textSize="@dimen/size_M" />
         </LinearLayout>
 
-        <EditText
-            android:id="@+id/etSwitchMediaTab"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:gravity="center"
-            android:hint="切换零听Tab栏"
-            android:inputType="number" />
+            android:gravity="center">
+
+            <EditText
+                android:id="@+id/etSwitchMediaTab"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:hint="切换零听Tab栏"
+                android:inputType="number" />
+
+            <TextView
+                android:id="@+id/tvIsBtAvailable"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <EditText
+                android:id="@+id/etId"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:hint="输入Id"
+                android:inputType="number" />
+        </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -173,12 +193,57 @@
                     android:layout_weight="1"
                     android:gravity="center"
                     android:text="播放酷狗历史" />
+
+                <Button
+                    android:id="@+id/playGuessLikeMusic"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="播放私人推荐" />
+
+                <Button
+                    android:id="@+id/playNextGuessLikeMusic"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="播放下一首私人推荐" />
+
+                <Button
+                    android:id="@+id/getKgAlbumInfoList"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="获取酷狗专辑信息列表" />
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1">
+
+                <Button
+                    android:id="@+id/getAllLpRadioPlayList"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="获取零跑电台播放列表" />
+
+                <Button
+                    android:id="@+id/getLpRadioListTimeProgram"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="获取零跑电台时段节目" />
 
                 <Button
                     android:id="@+id/playLpRadioListTimeProgram"
@@ -188,6 +253,15 @@
                     android:layout_weight="1"
                     android:gravity="center"
                     android:text="播放零跑电台时段节目" />
+
+                <Button
+                    android:id="@+id/getLpRadioAlbumInfo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="获取零跑电台专辑信息" />
 
                 <Button
                     android:id="@+id/getLpRadioRecommendList"
@@ -207,17 +281,30 @@
                     android:gravity="center"
                     android:text="播放零跑电台专辑 ： " />
 
-                <EditText
-                    android:id="@+id/etLpRadioProgramId"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1" />
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1">
+
+                <Button
+                    android:id="@+id/getAllXmlyPlayList"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="获取喜马拉雅播放列表" />
+
+                <Button
+                    android:id="@+id/getXmlyAlbumInfo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="获取喜马拉雅专辑信息" />
 
                 <Button
                     android:id="@+id/getXmlyRecVehicle"
@@ -255,17 +342,21 @@
                     android:gravity="center"
                     android:text="播放喜马拉雅 ： " />
 
-                <EditText
-                    android:id="@+id/etXmlyAlbumId"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1" />
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1">
+
+                <Button
+                    android:id="@+id/getAllOnlineRadioBroadcastList"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="获取云听广播播放列表" />
 
                 <Button
                     android:id="@+id/playOnlineRadioLocal"
@@ -320,15 +411,6 @@
 
             </LinearLayout>
 
-            <Button
-                android:id="@+id/getLpRadioListTimeProgram"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:text="获取零跑电台时段节目" />
-
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -354,23 +436,29 @@
 
             </LinearLayout>
 
-            <Button
-                android:id="@+id/getAllOnlineRadioBroadcastList"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:text="获取云听广播播放列表" />
+                android:layout_weight="1">
 
-            <Button
-                android:id="@+id/getAllUdiskPlayList"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:text="获取U盘音乐播放列表" />
+                <Button
+                    android:id="@+id/getAllUdiskPlayList"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="获取U盘音乐播放列表" />
+
+                <Button
+                    android:id="@+id/playUdiskHistory"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="播放U盘音乐历史" />
+            </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
