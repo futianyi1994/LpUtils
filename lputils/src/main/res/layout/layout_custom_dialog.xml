@@ -7,7 +7,7 @@
 
     <LinearLayout
         android:id="@+id/llRoot"
-        android:layout_width="@dimen/x720"
+        android:layout_width="@dimen/x600"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:gravity="center"
@@ -20,11 +20,11 @@
             android:layout_width="match_parent"
             android:ellipsize="marquee"
             android:marqueeRepeatLimit="marquee_forever"
-            android:paddingStart="@dimen/x40"
-            android:paddingTop="@dimen/y40"
-            android:paddingEnd="@dimen/x40"
+            android:paddingStart="@dimen/x36"
+            android:paddingTop="@dimen/y36"
+            android:paddingEnd="@dimen/x36"
             android:singleLine="true"
-            android:textSize="@dimen/size_L"
+            android:textSize="@dimen/sizeT2"
             android:visibility="visible"
             tools:text="headTitle" />
 
@@ -32,8 +32,8 @@
             android:id="@+id/tvTitle"
             style="@style/main_text"
             android:layout_width="match_parent"
-            android:padding="@dimen/x40"
-            android:textSize="@dimen/size_L"
+            android:padding="@dimen/x36"
+            android:textSize="@dimen/sizeL"
             tools:text="title" />
 
         <View
@@ -43,7 +43,7 @@
         <LinearLayout
             android:id="@+id/llConfirm"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/y87">
+            android:layout_height="@dimen/y84">
 
             <TextView
                 android:id="@+id/tvLeft"
@@ -53,7 +53,7 @@
                 android:ellipsize="marquee"
                 android:marqueeRepeatLimit="marquee_forever"
                 android:singleLine="true"
-                android:textSize="@dimen/size_L"
+                android:textSize="@dimen/sizeL"
                 android:visibility="visible"
                 tools:text="left" />
 
@@ -65,7 +65,7 @@
                 android:ellipsize="marquee"
                 android:marqueeRepeatLimit="marquee_forever"
                 android:singleLine="true"
-                android:textSize="@dimen/size_L"
+                android:textSize="@dimen/sizeL"
                 android:visibility="visible"
                 tools:text="end" />
         </LinearLayout>

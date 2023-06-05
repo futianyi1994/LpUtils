@@ -80,6 +80,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         FindViewUtlis.findViewById(this, R.id.tvJump).setOnClickListener(this);
         FindViewUtlis.findViewById(this, R.id.tvKotlinTest).setOnClickListener(this);
         FindViewUtlis.findViewById(this, R.id.tvMediaTest).setOnClickListener(this);
+        FindViewUtlis.findViewById(this, R.id.tvMediaByBtTest).setOnClickListener(this);
         FindViewUtlis.findViewById(this, R.id.tvFinish).setOnClickListener(this);
     }
 
@@ -243,6 +244,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             Test.getTAG3();
         } else if (id == R.id.tvMediaTest) {
             ActivityUtils.startActivity(this, MediaActivity.class);
+        } else if (id == R.id.tvMediaByBtTest) {
+            ActivityUtils.startActivity(this, MediaByBtActivity.class);
         } else if (id == R.id.tvFinish) {
             finish();
         }

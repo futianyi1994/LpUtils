@@ -3,12 +3,12 @@
     android:interpolator="@android:anim/linear_interpolator"
     android:shareInterpolator="true">
     <alpha
-        android:duration="350"
+        android:duration="300"
         android:fromAlpha="0"
         android:toAlpha="1" />
 
     <scale
-        android:duration="350"
+        android:duration="300"
         android:fromXScale="40%p"
         android:fromYScale="40%p"
         android:pivotX="50%p"

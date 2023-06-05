@@ -14,6 +14,21 @@ android {
         testInstrumentationRunner rootProject.ext.dependencies["androidJUnitRunner"]
     }
 
+    signingConfigs {
+        debug {
+            storeFile file('../signKey/keystore/platform.keystore')
+            storePassword 'leapmotor.123'
+            keyAlias 'media'
+            keyPassword 'leapmotor.123'
+        }
+        release {
+            storeFile file('../signKey/keystore/platform.keystore')
+            storePassword 'leapmotor.123'
+            keyAlias 'media'
+            keyPassword 'leapmotor.123'
+        }
+    }
+
     buildTypes {
         release {
             minifyEnabled false

@@ -3,14 +3,25 @@ apply from: 'config.gradle'
 
 buildscript {
     repositories {
-        maven { url 'http://10.1.12.10:8081/repository/android_google/' }
-        maven { url 'http://10.1.12.10:8081/repository/android_aliyun/' }
-        maven { url 'http://10.1.12.10:8081/repository/android_jpack/' }
-        maven { url 'http://10.1.12.10:8081/repository/android_jcenter/' }
-        maven { url 'http://10.1.12.10:8081/repository/snapshot/' }
+        maven {
+            allowInsecureProtocol = true
+            url 'http://10.1.12.10:8081/repository/android_google/'
+        }
+        maven {
+            allowInsecureProtocol = true
+            url 'http://10.1.12.10:8081/repository/android_aliyun/'
+        }
+        maven {
+            allowInsecureProtocol = true
+            url 'http://10.1.12.10:8081/repository/android_jpack/'
+        }
+        maven {
+            allowInsecureProtocol = true
+            url 'http://10.1.12.10:8081/repository/snapshot/'
+        }
     }
     dependencies {
-        classpath "com.android.tools.build:gradle:3.6.1"
+        classpath 'com.android.tools.build:gradle:7.2.1'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.4.10"
 
         // NOTE: Do not place your application dependencies here; they belong
@@ -20,11 +31,22 @@ buildscript {
 
 allprojects {
     repositories {
-        maven { url 'http://10.1.12.10:8081/repository/android_google/' }
-        maven { url 'http://10.1.12.10:8081/repository/android_aliyun/' }
-        maven { url 'http://10.1.12.10:8081/repository/android_jpack/' }
-        maven { url 'http://10.1.12.10:8081/repository/android_jcenter/' }
-        maven { url 'http://10.1.12.10:8081/repository/snapshot/' }
+        maven {
+            allowInsecureProtocol = true
+            url 'http://10.1.12.10:8081/repository/android_google/'
+        }
+        maven {
+            allowInsecureProtocol = true
+            url 'http://10.1.12.10:8081/repository/android_aliyun/'
+        }
+        maven {
+            allowInsecureProtocol = true
+            url 'http://10.1.12.10:8081/repository/android_jpack/'
+        }
+        maven {
+            allowInsecureProtocol = true
+            url 'http://10.1.12.10:8081/repository/snapshot/'
+        }
     }
 }
 

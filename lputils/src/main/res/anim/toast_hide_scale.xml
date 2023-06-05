@@ -8,7 +8,7 @@
         android:toAlpha="0" />
 
     <scale
-        android:duration="350"
+        android:duration="250"
         android:fromXScale="100%p"
         android:fromYScale="100%p"
         android:pivotX="50%p"

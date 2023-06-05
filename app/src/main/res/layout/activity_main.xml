@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
+    android:background="@mipmap/bg_test"
     android:fitsSystemWindows="true"
     android:orientation="horizontal"
     tools:context=".ui.MainActivity">
@@ -191,6 +191,15 @@
             android:layout_weight="1"
             android:gravity="center"
             android:text="多媒体测试" />
+
+        <Button
+            android:id="@+id/tvMediaByBtTest"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="多媒体蓝牙协议测试" />
 
         <Button
             android:id="@+id/tvFinish"

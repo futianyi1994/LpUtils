@@ -34,4 +34,4 @@ tasks.withType(Javadoc) {
     options.addStringOption('charSet', 'UTF-8')
 }
 
-apply from: '../upload_nexus.gradle'
+apply from: '../publish_nexus_utils.gradle'

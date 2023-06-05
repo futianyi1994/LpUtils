@@ -1,17 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!--统一标定字体大小-->
-    <dimen name="size_s_">15px</dimen>
-    <dimen name="size_s">20px</dimen>
-    <dimen name="size_S">24px</dimen>
-    <dimen name="size_M">26px</dimen>
-    <dimen name="size_l">28px</dimen>
-    <dimen name="size_L">32px</dimen>
-    <dimen name="size_ll">40px</dimen>
-    <dimen name="size_Ll">48px</dimen>
-    <dimen name="size_LL">56px</dimen>
-    <dimen name="size_LLl">64px</dimen>
-    <dimen name="size_LLll">80px</dimen>
+    <dimen name="sizes_">15px</dimen>
+    <dimen name="sizes">20px</dimen>
+    <dimen name="sizeS">24px</dimen>
+    <dimen name="sizeM">26px</dimen>
+    <dimen name="sizel">28px</dimen>
+    <dimen name="sizeL">32px</dimen>
+    <dimen name="sizeT2">36px</dimen>
+    <dimen name="sizell">40px</dimen>
+    <dimen name="sizeLl">48px</dimen>
+    <dimen name="sizeLL">56px</dimen>
+    <dimen name="sizeLLl">64px</dimen>
+    <dimen name="sizeLLll">80px</dimen>
 
     <!--widtn-->
     <dimen name="x35_">-35px</dimen>
@@ -1048,6 +1049,7 @@
     <dimen name="x1029">1029px</dimen>
 
     <!--height-->
+    <dimen name="y11_">-9.0002px</dimen>
     <dimen name="y1">0.8182px</dimen>
     <dimen name="y2">1.6364px</dimen>
     <dimen name="y3">2.4546px</dimen>

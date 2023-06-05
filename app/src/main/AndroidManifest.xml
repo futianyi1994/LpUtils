@@ -32,6 +32,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".ui.MediaActivity" />
+        <activity android:name=".ui.MediaByBtActivity" />
     </application>
 
 </manifest>

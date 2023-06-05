@@ -1,5 +1,6 @@
 package com.leapmotor.lputils.widget;
 
+import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Context;
 import android.database.ContentObserver;
@@ -11,6 +12,7 @@ import android.os.Handler;
 import android.provider.Settings;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.Display;
 import android.view.Gravity;
 import android.view.View;
@@ -37,6 +39,7 @@ import com.leapmotor.lputils.content.ContextCompat;
 import com.leapmotor.lputils.utils.BarUtils;
 import com.leapmotor.lputils.utils.C11Util;
 import com.leapmotor.lputils.utils.DialogUtils;
+import com.leapmotor.lputils.utils.LpUtils;
 import com.leapmotor.lputils.utils.ScreenUtils;
 import com.leapmotor.lputils.utils.SettingsUtils;
 import com.leapmotor.lputils.utils.ThemeUtils;
@@ -127,12 +130,14 @@ import com.leapmotor.lputils.utils.ThemeUtils;
 public class ShadowDialog extends Dialog implements View.OnClickListener {
     public static final int LAYOUT_FULLSCREEN = View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_LAYOUT_STABLE;
     public static final int DEFAULT_VALUE = -10000;
-    public static final int DIALOG_WIDTH = 720;
-    public static final int TXT_CONTENT_MAX_WIDTH = 560;
-    public static final int TXT_CONTENT_MAX_HEIGHT_DISPLAY0 = 720;
-    public static final int TXT_CONTENT_MAX_HEIGHT_DISPLAY1 = 560;
-    public static final int TXT_CONTENT_HEAD_HEIGHT = 95;
+    public static final int DIALOG_WIDTH = LpUtils.getApp().getResources().getDimensionPixelOffset(R.dimen.x600);
+    public static final int TXT_CONTENT_MAX_WIDTH = LpUtils.getApp().getResources().getDimensionPixelOffset(R.dimen.x504);
+    public static final int TXT_CONTENT_MAX_HEIGHT_DISPLAY0 = LpUtils.getApp().getResources().getDimensionPixelOffset(R.dimen.x599);
+    public static final int TXT_CONTENT_MAX_HEIGHT_DISPLAY1 = LpUtils.getApp().getResources().getDimensionPixelOffset(R.dimen.x419);
+    public static final int TXT_CONTENT_HEAD_HEIGHT = LpUtils.getApp().getResources().getDimensionPixelOffset(R.dimen.y78);
     public static final int TXT_BG_SHADOW_PADING = 40;
+    public static final int TXT_BG_SHADOW_ROUNDED_CORNER = 24;
+    public static final int TXT_BG_SHADOW_BLUR_RADIUS = 25;
     private static final String TAG = "ShadowDialog";
     private static final int DEFAULT_DIALOG_SHOW_ANIM = R.anim.dialog_show;
     private static final int DEFAULT_DIALOG_HIDE_ANIM = R.anim.dialog_hide;
@@ -174,6 +179,8 @@ public class ShadowDialog extends Dialog implements View.OnClickListener {
         }
     };
     private int windowType = 0;
+    private final int[] textSizeUnits;
+    private final int[] textSizes;
 
     public ShadowDialog(Context context) {
         this(context, true);
@@ -188,8 +195,11 @@ public class ShadowDialog extends Dialog implements View.OnClickListener {
         setCancelable(true);
         setCanceledOnTouchOutside(true);
         setAnim(animIn, animOut);
+        textSizeUnits = new int[]{TypedValue.COMPLEX_UNIT_PX, TypedValue.COMPLEX_UNIT_PX, TypedValue.COMPLEX_UNIT_PX, TypedValue.COMPLEX_UNIT_PX};
+        textSizes = new int[]{getContext().getResources().getDimensionPixelSize(R.dimen.sizeL), getContext().getResources().getDimensionPixelSize(R.dimen.sizeL), getContext().getResources().getDimensionPixelSize(R.dimen.sizeL), getContext().getResources().getDimensionPixelSize(R.dimen.sizeL)};
     }
 
+    @SuppressLint("WrongConstant")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -435,36 +445,85 @@ public class ShadowDialog extends Dialog implements View.OnClickListener {
     }
 
     public ShadowDialog setTitleText(@Nullable String text) {
+        return setTitleText(text, -1, -1);
+    }
+
+    public ShadowDialog setTitleText(@Nullable String text, int unit, float size) {
         title = text;
+        if (unit >= 0 && size >= 0) {
+            textSizeUnits[0] = unit;
+            textSizes[0] = (int) size;
+        }
         if (tvTitle != null) {
             tvTitle.setText(title);
             tvTitle.setVisibility(title == null ? View.GONE : View.VISIBLE);
+            if (textSizes[0] >= 0) {
+                tvTitle.setTextSize(textSizeUnits[0], textSizes[0]);
+            }
         }
         return this;
     }
 
     public ShadowDialog setContentText(@NonNull String text) {
+        return setContentText(text, -1, -1);
+    }
+
+    public ShadowDialog setContentText(@NonNull String text, int unit, float size) {
+        return setContentText(text, unit, size, Gravity.START);
+    }
+
+    public ShadowDialog setContentText(@NonNull String text, int unit, float size, int gravity) {
         content = text;
+        if (unit >= 0 && size >= 0) {
+            textSizeUnits[1] = unit;
+            textSizes[1] = (int) size;
+        }
         if (tvContent != null) {
             tvContent.setText(content);
+            if (textSizes[1] >= 0) {
+                tvContent.setGravity(gravity);
+                tvContent.setTextSize(textSizeUnits[1], textSizes[1]);
+            }
         }
         return this;
     }
 
     public ShadowDialog setConfirmText(@Nullable String text) {
+        return setConfirmText(text, -1, -1);
+    }
+
+    public ShadowDialog setConfirmText(@Nullable String text, int unit, float size) {
         confirm = text;
+        if (unit >= 0 && size >= 0) {
+            textSizeUnits[2] = unit;
+            textSizes[2] = (int) size;
+        }
         if (tvConfirm != null) {
             tvConfirm.setText(confirm);
             tvConfirm.setVisibility(confirm == null ? View.GONE : View.VISIBLE);
+            if (textSizes[2] >= 0) {
+                tvConfirm.setTextSize(textSizeUnits[2], textSizes[2]);
+            }
         }
         return this;
     }
 
     public ShadowDialog setCancelText(@Nullable String text) {
+        return setCancelText(text, -1, -1);
+    }
+
+    public ShadowDialog setCancelText(@Nullable String text, int unit, float size) {
         cancel = text;
+        if (unit >= 0 && size >= 0) {
+            textSizeUnits[3] = unit;
+            textSizes[3] = (int) size;
+        }
         if (tvCancel != null) {
             tvCancel.setText(cancel);
             tvCancel.setVisibility(cancel == null ? View.GONE : View.VISIBLE);
+            if (textSizes[3] >= 0) {
+                tvCancel.setTextSize(textSizeUnits[3], textSizes[3]);
+            }
         }
         return this;
     }

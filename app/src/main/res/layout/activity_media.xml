@@ -102,7 +102,7 @@
                 style="@style/main_text"
                 android:layout_height="wrap_content"
                 android:text="00:00"
-                android:textSize="@dimen/size_M" />
+                android:textSize="@dimen/sizeM" />
 
             <SeekBar
                 android:id="@+id/seekBar"
@@ -115,7 +115,7 @@
                 style="@style/main_text"
                 android:layout_height="wrap_content"
                 android:text="00:00"
-                android:textSize="@dimen/size_M" />
+                android:textSize="@dimen/sizeM" />
         </LinearLayout>
 
         <LinearLayout

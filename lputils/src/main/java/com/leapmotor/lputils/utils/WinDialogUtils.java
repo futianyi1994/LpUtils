@@ -39,11 +39,11 @@ import java.util.stream.Collectors;
  * @description :
  */
 public class WinDialogUtils {
-    public static final int DIALOG_WIDTH = 720;
-    public static final int TXT_TITLE_MAX_WIDTH = 560;
-    public static final int TXT_TITLE_MAX_HEIGHT_DISPLAY0 = 720;
-    public static final int TXT_TITLE_MAX_HEIGHT_DISPLAY1 = 560;
-    public static final int TXT_TITLE_HEAD_HEIGHT = 95;
+    public static final int DIALOG_WIDTH = LpUtils.getApp().getResources().getDimensionPixelOffset(R.dimen.x600);
+    public static final int TXT_TITLE_MAX_WIDTH = LpUtils.getApp().getResources().getDimensionPixelOffset(R.dimen.x504);
+    public static final int TXT_TITLE_MAX_HEIGHT_DISPLAY0 = LpUtils.getApp().getResources().getDimensionPixelOffset(R.dimen.y599);
+    public static final int TXT_TITLE_MAX_HEIGHT_DISPLAY1 = LpUtils.getApp().getResources().getDimensionPixelOffset(R.dimen.y419);
+    public static final int TXT_TITLE_HEAD_HEIGHT = LpUtils.getApp().getResources().getDimensionPixelOffset(R.dimen.y78);
     public static final int TXT_BG_SHADOW_PADING = 40;
     private static final int MAX_WINDOW_SIZE = 10;
     private static final String TAG = "DialogUtils";
