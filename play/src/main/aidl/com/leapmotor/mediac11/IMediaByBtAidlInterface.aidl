@@ -17,7 +17,7 @@ import com.leapmotor.xmly.model.bean.RadioBean;
 
 
 // Declare any non-default types here with import statements
-interface IMediaAidlInterface {
+interface IMediaByBtAidlInterface {
     void playLpRadioListTimeProgram(boolean forceRefreshProgram);
 
     void playLpRadioProgram(String albumId, int position);
@@ -164,5 +164,4 @@ interface IMediaAidlInterface {
 
     oneway void getAllLpRadioPlayList(LpRadioCallback lpRadioCallback);
 
-    void playCurentList(int mediaType, int position, String songId);
 }
