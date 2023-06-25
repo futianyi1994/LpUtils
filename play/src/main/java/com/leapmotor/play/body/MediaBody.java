@@ -27,6 +27,7 @@ public class MediaBody implements Cloneable, Parcelable {
     @MediaType
     private int type = MediaType.TYPE_CURRENT;
     /**
+     * {@link AlbumBody#uniqueId}
      * PlayList的唯一值:
      * MediaType.TYPE_ONLINE: hash值；
      * MediaType.TYPE_ULTIMATETV: songId值；

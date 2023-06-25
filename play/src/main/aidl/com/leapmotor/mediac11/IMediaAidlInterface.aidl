@@ -2,6 +2,7 @@
 package com.leapmotor.mediac11;
 import android.os.Bundle;
 import com.leapmotor.play.body.MediaBody;
+import com.leapmotor.play.body.AlbumBody;
 import com.leapmotor.play.callback.FavCallback;
 import com.leapmotor.play.callback.JsonCallback;
 import com.leapmotor.play.callback.LpRadioCallback;
@@ -165,4 +166,10 @@ interface IMediaAidlInterface {
     oneway void getAllLpRadioPlayList(LpRadioCallback lpRadioCallback);
 
     void playCurentList(int mediaType, int position, String songId);
+
+    boolean isPlayingByMediaType(int mediaType);
+
+    String getBluetoothMusicInfo();
+
+    AlbumBody getLastMediaAlbumInfo(int mediaType);
 }

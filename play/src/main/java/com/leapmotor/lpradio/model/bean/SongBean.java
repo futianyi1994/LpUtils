@@ -23,6 +23,7 @@ public class SongBean {
      */
     private String albumId;
     private String albumName;
+    private String albumLogo;
 
     public String getSongId() {
         return songId;
@@ -88,6 +89,14 @@ public class SongBean {
         this.albumName = albumName;
     }
 
+    public String getAlbumLogo() {
+        return albumLogo;
+    }
+
+    public void setAlbumLogo(String albumLogo) {
+        this.albumLogo = albumLogo;
+    }
+
     @Override
     public String toString() {
         return "SongBean{" +
@@ -99,6 +108,7 @@ public class SongBean {
                 ", duration='" + duration + '\'' +
                 ", albumId='" + albumId + '\'' +
                 ", albumName='" + albumName + '\'' +
+                ", albumLogo='" + albumLogo + '\'' +
                 '}';
     }
 }

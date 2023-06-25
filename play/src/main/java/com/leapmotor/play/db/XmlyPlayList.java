@@ -85,6 +85,7 @@ public class XmlyPlayList implements Parcelable {
     private String middle_cover_url;
     private String large_cover_url;
     private long updated_at;
+    private long play_count;
     /**
      * 自定义属性播放鉴权结果：0:免费;1:vip;2:付费;3:无版权
      * {@link PrivilegeType}
@@ -129,6 +130,8 @@ public class XmlyPlayList implements Parcelable {
         this.middle_cover_url = in.readString();
         this.large_cover_url = in.readString();
         this.updated_at = in.readLong();
+        this.play_count = in.readLong();
+
         this.checkType = in.readInt();
         this.checkPlayType = in.readInt();
         this.isFreeTry = in.readInt();
@@ -375,6 +378,14 @@ public class XmlyPlayList implements Parcelable {
         this.updated_at = updated_at;
     }
 
+    public long getPlay_count() {
+        return play_count;
+    }
+
+    public void setPlay_count(long play_count) {
+        this.play_count = play_count;
+    }
+
     @PrivilegeType
     public int getCheckType() {
         return checkType;
@@ -440,6 +451,8 @@ public class XmlyPlayList implements Parcelable {
         dest.writeString(this.middle_cover_url);
         dest.writeString(this.large_cover_url);
         dest.writeLong(this.updated_at);
+        dest.writeLong(this.play_count);
+
         dest.writeInt(checkType);
         dest.writeInt(checkPlayType);
         dest.writeInt(isFreeTry);

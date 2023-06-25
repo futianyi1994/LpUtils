@@ -28,6 +28,7 @@ import com.leapmotor.mediac11.manager.MediaManager;
 import com.leapmotor.play.annotation.MediaType;
 import com.leapmotor.play.annotation.PlayMode;
 import com.leapmotor.play.annotation.PlayState;
+import com.leapmotor.play.body.AlbumBody;
 import com.leapmotor.play.body.MediaBody;
 import com.leapmotor.play.body.SeekBody;
 import com.leapmotor.play.callback.FavCallback;
@@ -60,8 +61,7 @@ public class MediaActivity extends AppCompatActivity implements View.OnClickList
     private SeekListener.Stub seekListener;
     private PlayStateListener.Stub playStateListener;
     private LocalDbListener.Stub localDbListener;
-    private TextView tvTitle;
-    private TextView tvSinger;
+    private TextView tvTitle, tvSinger, tvGetLastMediaAlbumInfo;
     private TextView tvPlayPause;
     private TextView tvContent;
     private TextView tvPlayMode;
@@ -114,7 +114,16 @@ public class MediaActivity extends AppCompatActivity implements View.OnClickList
         int id = v.getId();
         try {
             if (iMediaAidlInterface != null) {
-                if (id == R.id.tvPre) {
+                if (id == R.id.tvGetLastMediaAlbumInfo) {
+                    AlbumBody lastMediaAlbumInfo = iMediaAidlInterface.getLastMediaAlbumInfo(mediaBody.getType());
+                    if (lastMediaAlbumInfo != null) {
+                        String json = JsonUtils.formatJson(GsonUtils.toJson(lastMediaAlbumInfo));
+                        tvContent.setText(json);
+                        TLog.v(TAG, "getLastMediaAlbumInfo: " + json);
+                    } else {
+                        TLog.e(TAG, "getLastMediaAlbumInfom is null");
+                    }
+                } else if (id == R.id.tvPre) {
                     iMediaAidlInterface.pre();
                 } else if (id == R.id.tvPlayPause) {
                     iMediaAidlInterface.pauseOrResume();
@@ -414,6 +423,8 @@ public class MediaActivity extends AppCompatActivity implements View.OnClickList
         tvContent = FindViewUtlis.findViewById(this, R.id.tvContent);
         tvTitle = FindViewUtlis.findViewById(this, R.id.tvTitle);
         tvSinger = FindViewUtlis.findViewById(this, R.id.tvSinger);
+        tvGetLastMediaAlbumInfo = FindViewUtlis.findViewById(this, R.id.tvGetLastMediaAlbumInfo);
+        tvGetLastMediaAlbumInfo.setOnClickListener(this);
         tvPlayPause = FindViewUtlis.findViewById(this, R.id.tvPlayPause);
         tvPlayMode = FindViewUtlis.findViewById(this, R.id.tvPlayMode);
         tvIsFav = FindViewUtlis.findViewById(this, R.id.tvIsFav);

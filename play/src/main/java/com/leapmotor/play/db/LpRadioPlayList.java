@@ -80,6 +80,10 @@ public class LpRadioPlayList implements Parcelable {
      * 专辑名称
      */
     private String albumName;
+    /**
+     * 专辑图片
+     */
+    private String albumLogo;
 
     /************************************************************************************************/
     public LpRadioPlayList() {
@@ -100,6 +104,7 @@ public class LpRadioPlayList implements Parcelable {
         this.status = in.readString();
         this.albumId = in.readString();
         this.albumName = in.readString();
+        this.albumLogo = in.readString();
     }
 
     public static Creator<LpRadioPlayList> getCREATOR() {
@@ -214,6 +219,14 @@ public class LpRadioPlayList implements Parcelable {
         this.albumName = albumName;
     }
 
+    public String getAlbumLogo() {
+        return albumLogo;
+    }
+
+    public void setAlbumLogo(String albumLogo) {
+        this.albumLogo = albumLogo;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -235,5 +248,6 @@ public class LpRadioPlayList implements Parcelable {
         dest.writeString(this.status);
         dest.writeString(this.albumId);
         dest.writeString(this.albumName);
+        dest.writeString(this.albumLogo);
     }
 }
