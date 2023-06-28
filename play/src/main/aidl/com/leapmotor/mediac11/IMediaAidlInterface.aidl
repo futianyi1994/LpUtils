@@ -172,4 +172,10 @@ interface IMediaAidlInterface {
     String getBluetoothMusicInfo();
 
     AlbumBody getLastMediaAlbumInfo(int mediaType);
+
+    int getNewLastMediaType(boolean includeThirdPartyMedia);
+
+    MediaBody getNewMediaBody(boolean includeThirdPartyMedia);
+
+    oneway void getKgSelfbuiltPlaylistList(UltimatetvCallback ultimatetvCallback);
 }

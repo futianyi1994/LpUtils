@@ -13,6 +13,7 @@ import com.leapmotor.baselib.exception.ApiException;
 import com.leapmotor.baselib.net.http.HttpCallback;
 import com.leapmotor.baselib.utils.GsonUtils;
 import com.leapmotor.baselib.utils.ThreadUtils;
+import com.leapmotor.bluetooth.model.bean.BluetoothInfoBean;
 import com.leapmotor.lpradio.model.bean.AlbumInfoBean;
 import com.leapmotor.lpradio.model.bean.RecommendListBean;
 import com.leapmotor.mediac11.IMediaAidlInterface;
@@ -33,6 +34,7 @@ import com.leapmotor.play.db.UdiskPlayList;
 import com.leapmotor.play.db.UltimatetvPlayList;
 import com.leapmotor.play.db.XmlyPlayList;
 import com.leapmotor.ultimatetv.entity.AlbumInfo;
+import com.leapmotor.ultimatetv.entity.PlaylistList;
 import com.leapmotor.xmly.annotation.SortType;
 import com.leapmotor.xmly.model.ErrorResponse;
 import com.leapmotor.xmly.model.bean.AlbumPayBean;
@@ -675,6 +677,45 @@ public class ApiInterface {
                 @Override
                 public void onError(String error) throws RemoteException {
                     Log.e(TAG, "getXmlyAlbumInfo : " + error);
+                    ThreadUtils.runOnUiThread(() -> httpCallback.onError(new ApiException(error)));
+                }
+            });
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public BluetoothInfoBean getBluetoothMusicInfo(@NonNull IMediaAidlInterface iMediaAidlInterface) {
+        try {
+            String json = iMediaAidlInterface.getBluetoothMusicInfo();
+            return GsonUtils.fromJson(json, BluetoothInfoBean.class);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public void getKgSelfbuiltPlaylistList(@NonNull IMediaAidlInterface iMediaAidlInterface, @NonNull HttpCallback<PlaylistList> httpCallback) {
+        try {
+            iMediaAidlInterface.getKgSelfbuiltPlaylistList(new UltimatetvCallback.Stub() {
+                @Override
+                public void onUltimatetvPlayList(List<UltimatetvPlayList> ultimatetvPlayLists) throws RemoteException {
+                }
+
+                @Override
+                public void onJsonData(String json) throws RemoteException {
+                    PlaylistList playlistList = GsonUtils.fromJson(json, PlaylistList.class);
+                    ThreadUtils.runOnUiThread(() -> httpCallback.onSuccess(playlistList));
+                }
+
+                @Override
+                public void onFail(String json) throws RemoteException {
+                    ThreadUtils.runOnUiThread(() -> httpCallback.onFailed(json));
+                }
+
+                @Override
+                public void onError(String error) throws RemoteException {
+                    Log.e(TAG, "getKgAlbumInfoList : " + error);
                     ThreadUtils.runOnUiThread(() -> httpCallback.onError(new ApiException(error)));
                 }
             });
