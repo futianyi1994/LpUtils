@@ -15,8 +15,6 @@ import androidx.annotation.Nullable;
 import com.leapmotor.mediac11.Constants;
 import com.leapmotor.mediac11.IBinderPool;
 import com.leapmotor.mediac11.IMediaByBtAidlInterface;
-import com.leapmotor.play.listener.PlayStateListener;
-import com.leapmotor.play.listener.SeekListener;
 
 import java.util.Locale;
 
@@ -72,23 +70,6 @@ public class MediaByBtManager {
 
     public void unBindService(@NonNull Context context, @NonNull MServiceConnection conn, @Nullable IInterface... listener) {
         Log.i(TAG, "unBindService");
-        if (iMediaAidlInterface != null) {
-            if (listener != null) {
-                try {
-                    for (IInterface iInterface : listener) {
-                        if (iInterface instanceof SeekListener) {
-                            Log.i(TAG, "unRegisterSeekListener");
-                            iMediaAidlInterface.unRegisterSeekListener((SeekListener) iInterface);
-                        } else if (iInterface instanceof PlayStateListener) {
-                            Log.i(TAG, "unRegisterPlayStateListener");
-                            iMediaAidlInterface.unRegisterPlayStateListener((PlayStateListener) iInterface);
-                        }
-                    }
-                } catch (RemoteException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
         context.unbindService(conn);
         release();
     }

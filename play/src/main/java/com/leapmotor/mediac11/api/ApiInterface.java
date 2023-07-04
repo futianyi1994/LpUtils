@@ -715,7 +715,7 @@ public class ApiInterface {
 
                 @Override
                 public void onError(String error) throws RemoteException {
-                    Log.e(TAG, "getKgAlbumInfoList : " + error);
+                    Log.e(TAG, "getKgSelfbuiltPlaylistList : " + error);
                     ThreadUtils.runOnUiThread(() -> httpCallback.onError(new ApiException(error)));
                 }
             });
