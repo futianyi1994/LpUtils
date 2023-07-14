@@ -1,5 +1,6 @@
 // IMediaAidlInterface.aidl
 package com.leapmotor.mediac11;
+import com.leapmotor.mediac11.IOnFileListener;
 import android.os.Bundle;
 import com.leapmotor.play.body.MediaBody;
 import com.leapmotor.play.body.AlbumBody;
@@ -121,7 +122,7 @@ interface IMediaAidlInterface {
 
     oneway void getFmCollectFreqFromDb(FmCallback fmCallback);
 
-    oneway void getAllOnlineRadioBroadcastList(OnlineRadioCallback fmCallback);
+    oneway void getAllOnlineRadioBroadcastList(OnlineRadioCallback onlineRadioCallback);
 
     oneway void getAllUdiskPlayList(UdiskCallback udiskCallback);
 
@@ -178,4 +179,10 @@ interface IMediaAidlInterface {
     MediaBody getNewMediaBody(boolean includeThirdPartyMedia);
 
     oneway void getKgSelfbuiltPlaylistList(UltimatetvCallback ultimatetvCallback);
+
+    oneway void getOnlineRadioSubscribeList(int pageNum, int pageSize, JsonCallback jsonCallBack);
+
+    oneway void getOnlineRadioHistoryList(JsonCallback jsonCallBack);
+
+    oneway void getKgAllUltimatetvPlayListByFd(IOnFileListener iOnFileListener);
 }

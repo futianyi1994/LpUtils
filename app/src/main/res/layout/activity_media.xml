@@ -369,6 +369,24 @@
                     android:text="获取云听广播播放列表" />
 
                 <Button
+                    android:id="@+id/getOnlineRadioSubscribeList"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="获取云听广播订阅列表" />
+
+                <Button
+                    android:id="@+id/getOnlineRadioHistoryList"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="获取云听广播播放历史列表" />
+
+                <Button
                     android:id="@+id/playOnlineRadioLocal"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

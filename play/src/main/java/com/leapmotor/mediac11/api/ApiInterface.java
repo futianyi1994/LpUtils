@@ -1,6 +1,7 @@
 package com.leapmotor.mediac11.api;
 
 import android.os.Bundle;
+import android.os.ParcelFileDescriptor;
 import android.os.Parcelable;
 import android.os.RemoteException;
 import android.util.Log;
@@ -17,6 +18,10 @@ import com.leapmotor.bluetooth.model.bean.BluetoothInfoBean;
 import com.leapmotor.lpradio.model.bean.AlbumInfoBean;
 import com.leapmotor.lpradio.model.bean.RecommendListBean;
 import com.leapmotor.mediac11.IMediaAidlInterface;
+import com.leapmotor.mediac11.IOnFileListener;
+import com.leapmotor.onlineradio.model.BasePageResult;
+import com.leapmotor.onlineradio.model.bean.ListeningHistory;
+import com.leapmotor.onlineradio.model.bean.SubscribeInfo;
 import com.leapmotor.play.annotation.MediaType;
 import com.leapmotor.play.body.MediaBody;
 import com.leapmotor.play.callback.FmCallback;
@@ -45,6 +50,8 @@ import com.leapmotor.xmly.model.bean.TrackFullBean;
 import com.leapmotor.xmly.model.page.AlbumSubscribedPage;
 import com.leapmotor.xmly.model.page.HistoryPlayRecordFullPage;
 
+import java.io.ByteArrayOutputStream;
+import java.io.FileInputStream;
 import java.util.List;
 
 /**
@@ -239,6 +246,42 @@ public class ApiInterface {
                 @Override
                 public void onError(String error) throws RemoteException {
                     Log.e(TAG, "getKgAllUltimatetvPlayList : " + error);
+                    ThreadUtils.runOnUiThread(() -> httpCallback.onError(new ApiException(error)));
+                }
+            });
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void getKgAllUltimatetvPlayListByFd(@NonNull IMediaAidlInterface iMediaAidlInterface, @NonNull HttpCallback<List<UltimatetvPlayList>> httpCallback) {
+        try {
+            iMediaAidlInterface.getKgAllUltimatetvPlayListByFd(new IOnFileListener.Stub() {
+                @Override
+                public void onFile(ParcelFileDescriptor pfd) throws RemoteException {
+                    try {
+                        FileInputStream fis = new FileInputStream(pfd.getFileDescriptor());
+                        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+                        byte[] buf = new byte[1920 * 1080];
+                        int len;
+                        while ((len = fis.read(buf)) != -1) {
+                            bos.write(buf, 0, len);
+                        }
+                        String jsonData = bos.toString();
+                        List<UltimatetvPlayList> ultimatetvPlayLists = GsonUtils.fromJson(jsonData, new TypeToken<List<UltimatetvPlayList>>() {
+                        }.getType());
+                        ThreadUtils.runOnUiThread(() -> httpCallback.onSuccess(ultimatetvPlayLists));
+                        bos.close();
+                        fis.close();
+                        pfd.close();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                @Override
+                public void onError(String error) throws RemoteException {
+                    Log.e(TAG, "getKgAllUltimatetvPlayListByFd : " + error);
                     ThreadUtils.runOnUiThread(() -> httpCallback.onError(new ApiException(error)));
                 }
             });
@@ -484,6 +527,69 @@ public class ApiInterface {
                 public void onError(String error) throws RemoteException {
                     Log.e(TAG, "getAllOnlineRadioBroadcastList : " + error);
                     ThreadUtils.runOnUiThread(() -> httpCallback.onError(new ApiException(error)));
+                }
+            });
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void getOnlineRadioSubscribeList(@NonNull IMediaAidlInterface iMediaAidlInterface, int pageNum, int pageSize, HttpCallback<BasePageResult<List<SubscribeInfo>>> httpCallback) {
+        try {
+            iMediaAidlInterface.getOnlineRadioSubscribeList(pageNum, pageSize, new JsonCallback.Stub() {
+                @Override
+                public void getJsonData(String jsonData) throws RemoteException {
+                    if (httpCallback != null) {
+                        BasePageResult listBasePageResult = GsonUtils.fromJson(jsonData, BasePageResult.class);
+                        ThreadUtils.runOnUiThread(() -> httpCallback.onSuccess(listBasePageResult));
+                    }
+                }
+
+                @Override
+                public void onFailed(String fail) throws RemoteException {
+                    if (httpCallback != null) {
+                        ThreadUtils.runOnUiThread(() -> httpCallback.onFailed(fail));
+                    }
+                }
+
+                @Override
+                public void onError(String error) throws RemoteException {
+                    Log.e(TAG, "getOnlineRadioSubscribeList : " + error);
+                    if (httpCallback != null) {
+                        ThreadUtils.runOnUiThread(() -> httpCallback.onError(new ApiException(error)));
+                    }
+                }
+            });
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void getOnlineRadioHistoryList(@NonNull IMediaAidlInterface iMediaAidlInterface, HttpCallback<List<ListeningHistory>> httpCallback) {
+        try {
+            iMediaAidlInterface.getOnlineRadioHistoryList(new JsonCallback.Stub() {
+                @Override
+                public void getJsonData(String jsonData) throws RemoteException {
+                    if (httpCallback != null) {
+                        List<ListeningHistory> listeningHistories = GsonUtils.fromJson(jsonData, new TypeToken<List<ListeningHistory>>() {
+                        }.getType());
+                        ThreadUtils.runOnUiThread(() -> httpCallback.onSuccess(listeningHistories));
+                    }
+                }
+
+                @Override
+                public void onFailed(String fail) throws RemoteException {
+                    if (httpCallback != null) {
+                        ThreadUtils.runOnUiThread(() -> httpCallback.onFailed(fail));
+                    }
+                }
+
+                @Override
+                public void onError(String error) throws RemoteException {
+                    Log.e(TAG, "getOnlineRadioHistoryList : " + error);
+                    if (httpCallback != null) {
+                        ThreadUtils.runOnUiThread(() -> httpCallback.onError(new ApiException(error)));
+                    }
                 }
             });
         } catch (RemoteException e) {

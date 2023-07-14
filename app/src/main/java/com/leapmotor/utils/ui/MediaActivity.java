@@ -25,6 +25,9 @@ import com.leapmotor.mediac11.Constants;
 import com.leapmotor.mediac11.IMediaAidlInterface;
 import com.leapmotor.mediac11.api.ApiInterface;
 import com.leapmotor.mediac11.manager.MediaManager;
+import com.leapmotor.onlineradio.model.BasePageResult;
+import com.leapmotor.onlineradio.model.bean.ListeningHistory;
+import com.leapmotor.onlineradio.model.bean.SubscribeInfo;
 import com.leapmotor.play.annotation.MediaType;
 import com.leapmotor.play.annotation.PlayMode;
 import com.leapmotor.play.annotation.PlayState;
@@ -203,10 +206,10 @@ public class MediaActivity extends AppCompatActivity implements View.OnClickList
                 } else if (id == R.id.getKgAllUltimatetvPlayList) {
                     ApiInterface
                             .getInstance()
-                            .getKgAllUltimatetvPlayList(iMediaAidlInterface, new HttpCallback<List<UltimatetvPlayList>>() {
+                            .getKgAllUltimatetvPlayListByFd(iMediaAidlInterface, new HttpCallback<List<UltimatetvPlayList>>() {
                                 @Override
                                 public void onSuccess(List<UltimatetvPlayList> ultimatetvPlayLists) {
-                                    TLog.v(TAG, "getKgAllUltimatetvPlayList: " + Thread.currentThread());
+                                    TLog.v(TAG, "getKgAllUltimatetvPlayListByFd: " + ultimatetvPlayLists.size());
                                     tvContent.setText(JsonUtils.formatJson(GsonUtils.toJson(ultimatetvPlayLists)));
                                 }
                             });
@@ -298,6 +301,26 @@ public class MediaActivity extends AppCompatActivity implements View.OnClickList
                                 public void onSuccess(List<OnlineRadioBroadcastList> onlineRadioBroadcastLists) {
                                     TLog.v(TAG, "getAllOnlineRadioBroadcastList: " + Thread.currentThread());
                                     ThreadUtils.runOnUiThread(() -> tvContent.setText(JsonUtils.formatJson(GsonUtils.toJson(onlineRadioBroadcastLists))));
+                                }
+                            });
+                } else if (id == R.id.getOnlineRadioSubscribeList) {
+                    ApiInterface
+                            .getInstance()
+                            .getOnlineRadioSubscribeList(iMediaAidlInterface, Constants.ONLINE_RADIO_PAGE_FIRST, 4, new HttpCallback<BasePageResult<List<SubscribeInfo>>>() {
+                                @Override
+                                public void onSuccess(BasePageResult<List<SubscribeInfo>> listBasePageResult) {
+                                    TLog.v(TAG, "getOnlineRadioSubscribeList: " + Thread.currentThread());
+                                    ThreadUtils.runOnUiThread(() -> tvContent.setText(JsonUtils.formatJson(GsonUtils.toJson(listBasePageResult))));
+                                }
+                            });
+                } else if (id == R.id.getOnlineRadioHistoryList) {
+                    ApiInterface
+                            .getInstance()
+                            .getOnlineRadioHistoryList(iMediaAidlInterface, new HttpCallback<List<ListeningHistory>>() {
+                                @Override
+                                public void onSuccess(List<ListeningHistory> listeningHistories) {
+                                    TLog.v(TAG, "getOnlineRadioHistoryList: " + Thread.currentThread());
+                                    ThreadUtils.runOnUiThread(() -> tvContent.setText(JsonUtils.formatJson(GsonUtils.toJson(listeningHistories))));
                                 }
                             });
                 } else if (id == R.id.getAllUdiskPlayList) {
@@ -409,6 +432,8 @@ public class MediaActivity extends AppCompatActivity implements View.OnClickList
         FindViewUtlis.findViewById(this, R.id.getFmFreqFromDb).setOnClickListener(this);
         FindViewUtlis.findViewById(this, R.id.getFmCollectFreqFromDb).setOnClickListener(this);
         FindViewUtlis.findViewById(this, R.id.getAllOnlineRadioBroadcastList).setOnClickListener(this);
+        FindViewUtlis.findViewById(this, R.id.getOnlineRadioSubscribeList).setOnClickListener(this);
+        FindViewUtlis.findViewById(this, R.id.getOnlineRadioHistoryList).setOnClickListener(this);
         FindViewUtlis.findViewById(this, R.id.getAllUdiskPlayList).setOnClickListener(this);
         FindViewUtlis.findViewById(this, R.id.getAllXmlyPlayList).setOnClickListener(this);
         FindViewUtlis.findViewById(this, R.id.getXmlyAlbumInfo).setOnClickListener(this);
