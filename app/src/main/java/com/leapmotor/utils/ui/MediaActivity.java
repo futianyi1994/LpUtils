@@ -46,6 +46,7 @@ import com.leapmotor.play.listener.LocalDbListener;
 import com.leapmotor.play.listener.PlayStateListener;
 import com.leapmotor.play.listener.SeekListener;
 import com.leapmotor.ultimatetv.entity.AlbumInfo;
+import com.leapmotor.ultimatetv.entity.SearchSongList;
 import com.leapmotor.utils.R;
 import com.leapmotor.utils.utils.TLog;
 import com.leapmotor.xmly.annotation.SortType;
@@ -97,6 +98,7 @@ public class MediaActivity extends AppCompatActivity implements View.OnClickList
                     super.onServiceConnected(componentName, iBinder);
                     iMediaAidlInterface = MediaManager.getInstance().getiMediaAidlInterface();
                     if (iMediaAidlInterface != null) {
+                        ApiInterface.getInstance().init(iMediaAidlInterface);
                         initData();
                     }
                 }
@@ -140,7 +142,7 @@ public class MediaActivity extends AppCompatActivity implements View.OnClickList
                         /*if ("收藏".equals(tvIsFav.getText().toString())) {
                             ApiInterface
                                     .getInstance()
-                                    .onFav(iMediaAidlInterface, mediaType, null, new HttpCallback<String>() {
+                                    .onFav(mediaType, null, new HttpCallback<String>() {
                                         @Override
                                         public void onSuccess(String s) {
                                             try {
@@ -154,7 +156,7 @@ public class MediaActivity extends AppCompatActivity implements View.OnClickList
                         } else {
                             ApiInterface
                                     .getInstance()
-                                    .onUnFav(iMediaAidlInterface, mediaType, null, new HttpCallback<String>() {
+                                    .onUnFav(mediaType, null, new HttpCallback<String>() {
                                         @Override
                                         public void onSuccess(String s) {
                                             try {
@@ -168,7 +170,7 @@ public class MediaActivity extends AppCompatActivity implements View.OnClickList
                         }*/
                         ApiInterface
                                 .getInstance()
-                                .controlCurFav(iMediaAidlInterface, mediaType, "收藏".equals(tvIsFav.getText().toString()), new HttpCallback<String>() {
+                                .controlCurFav(mediaType, "收藏".equals(tvIsFav.getText().toString()), new HttpCallback<String>() {
                                     @Override
                                     public void onSuccess(String s) {
                                         tvContent.setText(JsonUtils.formatJson(GsonUtils.toJson(s)));
@@ -206,7 +208,7 @@ public class MediaActivity extends AppCompatActivity implements View.OnClickList
                 } else if (id == R.id.getKgAllUltimatetvPlayList) {
                     ApiInterface
                             .getInstance()
-                            .getKgAllUltimatetvPlayListByFd(iMediaAidlInterface, new HttpCallback<List<UltimatetvPlayList>>() {
+                            .getKgAllUltimatetvPlayListByFd(new HttpCallback<List<UltimatetvPlayList>>() {
                                 @Override
                                 public void onSuccess(List<UltimatetvPlayList> ultimatetvPlayLists) {
                                     TLog.v(TAG, "getKgAllUltimatetvPlayListByFd: " + ultimatetvPlayLists.size());
@@ -216,7 +218,7 @@ public class MediaActivity extends AppCompatActivity implements View.OnClickList
                 } else if (id == R.id.getKgDailyRecPlayList) {
                     ApiInterface
                             .getInstance()
-                            .getKgDailyRecPlayList(iMediaAidlInterface, new HttpCallback<List<UltimatetvPlayList>>() {
+                            .getKgDailyRecPlayList(new HttpCallback<List<UltimatetvPlayList>>() {
                                 @Override
                                 public void onSuccess(List<UltimatetvPlayList> ultimatetvPlayLists) {
                                     TLog.v(TAG, "getKgDailyRecPlayList: " + Thread.currentThread());
@@ -226,17 +228,27 @@ public class MediaActivity extends AppCompatActivity implements View.OnClickList
                 } else if (id == R.id.getKgAlbumInfoList) {
                     ApiInterface
                             .getInstance()
-                            .getKgAlbumInfoList(iMediaAidlInterface, etId.getText().toString(), Constants.KG_PAGE_FIRST, 1, new HttpCallback<AlbumInfo>() {
+                            .getKgAlbumInfoList(etId.getText().toString(), Constants.KG_PAGE_FIRST, 1, new HttpCallback<AlbumInfo>() {
                                 @Override
                                 public void onSuccess(AlbumInfo albumInfo) {
                                     TLog.v(TAG, "getKgAlbumInfoList: " + Thread.currentThread());
                                     ThreadUtils.runOnUiThread(() -> tvContent.setText(JsonUtils.formatJson(GsonUtils.toJson(albumInfo))));
                                 }
                             });
+                } else if (id == R.id.searchKgSingleSong) {
+                    ApiInterface
+                            .getInstance()
+                            .searchKgSingleSong(Constants.KG_PAGE_FIRST, 5, "刘德华", new HttpCallback<SearchSongList>() {
+                                @Override
+                                public void onSuccess(SearchSongList searchSongList) {
+                                    TLog.v(TAG, "searchKgSingleSong: " + Thread.currentThread());
+                                    ThreadUtils.runOnUiThread(() -> tvContent.setText(JsonUtils.formatJson(GsonUtils.toJson(searchSongList))));
+                                }
+                            });
                 } else if (id == R.id.getAllLpRadioPlayList) {
                     ApiInterface
                             .getInstance()
-                            .getAllLpRadioPlayList(iMediaAidlInterface, new HttpCallback<List<LpRadioPlayList>>() {
+                            .getAllLpRadioPlayList(new HttpCallback<List<LpRadioPlayList>>() {
                                 @Override
                                 public void onSuccess(List<LpRadioPlayList> lpRadioPlayLists) {
                                     TLog.v(TAG, "getAllLpRadioPlayList: " + Thread.currentThread());
@@ -246,7 +258,7 @@ public class MediaActivity extends AppCompatActivity implements View.OnClickList
                 } else if (id == R.id.getLpRadioListTimeProgram) {
                     ApiInterface
                             .getInstance()
-                            .getLpRadioListTimeProgram(iMediaAidlInterface, new HttpCallback<List<LpRadioPlayList>>() {
+                            .getLpRadioListTimeProgram(new HttpCallback<List<LpRadioPlayList>>() {
                                 @Override
                                 public void onSuccess(List<LpRadioPlayList> lpRadioPlayLists) {
                                     TLog.v(TAG, "getLpRadioListTimeProgram: " + Thread.currentThread());
@@ -256,7 +268,7 @@ public class MediaActivity extends AppCompatActivity implements View.OnClickList
                 } else if (id == R.id.getLpRadioAlbumInfo) {
                     ApiInterface
                             .getInstance()
-                            .getLpRadioAlbumInfo(iMediaAidlInterface, etId.getText().toString(), new HttpCallback<AlbumInfoBean>() {
+                            .getLpRadioAlbumInfo(etId.getText().toString(), new HttpCallback<AlbumInfoBean>() {
                                 @Override
                                 public void onSuccess(AlbumInfoBean albumInfoBean) {
                                     TLog.v(TAG, "getLpRadioAlbumInfo: " + Thread.currentThread());
@@ -266,7 +278,7 @@ public class MediaActivity extends AppCompatActivity implements View.OnClickList
                 } else if (id == R.id.getLpRadioRecommendList) {
                     ApiInterface
                             .getInstance()
-                            .getLpRadioRecommendList(iMediaAidlInterface, new HttpCallback<RecommendListBean>() {
+                            .getLpRadioRecommendList(new HttpCallback<RecommendListBean>() {
                                 @Override
                                 public void onSuccess(RecommendListBean recommendListBean) {
                                     TLog.v(TAG, "getLpRadioRecommendList: " + Thread.currentThread());
@@ -276,7 +288,7 @@ public class MediaActivity extends AppCompatActivity implements View.OnClickList
                 } else if (id == R.id.getFmFreqFromDb) {
                     ApiInterface
                             .getInstance()
-                            .getFmFreqFromDb(iMediaAidlInterface, new HttpCallback<List<FmList>>() {
+                            .getFmFreqFromDb(new HttpCallback<List<FmList>>() {
                                 @Override
                                 public void onSuccess(List<FmList> fmLists) {
                                     TLog.v(TAG, "getFmFreqFromDb: " + Thread.currentThread());
@@ -286,7 +298,7 @@ public class MediaActivity extends AppCompatActivity implements View.OnClickList
                 } else if (id == R.id.getFmCollectFreqFromDb) {
                     ApiInterface
                             .getInstance()
-                            .getFmCollectFreqFromDb(iMediaAidlInterface, new HttpCallback<List<FmCollectList>>() {
+                            .getFmCollectFreqFromDb(new HttpCallback<List<FmCollectList>>() {
                                 @Override
                                 public void onSuccess(List<FmCollectList> fmCollectLists) {
                                     TLog.v(TAG, "getFmCollectFreqFromDb: " + Thread.currentThread());
@@ -296,7 +308,7 @@ public class MediaActivity extends AppCompatActivity implements View.OnClickList
                 } else if (id == R.id.getAllOnlineRadioBroadcastList) {
                     ApiInterface
                             .getInstance()
-                            .getAllOnlineRadioBroadcastList(iMediaAidlInterface, new HttpCallback<List<OnlineRadioBroadcastList>>() {
+                            .getAllOnlineRadioBroadcastList(new HttpCallback<List<OnlineRadioBroadcastList>>() {
                                 @Override
                                 public void onSuccess(List<OnlineRadioBroadcastList> onlineRadioBroadcastLists) {
                                     TLog.v(TAG, "getAllOnlineRadioBroadcastList: " + Thread.currentThread());
@@ -306,7 +318,7 @@ public class MediaActivity extends AppCompatActivity implements View.OnClickList
                 } else if (id == R.id.getOnlineRadioSubscribeList) {
                     ApiInterface
                             .getInstance()
-                            .getOnlineRadioSubscribeList(iMediaAidlInterface, Constants.ONLINE_RADIO_PAGE_FIRST, 4, new HttpCallback<BasePageResult<List<SubscribeInfo>>>() {
+                            .getOnlineRadioSubscribeList(Constants.ONLINE_RADIO_PAGE_FIRST, 4, new HttpCallback<BasePageResult<List<SubscribeInfo>>>() {
                                 @Override
                                 public void onSuccess(BasePageResult<List<SubscribeInfo>> listBasePageResult) {
                                     TLog.v(TAG, "getOnlineRadioSubscribeList: " + Thread.currentThread());
@@ -316,7 +328,7 @@ public class MediaActivity extends AppCompatActivity implements View.OnClickList
                 } else if (id == R.id.getOnlineRadioHistoryList) {
                     ApiInterface
                             .getInstance()
-                            .getOnlineRadioHistoryList(iMediaAidlInterface, new HttpCallback<List<ListeningHistory>>() {
+                            .getOnlineRadioHistoryList(new HttpCallback<List<ListeningHistory>>() {
                                 @Override
                                 public void onSuccess(List<ListeningHistory> listeningHistories) {
                                     TLog.v(TAG, "getOnlineRadioHistoryList: " + Thread.currentThread());
@@ -326,7 +338,7 @@ public class MediaActivity extends AppCompatActivity implements View.OnClickList
                 } else if (id == R.id.getAllUdiskPlayList) {
                     ApiInterface
                             .getInstance()
-                            .getAllUdiskPlayList(iMediaAidlInterface, new HttpCallback<List<UdiskPlayList>>() {
+                            .getAllUdiskPlayList(new HttpCallback<List<UdiskPlayList>>() {
                                 @Override
                                 public void onSuccess(List<UdiskPlayList> udiskPlayLists) {
                                     TLog.v(TAG, "getAllUdiskPlayList: " + Thread.currentThread());
@@ -336,7 +348,7 @@ public class MediaActivity extends AppCompatActivity implements View.OnClickList
                 } else if (id == R.id.getAllXmlyPlayList) {
                     ApiInterface
                             .getInstance()
-                            .getAllXmlyPlayList(iMediaAidlInterface, new HttpCallback<List<XmlyPlayList>>() {
+                            .getAllXmlyPlayList(new HttpCallback<List<XmlyPlayList>>() {
                                 @Override
                                 public void onSuccess(List<XmlyPlayList> xmlyPlayLists) {
                                     TLog.v(TAG, "getAllXmlyPlayList: " + Thread.currentThread());
@@ -346,7 +358,7 @@ public class MediaActivity extends AppCompatActivity implements View.OnClickList
                 } else if (id == R.id.getXmlyAlbumInfo) {
                     ApiInterface
                             .getInstance()
-                            .getXmlyAlbumInfo(iMediaAidlInterface, Long.parseLong(etId.getText().toString()), null, new HttpCallback<AlbumRichBean>() {
+                            .getXmlyAlbumInfo(Long.parseLong(etId.getText().toString()), null, new HttpCallback<AlbumRichBean>() {
                                 @Override
                                 public void onSuccess(AlbumRichBean albumRichBean) {
                                     TLog.v(TAG, "getXmlyAlbumInfo: " + Thread.currentThread());
@@ -356,7 +368,7 @@ public class MediaActivity extends AppCompatActivity implements View.OnClickList
                 } else if (id == R.id.getXmlyRecVehicle) {
                     ApiInterface
                             .getInstance()
-                            .getXmlyRecVehicle(iMediaAidlInterface, 4, new HttpCallback<List<RecommendInfoBean>>() {
+                            .getXmlyRecVehicle(4, new HttpCallback<List<RecommendInfoBean>>() {
                                 @Override
                                 public void onSuccess(List<RecommendInfoBean> recommendInfoBeans) {
                                     TLog.v(TAG, "getXmlyRecVehicle: " + Thread.currentThread());
@@ -366,7 +378,7 @@ public class MediaActivity extends AppCompatActivity implements View.OnClickList
                 } else if (id == R.id.getXmlySubAlbumsByUid) {
                     ApiInterface
                             .getInstance()
-                            .getXmlySubAlbumsByUid(iMediaAidlInterface, Constants.XMLY_FIRST_OFFSET, 4, new HttpCallback<AlbumSubscribedPage>() {
+                            .getXmlySubAlbumsByUid(Constants.XMLY_FIRST_OFFSET, 4, new HttpCallback<AlbumSubscribedPage>() {
                                 @Override
                                 public void onSuccess(AlbumSubscribedPage albumSubscribedPage) {
                                     TLog.v(TAG, "getXmlySubAlbumsByUid: " + Thread.currentThread());
@@ -376,17 +388,17 @@ public class MediaActivity extends AppCompatActivity implements View.OnClickList
                 } else if (id == R.id.getHisAlbumsByUid) {
                     ApiInterface
                             .getInstance()
-                            .getHisAlbumsByUid(iMediaAidlInterface, Constants.XMLY_FIRST_OFFSET, 4, -1, new HttpCallback<HistoryPlayRecordFullPage>() {
+                            .getHisAlbumsByUid(Constants.XMLY_FIRST_OFFSET, 4, -1, new HttpCallback<HistoryPlayRecordFullPage>() {
                                 @Override
                                 public void onSuccess(HistoryPlayRecordFullPage historyPlayRecordFullPage) {
                                     TLog.v(TAG, "getHisAlbumsByUid: " + Thread.currentThread());
                                     tvContent.setText(JsonUtils.formatJson(GsonUtils.toJson(historyPlayRecordFullPage)));
                                     HistoryPlayRecordFullBean historyPlayRecordFullBean = historyPlayRecordFullPage.getItems().get(0);
-                                    ApiInterface.playXmlyHis(iMediaAidlInterface, historyPlayRecordFullBean);
+                                    ApiInterface.getInstance().playXmlyHis(historyPlayRecordFullBean);
                                 }
                             });
                 } else if (id == R.id.getMediaBody) {
-                    MediaBody mediaBody = ApiInterface.getInstance().getMediaBody(iMediaAidlInterface);
+                    MediaBody mediaBody = ApiInterface.getInstance().getMediaBody();
                     TLog.v(TAG, "getMediaBody: " + mediaBody.toString() + ", " + Thread.currentThread());
                     tvContent.setText(JsonUtils.formatJson(GsonUtils.toJson(mediaBody)));
                 } else if (id == R.id.unRegisterSeekListener) {
@@ -425,6 +437,7 @@ public class MediaActivity extends AppCompatActivity implements View.OnClickList
         FindViewUtlis.findViewById(this, R.id.getKgAllUltimatetvPlayList).setOnClickListener(this);
         FindViewUtlis.findViewById(this, R.id.getKgDailyRecPlayList).setOnClickListener(this);
         FindViewUtlis.findViewById(this, R.id.getKgAlbumInfoList).setOnClickListener(this);
+        FindViewUtlis.findViewById(this, R.id.searchKgSingleSong).setOnClickListener(this);
         FindViewUtlis.findViewById(this, R.id.getAllLpRadioPlayList).setOnClickListener(this);
         FindViewUtlis.findViewById(this, R.id.getLpRadioListTimeProgram).setOnClickListener(this);
         FindViewUtlis.findViewById(this, R.id.getLpRadioAlbumInfo).setOnClickListener(this);
@@ -547,7 +560,7 @@ public class MediaActivity extends AppCompatActivity implements View.OnClickList
                     }
                 });
 
-                MediaBody mediaBody = ApiInterface.getInstance().getMediaBody(iMediaAidlInterface);
+                MediaBody mediaBody = ApiInterface.getInstance().getMediaBody();
                 tvTitle.setText(mediaBody.getTitle());
                 tvSinger.setText(mediaBody.getType() == MediaType.TYPE_BLUETOOTH ? mediaBody.getArtist() + " - " + iMediaAidlInterface.getBtDeviceName() : mediaBody.getArtist());
                 showPlayMode(iMediaAidlInterface.onPlayMode(mediaBody.getType()));

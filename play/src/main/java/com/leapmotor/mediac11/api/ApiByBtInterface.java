@@ -1,6 +1,7 @@
 package com.leapmotor.mediac11.api;
 
 import android.os.RemoteException;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 
@@ -19,6 +20,7 @@ import com.leapmotor.play.listener.PlayStateListener;
  * @description :
  */
 public class ApiByBtInterface {
+    private static final String TAG = "ApiByBtInterface";
     private static IMediaByBtAidlInterface iMediaAidlInterface;
 
     private ApiByBtInterface() {
@@ -223,7 +225,11 @@ public class ApiByBtInterface {
     }
 
     private boolean checkIMediaByBtAidlInterface() {
-        return iMediaAidlInterface != null;
+        boolean isInit = iMediaAidlInterface != null;
+        if (!isInit) {
+            Log.e(TAG, "iMediaAidlInterface is null please init first!");
+        }
+        return isInit;
     }
 
     private static class SingleInstanceHolder {

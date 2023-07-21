@@ -40,6 +40,7 @@ import com.leapmotor.play.db.UltimatetvPlayList;
 import com.leapmotor.play.db.XmlyPlayList;
 import com.leapmotor.ultimatetv.entity.AlbumInfo;
 import com.leapmotor.ultimatetv.entity.PlaylistList;
+import com.leapmotor.ultimatetv.entity.SearchSongList;
 import com.leapmotor.xmly.annotation.SortType;
 import com.leapmotor.xmly.model.ErrorResponse;
 import com.leapmotor.xmly.model.bean.AlbumPayBean;
@@ -64,6 +65,7 @@ import java.util.List;
  */
 public class ApiInterface {
     private static final String TAG = "ApiInterface";
+    private static IMediaAidlInterface iMediaAidlInterface;
 
     private ApiInterface() {
 
@@ -73,7 +75,14 @@ public class ApiInterface {
         return SingleInstanceHolder.INSTANCE;
     }
 
-    public static void playXmlyHis(@NonNull IMediaAidlInterface iMediaAidlInterface, @NonNull HistoryPlayRecordFullBean historyPlayRecordFullBean) {
+    public void init(@NonNull IMediaAidlInterface mediaAidlInterface) {
+        iMediaAidlInterface = mediaAidlInterface;
+    }
+
+    public void playXmlyHis(@NonNull HistoryPlayRecordFullBean historyPlayRecordFullBean) {
+        if (!checkIMediaByBtAidlInterface()) {
+            return;
+        }
         try {
             if (historyPlayRecordFullBean.getContent_type() == 1) {
                 TrackFullBean track = historyPlayRecordFullBean.getTrack();
@@ -109,14 +118,16 @@ public class ApiInterface {
     }
 
     /**
-     * @param iMediaAidlInterface
      * @param mediaType
      * @param onPlayList
      * @param httpCallback
-     * @deprecated use {@link #controlCurFav(IMediaAidlInterface, int, boolean, HttpCallback))} instead
+     * @deprecated use {@link #controlCurFav(int, boolean, HttpCallback))} instead
      */
     @Deprecated
-    public void onFav(@NonNull IMediaAidlInterface iMediaAidlInterface, @MediaType int mediaType, @Nullable Parcelable onPlayList, @Nullable HttpCallback<String> httpCallback) {
+    public void onFav(@MediaType int mediaType, @Nullable Parcelable onPlayList, @Nullable HttpCallback<String> httpCallback) {
+        if (!checkIMediaByBtAidlInterface()) {
+            return;
+        }
         try {
             Bundle bundle = getFavOptionBundle(iMediaAidlInterface, mediaType, onPlayList);
             iMediaAidlInterface.onFav(mediaType, bundle, new JsonCallback.Stub() {
@@ -129,6 +140,7 @@ public class ApiInterface {
 
                 @Override
                 public void onFailed(String fail) throws RemoteException {
+                    Log.e(TAG, "onFav onFailed : " + fail);
                     if (httpCallback != null) {
                         ThreadUtils.runOnUiThread(() -> httpCallback.onFailed(fail));
                     }
@@ -136,7 +148,7 @@ public class ApiInterface {
 
                 @Override
                 public void onError(String error) throws RemoteException {
-                    Log.e(TAG, "onFav : " + error);
+                    Log.e(TAG, "onFav onError : " + error);
                     if (httpCallback != null) {
                         ThreadUtils.runOnUiThread(() -> httpCallback.onError(new ApiException(error)));
                     }
@@ -148,14 +160,16 @@ public class ApiInterface {
     }
 
     /**
-     * @param iMediaAidlInterface
      * @param mediaType
      * @param onPlayList
      * @param httpCallback
-     * @deprecated use {@link #controlCurFav(IMediaAidlInterface, int, boolean, HttpCallback))} instead
+     * @deprecated use {@link #controlCurFav(int, boolean, HttpCallback))} instead
      */
     @Deprecated
-    public void onUnFav(@NonNull IMediaAidlInterface iMediaAidlInterface, @MediaType int mediaType, @Nullable Parcelable onPlayList, @Nullable HttpCallback<String> httpCallback) {
+    public void onUnFav(@MediaType int mediaType, @Nullable Parcelable onPlayList, @Nullable HttpCallback<String> httpCallback) {
+        if (!checkIMediaByBtAidlInterface()) {
+            return;
+        }
         try {
             Bundle bundle = getFavOptionBundle(iMediaAidlInterface, mediaType, onPlayList);
             iMediaAidlInterface.onUnFav(mediaType, bundle, new JsonCallback.Stub() {
@@ -168,6 +182,7 @@ public class ApiInterface {
 
                 @Override
                 public void onFailed(String fail) throws RemoteException {
+                    Log.e(TAG, "onUnFav onFailed : " + fail);
                     if (httpCallback != null) {
                         ThreadUtils.runOnUiThread(() -> httpCallback.onFailed(fail));
                     }
@@ -175,7 +190,7 @@ public class ApiInterface {
 
                 @Override
                 public void onError(String error) throws RemoteException {
-                    Log.e(TAG, "onUnFav : " + error);
+                    Log.e(TAG, "onUnFav onError : " + error);
                     if (httpCallback != null) {
                         ThreadUtils.runOnUiThread(() -> httpCallback.onError(new ApiException(error)));
                     }
@@ -186,7 +201,10 @@ public class ApiInterface {
         }
     }
 
-    public void controlCurFav(@NonNull IMediaAidlInterface iMediaAidlInterface, @MediaType int mediaType, boolean isFav, @Nullable HttpCallback<String> httpCallback) {
+    public void controlCurFav(@MediaType int mediaType, boolean isFav, @Nullable HttpCallback<String> httpCallback) {
+        if (!checkIMediaByBtAidlInterface()) {
+            return;
+        }
         try {
             iMediaAidlInterface.controlCurFav(mediaType, isFav, new JsonCallback.Stub() {
                 @Override
@@ -198,6 +216,7 @@ public class ApiInterface {
 
                 @Override
                 public void onFailed(String fail) throws RemoteException {
+                    Log.e(TAG, "controlCurFav onFailed : " + fail);
                     if (httpCallback != null) {
                         ThreadUtils.runOnUiThread(() -> httpCallback.onFailed(fail));
                     }
@@ -205,7 +224,7 @@ public class ApiInterface {
 
                 @Override
                 public void onError(String error) throws RemoteException {
-                    Log.e(TAG, "controlCurFav : " + error);
+                    Log.e(TAG, "controlCurFav onError : " + error);
                     if (httpCallback != null) {
                         ThreadUtils.runOnUiThread(() -> httpCallback.onError(new ApiException(error)));
                     }
@@ -216,7 +235,11 @@ public class ApiInterface {
         }
     }
 
-    public MediaBody getMediaBody(@NonNull IMediaAidlInterface iMediaAidlInterface) {
+    @Nullable
+    public MediaBody getMediaBody() {
+        if (!checkIMediaByBtAidlInterface()) {
+            return null;
+        }
         try {
             return iMediaAidlInterface.getMediaBody();
         } catch (RemoteException e) {
@@ -225,7 +248,10 @@ public class ApiInterface {
         }
     }
 
-    public void getKgAllUltimatetvPlayList(@NonNull IMediaAidlInterface iMediaAidlInterface, @NonNull HttpCallback<List<UltimatetvPlayList>> httpCallback) {
+    public void getKgAllUltimatetvPlayList(@NonNull HttpCallback<List<UltimatetvPlayList>> httpCallback) {
+        if (!checkIMediaByBtAidlInterface()) {
+            return;
+        }
         try {
             iMediaAidlInterface.getKgAllUltimatetvPlayList(new UltimatetvCallback.Stub() {
                 @Override
@@ -240,12 +266,13 @@ public class ApiInterface {
 
                 @Override
                 public void onFail(String json) throws RemoteException {
+                    Log.e(TAG, "getKgAllUltimatetvPlayList onFail : " + json);
                     ThreadUtils.runOnUiThread(() -> httpCallback.onFailed(json));
                 }
 
                 @Override
                 public void onError(String error) throws RemoteException {
-                    Log.e(TAG, "getKgAllUltimatetvPlayList : " + error);
+                    Log.e(TAG, "getKgAllUltimatetvPlayList onError : " + error);
                     ThreadUtils.runOnUiThread(() -> httpCallback.onError(new ApiException(error)));
                 }
             });
@@ -254,7 +281,10 @@ public class ApiInterface {
         }
     }
 
-    public void getKgAllUltimatetvPlayListByFd(@NonNull IMediaAidlInterface iMediaAidlInterface, @NonNull HttpCallback<List<UltimatetvPlayList>> httpCallback) {
+    public void getKgAllUltimatetvPlayListByFd(@NonNull HttpCallback<List<UltimatetvPlayList>> httpCallback) {
+        if (!checkIMediaByBtAidlInterface()) {
+            return;
+        }
         try {
             iMediaAidlInterface.getKgAllUltimatetvPlayListByFd(new IOnFileListener.Stub() {
                 @Override
@@ -281,7 +311,7 @@ public class ApiInterface {
 
                 @Override
                 public void onError(String error) throws RemoteException {
-                    Log.e(TAG, "getKgAllUltimatetvPlayListByFd : " + error);
+                    Log.e(TAG, "getKgAllUltimatetvPlayListByFd onError : " + error);
                     ThreadUtils.runOnUiThread(() -> httpCallback.onError(new ApiException(error)));
                 }
             });
@@ -290,7 +320,10 @@ public class ApiInterface {
         }
     }
 
-    public void getKgDailyRecPlayList(@NonNull IMediaAidlInterface iMediaAidlInterface, @NonNull HttpCallback<List<UltimatetvPlayList>> httpCallback) {
+    public void getKgDailyRecPlayList(@NonNull HttpCallback<List<UltimatetvPlayList>> httpCallback) {
+        if (!checkIMediaByBtAidlInterface()) {
+            return;
+        }
         try {
             iMediaAidlInterface.getKgDailyRecPlayList(new UltimatetvCallback.Stub() {
                 @Override
@@ -305,12 +338,13 @@ public class ApiInterface {
 
                 @Override
                 public void onFail(String json) throws RemoteException {
+                    Log.e(TAG, "getKgDailyRecPlayList onFail : " + json);
                     ThreadUtils.runOnUiThread(() -> httpCallback.onFailed(json));
                 }
 
                 @Override
                 public void onError(String error) throws RemoteException {
-                    Log.e(TAG, "getKgDailyRecPlayList : " + error);
+                    Log.e(TAG, "getKgDailyRecPlayList onError : " + error);
                     ThreadUtils.runOnUiThread(() -> httpCallback.onError(new ApiException(error)));
                 }
             });
@@ -319,7 +353,10 @@ public class ApiInterface {
         }
     }
 
-    public void getKgAlbumInfoList(@NonNull IMediaAidlInterface iMediaAidlInterface, String albumId, int page, int size, @NonNull HttpCallback<AlbumInfo> httpCallback) {
+    public void getKgAlbumInfoList(String albumId, int page, int size, @NonNull HttpCallback<AlbumInfo> httpCallback) {
+        if (!checkIMediaByBtAidlInterface()) {
+            return;
+        }
         try {
             iMediaAidlInterface.getKgAlbumInfoList(albumId, page, size, new UltimatetvCallback.Stub() {
                 @Override
@@ -334,12 +371,13 @@ public class ApiInterface {
 
                 @Override
                 public void onFail(String json) throws RemoteException {
+                    Log.e(TAG, "getKgAlbumInfoList onFail : " + json);
                     ThreadUtils.runOnUiThread(() -> httpCallback.onFailed(json));
                 }
 
                 @Override
                 public void onError(String error) throws RemoteException {
-                    Log.e(TAG, "getKgAlbumInfoList : " + error);
+                    Log.e(TAG, "getKgAlbumInfoList onError : " + error);
                     ThreadUtils.runOnUiThread(() -> httpCallback.onError(new ApiException(error)));
                 }
             });
@@ -348,7 +386,10 @@ public class ApiInterface {
         }
     }
 
-    public void getAllLpRadioPlayList(@NonNull IMediaAidlInterface iMediaAidlInterface, @NonNull HttpCallback<List<LpRadioPlayList>> httpCallback) {
+    public void getAllLpRadioPlayList(@NonNull HttpCallback<List<LpRadioPlayList>> httpCallback) {
+        if (!checkIMediaByBtAidlInterface()) {
+            return;
+        }
         try {
             iMediaAidlInterface.getAllLpRadioPlayList(new LpRadioCallback.Stub() {
                 @Override
@@ -362,7 +403,7 @@ public class ApiInterface {
 
                 @Override
                 public void onError(String error) throws RemoteException {
-                    Log.e(TAG, "getAllLpRadioPlayList : " + error);
+                    Log.e(TAG, "getAllLpRadioPlayList onError : " + error);
                     ThreadUtils.runOnUiThread(() -> httpCallback.onError(new ApiException(error)));
                 }
             });
@@ -371,7 +412,10 @@ public class ApiInterface {
         }
     }
 
-    public void getLpRadioListTimeProgram(@NonNull IMediaAidlInterface iMediaAidlInterface, @NonNull HttpCallback<List<LpRadioPlayList>> httpCallback) {
+    public void getLpRadioListTimeProgram(@NonNull HttpCallback<List<LpRadioPlayList>> httpCallback) {
+        if (!checkIMediaByBtAidlInterface()) {
+            return;
+        }
         try {
             iMediaAidlInterface.getLpRadioListTimeProgram(new LpRadioCallback.Stub() {
                 @Override
@@ -385,7 +429,7 @@ public class ApiInterface {
 
                 @Override
                 public void onError(String error) throws RemoteException {
-                    Log.e(TAG, "getLpRadioListTimeProgram : " + error);
+                    Log.e(TAG, "getLpRadioListTimeProgram onError : " + error);
                     ThreadUtils.runOnUiThread(() -> httpCallback.onError(new ApiException(error)));
                 }
             });
@@ -394,7 +438,10 @@ public class ApiInterface {
         }
     }
 
-    public void getLpRadioRecommendList(@NonNull IMediaAidlInterface iMediaAidlInterface, @NonNull HttpCallback<RecommendListBean> httpCallback) {
+    public void getLpRadioRecommendList(@NonNull HttpCallback<RecommendListBean> httpCallback) {
+        if (!checkIMediaByBtAidlInterface()) {
+            return;
+        }
         try {
             iMediaAidlInterface.getLpRadioRecommendList(new LpRadioCallback.Stub() {
                 @Override
@@ -411,6 +458,7 @@ public class ApiInterface {
                             httpCallback.onComplete();
                         } else {
                             try {
+                                Log.e(TAG, "getLpRadioRecommendList onFailed : " + json);
                                 httpCallback.onFailed(recommendListBean);
                             } catch (Exception e) {
                                 Log.e(TAG, "getLpRadioRecommendList : " + e);
@@ -422,7 +470,7 @@ public class ApiInterface {
 
                 @Override
                 public void onError(String error) throws RemoteException {
-                    Log.e(TAG, "getLpRadioRecommendList : " + error);
+                    Log.e(TAG, "getLpRadioRecommendList onError : " + error);
                     ThreadUtils.runOnUiThread(() -> httpCallback.onError(new ApiException(error)));
                 }
             });
@@ -431,7 +479,10 @@ public class ApiInterface {
         }
     }
 
-    public void getLpRadioAlbumInfo(@NonNull IMediaAidlInterface iMediaAidlInterface, String albumId, @NonNull HttpCallback<AlbumInfoBean> httpCallback) {
+    public void getLpRadioAlbumInfo(String albumId, @NonNull HttpCallback<AlbumInfoBean> httpCallback) {
+        if (!checkIMediaByBtAidlInterface()) {
+            return;
+        }
         try {
             iMediaAidlInterface.getLpRadioAlbumInfo(albumId, new LpRadioCallback.Stub() {
                 @Override
@@ -448,6 +499,7 @@ public class ApiInterface {
                             httpCallback.onComplete();
                         } else {
                             try {
+                                Log.e(TAG, "getLpRadioAlbumInfo onFailed : " + json);
                                 httpCallback.onFailed(albumInfoBean);
                             } catch (Exception e) {
                                 Log.e(TAG, "getLpRadioAlbumInfo : " + e);
@@ -459,7 +511,7 @@ public class ApiInterface {
 
                 @Override
                 public void onError(String error) throws RemoteException {
-                    Log.e(TAG, "getLpRadioAlbumInfo : " + error);
+                    Log.e(TAG, "getLpRadioAlbumInfo onError : " + error);
                     ThreadUtils.runOnUiThread(() -> httpCallback.onError(new ApiException(error)));
                 }
             });
@@ -468,7 +520,10 @@ public class ApiInterface {
         }
     }
 
-    public void getFmFreqFromDb(@NonNull IMediaAidlInterface iMediaAidlInterface, @NonNull HttpCallback<List<FmList>> httpCallback) {
+    public void getFmFreqFromDb(@NonNull HttpCallback<List<FmList>> httpCallback) {
+        if (!checkIMediaByBtAidlInterface()) {
+            return;
+        }
         try {
             iMediaAidlInterface.getFmFreqFromDb(new FmCallback.Stub() {
                 @Override
@@ -482,7 +537,7 @@ public class ApiInterface {
 
                 @Override
                 public void onError(String error) throws RemoteException {
-                    Log.e(TAG, "getFmFreqFromDb : " + error);
+                    Log.e(TAG, "getFmFreqFromDb onError : " + error);
                     ThreadUtils.runOnUiThread(() -> httpCallback.onError(new ApiException(error)));
                 }
             });
@@ -491,7 +546,10 @@ public class ApiInterface {
         }
     }
 
-    public void getFmCollectFreqFromDb(@NonNull IMediaAidlInterface iMediaAidlInterface, @NonNull HttpCallback<List<FmCollectList>> httpCallback) {
+    public void getFmCollectFreqFromDb(@NonNull HttpCallback<List<FmCollectList>> httpCallback) {
+        if (!checkIMediaByBtAidlInterface()) {
+            return;
+        }
         try {
             iMediaAidlInterface.getFmCollectFreqFromDb(new FmCallback.Stub() {
                 @Override
@@ -506,7 +564,7 @@ public class ApiInterface {
 
                 @Override
                 public void onError(String error) throws RemoteException {
-                    Log.e(TAG, "getFmCollectFreqFromDb : " + error);
+                    Log.e(TAG, "getFmCollectFreqFromDb onError : " + error);
                     ThreadUtils.runOnUiThread(() -> httpCallback.onError(new ApiException(error)));
                 }
             });
@@ -515,7 +573,10 @@ public class ApiInterface {
         }
     }
 
-    public void getAllOnlineRadioBroadcastList(@NonNull IMediaAidlInterface iMediaAidlInterface, @NonNull HttpCallback<List<OnlineRadioBroadcastList>> httpCallback) {
+    public void getAllOnlineRadioBroadcastList(@NonNull HttpCallback<List<OnlineRadioBroadcastList>> httpCallback) {
+        if (!checkIMediaByBtAidlInterface()) {
+            return;
+        }
         try {
             iMediaAidlInterface.getAllOnlineRadioBroadcastList(new OnlineRadioCallback.Stub() {
                 @Override
@@ -525,7 +586,7 @@ public class ApiInterface {
 
                 @Override
                 public void onError(String error) throws RemoteException {
-                    Log.e(TAG, "getAllOnlineRadioBroadcastList : " + error);
+                    Log.e(TAG, "getAllOnlineRadioBroadcastList onError : " + error);
                     ThreadUtils.runOnUiThread(() -> httpCallback.onError(new ApiException(error)));
                 }
             });
@@ -534,7 +595,10 @@ public class ApiInterface {
         }
     }
 
-    public void getOnlineRadioSubscribeList(@NonNull IMediaAidlInterface iMediaAidlInterface, int pageNum, int pageSize, HttpCallback<BasePageResult<List<SubscribeInfo>>> httpCallback) {
+    public void getOnlineRadioSubscribeList(int pageNum, int pageSize, HttpCallback<BasePageResult<List<SubscribeInfo>>> httpCallback) {
+        if (!checkIMediaByBtAidlInterface()) {
+            return;
+        }
         try {
             iMediaAidlInterface.getOnlineRadioSubscribeList(pageNum, pageSize, new JsonCallback.Stub() {
                 @Override
@@ -547,6 +611,7 @@ public class ApiInterface {
 
                 @Override
                 public void onFailed(String fail) throws RemoteException {
+                    Log.e(TAG, "getOnlineRadioSubscribeList onFailed : " + fail);
                     if (httpCallback != null) {
                         ThreadUtils.runOnUiThread(() -> httpCallback.onFailed(fail));
                     }
@@ -554,7 +619,7 @@ public class ApiInterface {
 
                 @Override
                 public void onError(String error) throws RemoteException {
-                    Log.e(TAG, "getOnlineRadioSubscribeList : " + error);
+                    Log.e(TAG, "getOnlineRadioSubscribeList onError : " + error);
                     if (httpCallback != null) {
                         ThreadUtils.runOnUiThread(() -> httpCallback.onError(new ApiException(error)));
                     }
@@ -565,7 +630,10 @@ public class ApiInterface {
         }
     }
 
-    public void getOnlineRadioHistoryList(@NonNull IMediaAidlInterface iMediaAidlInterface, HttpCallback<List<ListeningHistory>> httpCallback) {
+    public void getOnlineRadioHistoryList(HttpCallback<List<ListeningHistory>> httpCallback) {
+        if (!checkIMediaByBtAidlInterface()) {
+            return;
+        }
         try {
             iMediaAidlInterface.getOnlineRadioHistoryList(new JsonCallback.Stub() {
                 @Override
@@ -579,6 +647,7 @@ public class ApiInterface {
 
                 @Override
                 public void onFailed(String fail) throws RemoteException {
+                    Log.e(TAG, "getOnlineRadioHistoryList onFailed : " + fail);
                     if (httpCallback != null) {
                         ThreadUtils.runOnUiThread(() -> httpCallback.onFailed(fail));
                     }
@@ -586,7 +655,7 @@ public class ApiInterface {
 
                 @Override
                 public void onError(String error) throws RemoteException {
-                    Log.e(TAG, "getOnlineRadioHistoryList : " + error);
+                    Log.e(TAG, "getOnlineRadioHistoryList onError : " + error);
                     if (httpCallback != null) {
                         ThreadUtils.runOnUiThread(() -> httpCallback.onError(new ApiException(error)));
                     }
@@ -597,7 +666,10 @@ public class ApiInterface {
         }
     }
 
-    public void getAllUdiskPlayList(@NonNull IMediaAidlInterface iMediaAidlInterface, @NonNull HttpCallback<List<UdiskPlayList>> httpCallback) {
+    public void getAllUdiskPlayList(@NonNull HttpCallback<List<UdiskPlayList>> httpCallback) {
+        if (!checkIMediaByBtAidlInterface()) {
+            return;
+        }
         try {
             iMediaAidlInterface.getAllUdiskPlayList(new UdiskCallback.Stub() {
                 @Override
@@ -607,7 +679,7 @@ public class ApiInterface {
 
                 @Override
                 public void onError(String error) throws RemoteException {
-                    Log.e(TAG, "getAllUdiskPlayList : " + error);
+                    Log.e(TAG, "getAllUdiskPlayList onError : " + error);
                     ThreadUtils.runOnUiThread(() -> httpCallback.onError(new ApiException(error)));
                 }
             });
@@ -616,7 +688,10 @@ public class ApiInterface {
         }
     }
 
-    public void getAllXmlyPlayList(@NonNull IMediaAidlInterface iMediaAidlInterface, @NonNull HttpCallback<List<XmlyPlayList>> httpCallback) {
+    public void getAllXmlyPlayList(@NonNull HttpCallback<List<XmlyPlayList>> httpCallback) {
+        if (!checkIMediaByBtAidlInterface()) {
+            return;
+        }
         try {
             iMediaAidlInterface.getAllXmlyPlayListBySingle(new XmlyCallback.Stub() {
                 @Override
@@ -632,6 +707,7 @@ public class ApiInterface {
                 @Override
                 public void onFail(String json) throws RemoteException {
                     try {
+                        Log.e(TAG, "getAllXmlyPlayList onFail : " + json);
                         httpCallback.onFailed(GsonUtils.fromJson(json, ErrorResponse.class));
                     } catch (Exception e) {
                         Log.e(TAG, "getAllXmlyPlayList : " + e);
@@ -641,7 +717,7 @@ public class ApiInterface {
 
                 @Override
                 public void onError(String error) throws RemoteException {
-                    Log.e(TAG, "getAllXmlyPlayList : " + error);
+                    Log.e(TAG, "getAllXmlyPlayList onError : " + error);
                     ThreadUtils.runOnUiThread(() -> httpCallback.onError(new ApiException(error)));
                 }
             });
@@ -650,7 +726,10 @@ public class ApiInterface {
         }
     }
 
-    public void getXmlyRecVehicle(@NonNull IMediaAidlInterface iMediaAidlInterface, int limit, @NonNull HttpCallback<List<RecommendInfoBean>> httpCallback) {
+    public void getXmlyRecVehicle(int limit, @NonNull HttpCallback<List<RecommendInfoBean>> httpCallback) {
+        if (!checkIMediaByBtAidlInterface()) {
+            return;
+        }
         try {
             iMediaAidlInterface.getXmlyRecVehicle(limit, new XmlyCallback.Stub() {
                 @Override
@@ -668,6 +747,7 @@ public class ApiInterface {
                 @Override
                 public void onFail(String json) throws RemoteException {
                     try {
+                        Log.e(TAG, "getXmlyRecVehicle onFail : " + json);
                         httpCallback.onFailed(GsonUtils.fromJson(json, ErrorResponse.class));
                     } catch (Exception e) {
                         Log.e(TAG, "getXmlyRecVehicle : " + e);
@@ -677,7 +757,7 @@ public class ApiInterface {
 
                 @Override
                 public void onError(String error) throws RemoteException {
-                    Log.e(TAG, "getXmlyRecVehicle : " + error);
+                    Log.e(TAG, "getXmlyRecVehicle onError : " + error);
                     ThreadUtils.runOnUiThread(() -> httpCallback.onError(new ApiException(error)));
                 }
             });
@@ -686,7 +766,10 @@ public class ApiInterface {
         }
     }
 
-    public void getXmlySubAlbumsByUid(@NonNull IMediaAidlInterface iMediaAidlInterface, long timeline, int offset, @NonNull HttpCallback<AlbumSubscribedPage> httpCallback) {
+    public void getXmlySubAlbumsByUid(long timeline, int offset, @NonNull HttpCallback<AlbumSubscribedPage> httpCallback) {
+        if (!checkIMediaByBtAidlInterface()) {
+            return;
+        }
         try {
             iMediaAidlInterface.getXmlySubAlbumsByUid(timeline, offset, new XmlyCallback.Stub() {
                 @Override
@@ -703,6 +786,7 @@ public class ApiInterface {
                 @Override
                 public void onFail(String json) throws RemoteException {
                     try {
+                        Log.e(TAG, "getXmlySubAlbumsByUid onFail: " + json);
                         httpCallback.onFailed(GsonUtils.fromJson(json, ErrorResponse.class));
                     } catch (Exception e) {
                         Log.e(TAG, "getXmlySubAlbumsByUid : " + e);
@@ -712,7 +796,7 @@ public class ApiInterface {
 
                 @Override
                 public void onError(String error) throws RemoteException {
-                    Log.e(TAG, "getXmlySubAlbumsByUid : " + error);
+                    Log.e(TAG, "getXmlySubAlbumsByUid onError: " + error);
                     ThreadUtils.runOnUiThread(() -> httpCallback.onError(new ApiException(error)));
                 }
             });
@@ -721,7 +805,10 @@ public class ApiInterface {
         }
     }
 
-    public void getHisAlbumsByUid(@NonNull IMediaAidlInterface iMediaAidlInterface, int offset, int limit, int category_id, @NonNull HttpCallback<HistoryPlayRecordFullPage> httpCallback) {
+    public void getHisAlbumsByUid(int offset, int limit, int category_id, @NonNull HttpCallback<HistoryPlayRecordFullPage> httpCallback) {
+        if (!checkIMediaByBtAidlInterface()) {
+            return;
+        }
         try {
             iMediaAidlInterface.getHisAlbumsByUid(offset, limit, category_id, new XmlyCallback.Stub() {
                 @Override
@@ -738,6 +825,7 @@ public class ApiInterface {
                 @Override
                 public void onFail(String json) throws RemoteException {
                     try {
+                        Log.e(TAG, "getHisAlbumsByUid onFail : " + json);
                         httpCallback.onFailed(GsonUtils.fromJson(json, ErrorResponse.class));
                     } catch (Exception e) {
                         Log.e(TAG, "getHisAlbumsByUid : " + e);
@@ -747,7 +835,7 @@ public class ApiInterface {
 
                 @Override
                 public void onError(String error) throws RemoteException {
-                    Log.e(TAG, "getHisAlbumsByUid : " + error);
+                    Log.e(TAG, "getHisAlbumsByUid onError : " + error);
                     ThreadUtils.runOnUiThread(() -> httpCallback.onError(new ApiException(error)));
                 }
             });
@@ -756,7 +844,10 @@ public class ApiInterface {
         }
     }
 
-    public void getXmlyAlbumInfo(@NonNull IMediaAidlInterface iMediaAidlInterface, long albumId, String rich_info, @NonNull HttpCallback<AlbumRichBean> httpCallback) {
+    public void getXmlyAlbumInfo(long albumId, String rich_info, @NonNull HttpCallback<AlbumRichBean> httpCallback) {
+        if (!checkIMediaByBtAidlInterface()) {
+            return;
+        }
         try {
             iMediaAidlInterface.getXmlyAlbumInfo(albumId, rich_info, new XmlyCallback.Stub() {
                 @Override
@@ -773,6 +864,7 @@ public class ApiInterface {
                 @Override
                 public void onFail(String json) throws RemoteException {
                     try {
+                        Log.e(TAG, "getXmlyAlbumInfo onFail : " + json);
                         httpCallback.onFailed(GsonUtils.fromJson(json, ErrorResponse.class));
                     } catch (Exception e) {
                         Log.e(TAG, "getXmlyAlbumInfo : " + e);
@@ -782,7 +874,7 @@ public class ApiInterface {
 
                 @Override
                 public void onError(String error) throws RemoteException {
-                    Log.e(TAG, "getXmlyAlbumInfo : " + error);
+                    Log.e(TAG, "getXmlyAlbumInfo onError : " + error);
                     ThreadUtils.runOnUiThread(() -> httpCallback.onError(new ApiException(error)));
                 }
             });
@@ -791,7 +883,11 @@ public class ApiInterface {
         }
     }
 
-    public BluetoothInfoBean getBluetoothMusicInfo(@NonNull IMediaAidlInterface iMediaAidlInterface) {
+    @Nullable
+    public BluetoothInfoBean getBluetoothMusicInfo() {
+        if (!checkIMediaByBtAidlInterface()) {
+            return null;
+        }
         try {
             String json = iMediaAidlInterface.getBluetoothMusicInfo();
             return GsonUtils.fromJson(json, BluetoothInfoBean.class);
@@ -801,7 +897,10 @@ public class ApiInterface {
         }
     }
 
-    public void getKgSelfbuiltPlaylistList(@NonNull IMediaAidlInterface iMediaAidlInterface, @NonNull HttpCallback<PlaylistList> httpCallback) {
+    public void getKgSelfbuiltPlaylistList(@NonNull HttpCallback<PlaylistList> httpCallback) {
+        if (!checkIMediaByBtAidlInterface()) {
+            return;
+        }
         try {
             iMediaAidlInterface.getKgSelfbuiltPlaylistList(new UltimatetvCallback.Stub() {
                 @Override
@@ -816,18 +915,56 @@ public class ApiInterface {
 
                 @Override
                 public void onFail(String json) throws RemoteException {
+                    Log.e(TAG, "getKgSelfbuiltPlaylistList onFail : " + json);
                     ThreadUtils.runOnUiThread(() -> httpCallback.onFailed(json));
                 }
 
                 @Override
                 public void onError(String error) throws RemoteException {
-                    Log.e(TAG, "getKgSelfbuiltPlaylistList : " + error);
+                    Log.e(TAG, "getKgSelfbuiltPlaylistList onError : " + error);
                     ThreadUtils.runOnUiThread(() -> httpCallback.onError(new ApiException(error)));
                 }
             });
         } catch (RemoteException e) {
             e.printStackTrace();
         }
+    }
+
+    public void searchKgSingleSong(int page, int size, String keyword, @NonNull HttpCallback<SearchSongList> httpCallback) {
+        if (!checkIMediaByBtAidlInterface()) {
+            return;
+        }
+        try {
+            iMediaAidlInterface.searchKgSingleSong(page, size, keyword, new JsonCallback.Stub() {
+                @Override
+                public void getJsonData(String jsonData) throws RemoteException {
+                    SearchSongList searchSongList = GsonUtils.fromJson(jsonData, SearchSongList.class);
+                    ThreadUtils.runOnUiThread(() -> httpCallback.onSuccess(searchSongList));
+                }
+
+                @Override
+                public void onFailed(String fail) throws RemoteException {
+                    Log.e(TAG, "searchKgSingleSong onFailed : " + fail);
+                    ThreadUtils.runOnUiThread(() -> httpCallback.onFailed(fail));
+                }
+
+                @Override
+                public void onError(String error) throws RemoteException {
+                    Log.e(TAG, "searchKgSingleSong onError : " + error);
+                    ThreadUtils.runOnUiThread(() -> httpCallback.onError(new ApiException(error)));
+                }
+            });
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private boolean checkIMediaByBtAidlInterface() {
+        boolean isInit = iMediaAidlInterface != null;
+        if (!isInit) {
+            Log.e(TAG, "iMediaAidlInterface is null please init first!");
+        }
+        return isInit;
     }
 
     private static class SingleInstanceHolder {

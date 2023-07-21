@@ -230,6 +230,15 @@
                     android:layout_weight="1"
                     android:gravity="center"
                     android:text="获取酷狗专辑信息列表" />
+
+                <Button
+                    android:id="@+id/searchKgSingleSong"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="搜索单曲“刘德华”" />
             </LinearLayout>
 
             <LinearLayout
