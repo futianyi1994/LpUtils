@@ -109,6 +109,33 @@
                 android:layout_weight="1">
 
                 <Button
+                    android:id="@+id/getCurrentPlayPosition"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="获取当前歌曲所在位置" />
+
+                <Button
+                    android:id="@+id/isVip"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="获取当前歌曲是否为VIP" />
+
+                <Button
+                    android:id="@+id/isKgGuessYouLike"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="是否是酷狗猜你喜欢" />
+
+                <Button
                     android:id="@+id/getMediaBody"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

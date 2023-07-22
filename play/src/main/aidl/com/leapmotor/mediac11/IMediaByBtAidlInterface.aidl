@@ -45,4 +45,10 @@ interface IMediaByBtAidlInterface {
 
     void unRegisterPlayStateListener(PlayStateListener playStateListener);
 
+    oneway void getCurrentPlayPosition(int mediaType, String uniqueId, JsonCallback jsonCallback);
+
+    oneway void isVip(int mediaType, String uniqueId, JsonCallback jsonCallback);
+
+    String getPlayingAlbumId();
+
 }

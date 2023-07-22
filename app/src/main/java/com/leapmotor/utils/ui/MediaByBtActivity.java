@@ -83,6 +83,54 @@ public class MediaByBtActivity extends AppCompatActivity implements View.OnClick
             ApiByBtInterface.getInstance().next();
         } else if (id == R.id.tvIsBtAvailable) {
             ApiByBtInterface.getInstance().playBtMusic();
+        } else if (id == R.id.getCurrentPlayPosition) {
+            if (mediaBody != null) {
+                ApiByBtInterface
+                        .getInstance()
+                        .getCurrentPlayPosition(mediaBody.getType(), mediaBody.getUniqueId(), new JsonCallback.Stub() {
+                            @Override
+                            public void getJsonData(String jsonData) throws RemoteException {
+                                TLog.v(TAG, "getCurrentPlayPosition: " + jsonData + ", " + Thread.currentThread());
+                                ThreadUtils.runOnUiThread(() -> tvContent.setText(jsonData));
+                            }
+
+                            @Override
+                            public void onFailed(String fail) throws RemoteException {
+                                TLog.v(TAG, "getCurrentPlayPosition onFailed : " + fail + ", " + Thread.currentThread());
+                            }
+
+                            @Override
+                            public void onError(String error) throws RemoteException {
+                                TLog.v(TAG, "getCurrentPlayPosition onError : " + error + ", " + Thread.currentThread());
+                            }
+                        });
+            }
+        } else if (id == R.id.isVip) {
+            if (mediaBody != null) {
+                ApiByBtInterface
+                        .getInstance()
+                        .isVip(mediaBody.getType(), mediaBody.getUniqueId(), new JsonCallback.Stub() {
+                            @Override
+                            public void getJsonData(String jsonData) throws RemoteException {
+                                TLog.v(TAG, "isVip: " + jsonData + ", " + Thread.currentThread());
+                                ThreadUtils.runOnUiThread(() -> tvContent.setText(jsonData));
+                            }
+
+                            @Override
+                            public void onFailed(String fail) throws RemoteException {
+                                TLog.v(TAG, "isVip onFailed : " + fail + ", " + Thread.currentThread());
+                            }
+
+                            @Override
+                            public void onError(String error) throws RemoteException {
+                                TLog.v(TAG, "isVip onError : " + error + ", " + Thread.currentThread());
+                            }
+                        });
+            }
+        } else if (id == R.id.isKgGuessYouLike) {
+            boolean isKgGuessYouLike = ApiByBtInterface.getInstance().isKgGuessYouLike();
+            TLog.v(TAG, "isKgGuessYouLike: " + isKgGuessYouLike + ", " + Thread.currentThread());
+            tvContent.setText(String.valueOf(isKgGuessYouLike));
         } else if (id == R.id.getMediaBody) {
             MediaBody mediaBody = ApiByBtInterface.getInstance().getMediaBody();
             TLog.v(TAG, "getMediaBody: " + mediaBody.toString() + ", " + Thread.currentThread());
@@ -95,6 +143,9 @@ public class MediaByBtActivity extends AppCompatActivity implements View.OnClick
     private void initView() {
         FindViewUtlis.findViewById(this, R.id.tvPre).setOnClickListener(this);
         FindViewUtlis.findViewById(this, R.id.tvNext).setOnClickListener(this);
+        FindViewUtlis.findViewById(this, R.id.getCurrentPlayPosition).setOnClickListener(this);
+        FindViewUtlis.findViewById(this, R.id.isVip).setOnClickListener(this);
+        FindViewUtlis.findViewById(this, R.id.isKgGuessYouLike).setOnClickListener(this);
         FindViewUtlis.findViewById(this, R.id.getMediaBody).setOnClickListener(this);
         FindViewUtlis.findViewById(this, R.id.tvFinish).setOnClickListener(this);
 

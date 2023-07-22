@@ -6,6 +6,7 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 
 import com.leapmotor.mediac11.IMediaByBtAidlInterface;
+import com.leapmotor.play.annotation.AlbumType;
 import com.leapmotor.play.annotation.MediaType;
 import com.leapmotor.play.body.MediaBody;
 import com.leapmotor.play.callback.JsonCallback;
@@ -222,6 +223,37 @@ public class ApiByBtInterface {
                 e.printStackTrace();
             }
         }
+    }
+
+    public void getCurrentPlayPosition(@MediaType int mediaType, String uniqueId, JsonCallback jsonCallback) {
+        if (checkIMediaByBtAidlInterface()) {
+            try {
+                iMediaAidlInterface.getCurrentPlayPosition(mediaType, uniqueId, jsonCallback);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public void isVip(@MediaType int mediaType, String uniqueId, JsonCallback jsonCallback) {
+        if (checkIMediaByBtAidlInterface()) {
+            try {
+                iMediaAidlInterface.isVip(mediaType, uniqueId, jsonCallback);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public boolean isKgGuessYouLike() {
+        if (checkIMediaByBtAidlInterface()) {
+            try {
+                return iMediaAidlInterface.getPlayingAlbumId().equals(String.valueOf(AlbumType.KG_GUESS_LIKE));
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
+        return false;
     }
 
     private boolean checkIMediaByBtAidlInterface() {
