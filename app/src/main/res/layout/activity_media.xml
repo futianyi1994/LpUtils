@@ -238,7 +238,7 @@
                     android:layout_gravity="center"
                     android:layout_weight="1"
                     android:gravity="center"
-                    android:text="搜索单曲“刘德华”" />
+                    android:text="搜索单曲“刘德华”并播放" />
             </LinearLayout>
 
             <LinearLayout

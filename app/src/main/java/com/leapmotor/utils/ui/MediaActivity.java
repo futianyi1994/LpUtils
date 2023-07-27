@@ -243,6 +243,11 @@ public class MediaActivity extends AppCompatActivity implements View.OnClickList
                                 public void onSuccess(SearchSongList searchSongList) {
                                     TLog.v(TAG, "searchKgSingleSong: " + Thread.currentThread());
                                     ThreadUtils.runOnUiThread(() -> tvContent.setText(JsonUtils.formatJson(GsonUtils.toJson(searchSongList))));
+                                    try {
+                                        iMediaAidlInterface.insetPlayMediaByMediaInfo(MediaType.TYPE_ULTIMATETV, GsonUtils.toJson(searchSongList.getList()));
+                                    } catch (RemoteException e) {
+                                        e.printStackTrace();
+                                    }
                                 }
                             });
                 } else if (id == R.id.getAllLpRadioPlayList) {

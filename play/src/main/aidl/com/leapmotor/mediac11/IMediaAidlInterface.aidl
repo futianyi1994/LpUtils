@@ -187,4 +187,6 @@ interface IMediaAidlInterface {
     oneway void getKgAllUltimatetvPlayListByFd(IOnFileListener iOnFileListener);
 
     oneway void searchKgSingleSong(int page, int size, String keyword, JsonCallback jsonCallBack);
+
+    void insetPlayMediaByMediaInfo(int mediaType, String mediaInfo);
 }
