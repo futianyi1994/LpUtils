@@ -141,6 +141,10 @@ public class ShadowDialog extends Dialog implements View.OnClickListener {
     private static final String TAG = "ShadowDialog";
     private static final int DEFAULT_DIALOG_SHOW_ANIM = R.anim.dialog_show;
     private static final int DEFAULT_DIALOG_HIDE_ANIM = R.anim.dialog_hide;
+
+    private final int[] textSizeUnits;
+    private final int[] textSizes;
+    private final int[] textGravities;
     private AnimationSet animModalIn;
     private AnimationSet animModalOut;
     private Animation overlayOutAnim;
@@ -179,8 +183,6 @@ public class ShadowDialog extends Dialog implements View.OnClickListener {
         }
     };
     private int windowType = 0;
-    private final int[] textSizeUnits;
-    private final int[] textSizes;
 
     public ShadowDialog(Context context) {
         this(context, true);
@@ -197,6 +199,7 @@ public class ShadowDialog extends Dialog implements View.OnClickListener {
         setAnim(animIn, animOut);
         textSizeUnits = new int[]{TypedValue.COMPLEX_UNIT_PX, TypedValue.COMPLEX_UNIT_PX, TypedValue.COMPLEX_UNIT_PX, TypedValue.COMPLEX_UNIT_PX};
         textSizes = new int[]{getContext().getResources().getDimensionPixelSize(R.dimen.sizeL), getContext().getResources().getDimensionPixelSize(R.dimen.sizeL), getContext().getResources().getDimensionPixelSize(R.dimen.sizeL), getContext().getResources().getDimensionPixelSize(R.dimen.sizeL)};
+        textGravities = new int[]{Gravity.CENTER, Gravity.START};
     }
 
     @SuppressLint("WrongConstant")
@@ -300,11 +303,15 @@ public class ShadowDialog extends Dialog implements View.OnClickListener {
         LinearLayout.LayoutParams vLineLayoutParams = (LinearLayout.LayoutParams) vLine.getLayoutParams();
         vLineLayoutParams.setMargins(TXT_BG_SHADOW_PADING, 0, TXT_BG_SHADOW_PADING, 0);
 
+        if (title != null) {
+            float titleWidth = tvTitle.getPaint().measureText(title);
+            if (textGravities[0] == Gravity.NO_GRAVITY) {
+                textGravities[0] = titleWidth >= TXT_CONTENT_MAX_WIDTH ? Gravity.START : Gravity.CENTER;
+            }
+        }
         float contentWidth = tvContent.getPaint().measureText(content);
-        if (contentWidth >= TXT_CONTENT_MAX_WIDTH) {
-            tvContent.setGravity(Gravity.START);
-        } else {
-            tvContent.setGravity(Gravity.CENTER);
+        if (textGravities[1] == Gravity.NO_GRAVITY) {
+            textGravities[1] = contentWidth >= TXT_CONTENT_MAX_WIDTH ? Gravity.START : Gravity.CENTER;
         }
         tvTitle.setSelected(true);
         tvConfirm.setSelected(true);
@@ -314,10 +321,10 @@ public class ShadowDialog extends Dialog implements View.OnClickListener {
         tvConfirm.setTextColor(ContextCompat.getColor(getContext(), ThemeUtils.getBtnTextHighlightColor()));
         tvCancel.setTextColor(ContextCompat.getColor(getContext(), textColorRes));
 
-        setTitleText(title);
-        setContentText(content);
-        setCancelText(cancel);
-        setConfirmText(confirm);
+        setTitleText(title, textSizeUnits[0], textSizes[0], textGravities[0]);
+        setContentText(content, textSizeUnits[1], textSizes[1], textGravities[1]);
+        setConfirmText(confirm, textSizeUnits[2], textSizes[2]);
+        setCancelText(cancel, textSizeUnits[3], textSizes[3]);
 
         getContext().getContentResolver().registerContentObserver(Settings.Global.getUriFor(SettingsUtils.SCREEN_MODE), true, observer);
     }
@@ -449,13 +456,19 @@ public class ShadowDialog extends Dialog implements View.OnClickListener {
     }
 
     public ShadowDialog setTitleText(@Nullable String text, int unit, float size) {
+        return setTitleText(text, unit, size, Gravity.NO_GRAVITY);
+    }
+
+    public ShadowDialog setTitleText(@Nullable String text, int unit, float size, int gravity) {
         title = text;
+        textGravities[0] = gravity;
         if (unit >= 0 && size >= 0) {
             textSizeUnits[0] = unit;
             textSizes[0] = (int) size;
         }
         if (tvTitle != null) {
             tvTitle.setText(title);
+            tvTitle.setGravity(textGravities[0]);
             tvTitle.setVisibility(title == null ? View.GONE : View.VISIBLE);
             if (textSizes[0] >= 0) {
                 tvTitle.setTextSize(textSizeUnits[0], textSizes[0]);
@@ -469,19 +482,20 @@ public class ShadowDialog extends Dialog implements View.OnClickListener {
     }
 
     public ShadowDialog setContentText(@NonNull String text, int unit, float size) {
-        return setContentText(text, unit, size, Gravity.START);
+        return setContentText(text, unit, size, Gravity.NO_GRAVITY);
     }
 
     public ShadowDialog setContentText(@NonNull String text, int unit, float size, int gravity) {
         content = text;
+        textGravities[1] = gravity;
         if (unit >= 0 && size >= 0) {
             textSizeUnits[1] = unit;
             textSizes[1] = (int) size;
         }
         if (tvContent != null) {
             tvContent.setText(content);
+            tvContent.setGravity(textGravities[1]);
             if (textSizes[1] >= 0) {
-                tvContent.setGravity(gravity);
                 tvContent.setTextSize(textSizeUnits[1], textSizes[1]);
             }
         }
