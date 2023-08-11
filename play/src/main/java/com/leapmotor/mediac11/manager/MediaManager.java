@@ -31,6 +31,7 @@ import java.util.Locale;
 public class MediaManager {
     public static final int BINDER_MEDIA = 0;
     private static final String TAG = "MediaManager";
+    private static final String KEY_CLIENT_PKG = "key_client_pkg";
     private static IBinderPool mBinderPool;
     private static IMediaAidlInterface iMediaAidlInterface;
     private static BinderDeathRecipient binderDeathRecipient;
@@ -49,7 +50,31 @@ public class MediaManager {
     }
 
     public static boolean isAlive() {
-        return isAlive;
+        boolean isAllAlive = isAlive && isBinderAlive() && pingBinder();
+        Log.i(TAG, "isAlive : " + isAllAlive);
+        return isAllAlive;
+    }
+
+    public static boolean isBinderAlive() {
+        if (iMediaAidlInterface != null) {
+            boolean binderAlive = iMediaAidlInterface.asBinder().isBinderAlive();
+            Log.i(TAG, "isBinderAlive : " + binderAlive);
+            return binderAlive;
+        } else {
+            Log.w(TAG, "isBinderAlive : false");
+            return false;
+        }
+    }
+
+    public static boolean pingBinder() {
+        if (iMediaAidlInterface != null) {
+            boolean pingBinder = iMediaAidlInterface.asBinder().pingBinder();
+            Log.i(TAG, "pingBinder : " + pingBinder);
+            return pingBinder;
+        } else {
+            Log.w(TAG, "pingBinder : false");
+            return false;
+        }
     }
 
     public static void release() {
@@ -62,7 +87,7 @@ public class MediaManager {
 
     public void bindService(@NonNull Context context, @NonNull MServiceConnection conn) {
         Log.i(TAG, "bindService start");
-        boolean connected = context.bindService(getMediaServiceIntent(), conn, Context.BIND_AUTO_CREATE);
+        boolean connected = context.bindService(getMediaServiceIntent().putExtra(KEY_CLIENT_PKG, context.getPackageName()), conn, Context.BIND_AUTO_CREATE);
         Log.i(TAG, "bindService : " + connected);
     }
 
@@ -139,7 +164,7 @@ public class MediaManager {
             }
             mBinderPool = IBinderPool.Stub.asInterface(iBinder);
             try {
-                iBinder.linkToDeath(mBinderPoolDeathRecipient, 0);
+                mBinderPool.asBinder().linkToDeath(mBinderPoolDeathRecipient, 0);
             } catch (RemoteException e) {
                 e.printStackTrace();
             }
@@ -157,7 +182,7 @@ public class MediaManager {
         @Override
         public void onServiceDisconnected(ComponentName componentName) {
             Log.e(TAG, String.format(Locale.getDefault(), "onServiceDisconnected : %s", componentName));
-            release();
+            //release();
         }
     }
 
